@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * @since 2.6.0
  */
 @XMemberAnnotation(XMemberAnnotation.NODE_LIST)
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XNodeList {
 
@@ -45,7 +45,7 @@ public @interface XNodeList {
     boolean trim() default true;
 
     /**
-     * The type of collection object.
+     * The type of a collection object.
      *
      * @return the type of items
      */

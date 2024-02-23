@@ -16,6 +16,9 @@
  */
 package com.alipay.sofa.actuator.autoconfigure.test;
 
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.healthcheck.core.HealthChecker;
+import com.alipay.sofa.healthcheck.impl.ComponentHealthChecker;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,10 +27,6 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.healthcheck.core.HealthChecker;
-import com.alipay.sofa.healthcheck.impl.ComponentHealthChecker;
 
 /**
  * @author abby.zh
@@ -43,11 +42,11 @@ public class SofaComponentHealthCheckerTest {
     @Test
     public void testDefaultConfig() {
         ComponentHealthChecker sofaComponentHealthChecker = ctx
-            .getBean(ComponentHealthChecker.class);
+                .getBean(ComponentHealthChecker.class);
         Assert.assertEquals(SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_COUNT,
-            sofaComponentHealthChecker.getRetryCount());
+                sofaComponentHealthChecker.getRetryCount());
         Assert.assertEquals(SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_INTERVAL,
-            sofaComponentHealthChecker.getRetryTimeInterval());
+                sofaComponentHealthChecker.getRetryTimeInterval());
     }
 
     @Test
@@ -58,9 +57,9 @@ public class SofaComponentHealthCheckerTest {
         Assert.assertTrue(healthChecker.isHealthy().getStatus().equals(Status.UP));
         Assert.assertEquals("SOFABoot-Components", healthChecker.getComponentName());
         Assert.assertEquals(SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_COUNT,
-            healthChecker.getRetryCount());
+                healthChecker.getRetryCount());
         Assert.assertEquals(SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_INTERVAL,
-            healthChecker.getRetryTimeInterval());
+                healthChecker.getRetryTimeInterval());
         Assert.assertEquals(true, healthChecker.isStrictCheck());
     }
 }

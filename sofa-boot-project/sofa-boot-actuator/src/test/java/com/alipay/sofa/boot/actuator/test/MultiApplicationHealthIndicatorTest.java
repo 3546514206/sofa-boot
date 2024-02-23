@@ -31,7 +31,7 @@ public class MultiApplicationHealthIndicatorTest {
     @Test
     public void testUp() {
         SofaFramework.registerSofaRuntimeManager(new StandardSofaRuntimeManager("test1", this
-            .getClass().getClassLoader(), null));
+                .getClass().getClassLoader(), null));
         Assert.assertEquals(Status.UP, new MultiApplicationHealthIndicator().health().getStatus());
     }
 }

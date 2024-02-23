@@ -16,10 +16,10 @@
  */
 package com.alipay.sofa.rpc.boot.config;
 
-import java.util.Map;
-
 import com.alipay.sofa.rpc.boot.common.RegistryParseUtil;
 import com.alipay.sofa.rpc.config.RegistryConfig;
+
+import java.util.Map;
 
 /**
  * SOFARegistry 配置
@@ -36,12 +36,12 @@ public class SofaRegistryConfigurator implements RegistryConfigureProcessor {
     @Override
     public RegistryConfig buildFromAddress(String address) {
         String sofaRegistryAddress = RegistryParseUtil.parseAddress(address,
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_SOFA);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_SOFA);
         Map<String, String> map = RegistryParseUtil.parseParam(address,
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_SOFA);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_SOFA);
 
         return new RegistryConfig().setAddress(sofaRegistryAddress)
-            .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_SOFA).setParameters(map);
+                .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_SOFA).setParameters(map);
     }
 
     @Override

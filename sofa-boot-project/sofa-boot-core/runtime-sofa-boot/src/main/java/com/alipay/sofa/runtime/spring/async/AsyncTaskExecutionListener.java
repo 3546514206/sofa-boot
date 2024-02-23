@@ -29,8 +29,8 @@ import org.springframework.core.PriorityOrdered;
  * @since 2.6.0
  */
 public class AsyncTaskExecutionListener implements PriorityOrdered,
-                                       ApplicationListener<ContextRefreshedEvent>,
-                                       ApplicationContextAware {
+        ApplicationListener<ContextRefreshedEvent>,
+        ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Override
@@ -42,6 +42,7 @@ public class AsyncTaskExecutionListener implements PriorityOrdered,
 
     @Override
     public int getOrder() {
+        // invoked after {@literal com.alipay.sofa.isle.spring.listener.SofaModuleContextRefreshedListener}
         return Ordered.HIGHEST_PRECEDENCE + 1;
     }
 

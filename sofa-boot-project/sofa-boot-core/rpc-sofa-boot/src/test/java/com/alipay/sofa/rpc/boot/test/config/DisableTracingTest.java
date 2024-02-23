@@ -16,9 +16,9 @@
  */
 package com.alipay.sofa.rpc.boot.test.config;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.alipay.sofa.rpc.boot.config.SofaBootRpcProperties;
+import com.alipay.sofa.rpc.module.Module;
+import com.alipay.sofa.rpc.module.ModuleFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,15 +26,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcProperties;
-import com.alipay.sofa.rpc.module.Module;
-import com.alipay.sofa.rpc.module.ModuleFactory;
+import java.lang.reflect.Field;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author khotyn
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = { SofaBootRpcProperties.PREFIX + ".defaultTracer=" })
+@SpringBootTest(properties = {SofaBootRpcProperties.PREFIX + ".defaultTracer="})
 public class DisableTracingTest {
 
     @Test
@@ -44,7 +43,7 @@ public class DisableTracingTest {
         installedModulesField.setAccessible(true);
         @SuppressWarnings("unchecked")
         ConcurrentHashMap<String, Module> modules = (ConcurrentHashMap<String, Module>) installedModulesField
-            .get(ModuleFactory.class);
+                .get(ModuleFactory.class);
         Assert.assertNull(modules.get("sofaTracer"));
     }
 }

@@ -16,15 +16,7 @@
  */
 package com.alipay.sofa.boot.actuator.version;
 
-import static com.alipay.sofa.boot.constant.SofaBootConstants.SOFA_BOOT_VERSION_PROPERTIES;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.alipay.sofa.boot.log.InfraLoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -34,13 +26,19 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.Assert;
 
-import com.alipay.sofa.boot.log.InfraLoggerFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.alipay.sofa.boot.constant.SofaBootConstants.SOFA_BOOT_VERSION_PROPERTIES;
 
 /**
  * SOFABootVersionEndpoint
- *
+ * <p>
  * {@link org.springframework.core.io.support.PropertiesLoaderSupport#loadProperties(java.util.Properties)}
-
  *
  * @author yangguanchao
  * @author qilong.zql
@@ -49,10 +47,10 @@ import com.alipay.sofa.boot.log.InfraLoggerFactory;
 @Endpoint(id = "versions")
 public class SofaBootVersionEndpoint {
 
-    private Logger                              logger                  = InfraLoggerFactory
-                                                                            .getLogger(SofaBootVersionEndpoint.class);
+    private Logger logger = InfraLoggerFactory
+            .getLogger(SofaBootVersionEndpoint.class);
 
-    private List<Object>                        endpointResult          = new ArrayList<>();
+    private List<Object> endpointResult = new ArrayList<>();
 
     private PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
@@ -84,7 +82,7 @@ public class SofaBootVersionEndpoint {
             PropertiesLoaderUtils.fillProperties(result, new EncodedResource(resourceLocation));
         } catch (IOException ex) {
             logger.warn("Error occurred when loading properties from {}: {}", resourceLocation,
-                ex.getMessage());
+                    ex.getMessage());
         }
         return result;
     }

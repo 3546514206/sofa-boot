@@ -28,11 +28,11 @@ import com.alipay.sofa.runtime.spi.util.ComponentNameFactory;
 public class ComponentNameUtil {
     public static ComponentName getServiceComponentName(Class clazz, String uniqueId) {
         return ComponentNameFactory.createComponentName(ServiceComponent.SERVICE_COMPONENT_TYPE,
-            clazz, uniqueId);
+                clazz, uniqueId);
     }
 
     public static ComponentName getReferenceComponentName(Class clazz, String uniqueId) {
         return ComponentNameFactory.createComponentName(
-            ReferenceComponent.REFERENCE_COMPONENT_TYPE, clazz, uniqueId);
+                ReferenceComponent.REFERENCE_COMPONENT_TYPE, clazz, uniqueId);
     }
 }

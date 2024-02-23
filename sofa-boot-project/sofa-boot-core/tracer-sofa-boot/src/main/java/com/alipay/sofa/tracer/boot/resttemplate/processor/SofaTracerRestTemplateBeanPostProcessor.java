@@ -22,7 +22,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/9/11 11:59 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/9/11 11:59 PM
+ * @since:
  **/
 public class SofaTracerRestTemplateBeanPostProcessor implements BeanPostProcessor {
 
@@ -34,13 +35,13 @@ public class SofaTracerRestTemplateBeanPostProcessor implements BeanPostProcesso
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
-                                                                               throws BeansException {
+            throws BeansException {
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
+            throws BeansException {
         if (bean instanceof RestTemplate) {
             RestTemplate restTemplate = (RestTemplate) bean;
             sofaTracerRestTemplateEnhance.enhanceRestTemplateWithSofaTracer(restTemplate);

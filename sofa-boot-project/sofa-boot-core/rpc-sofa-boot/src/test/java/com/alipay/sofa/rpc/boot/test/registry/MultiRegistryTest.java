@@ -16,10 +16,9 @@
  */
 package com.alipay.sofa.rpc.boot.test.registry;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.annotation.Resource;
-
+import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
+import com.alipay.sofa.rpc.boot.test.bean.registry.MultiRegistryService;
+import com.alipay.sofa.rpc.core.exception.SofaRpcException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,16 +26,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
-import com.alipay.sofa.rpc.boot.test.bean.registry.MultiRegistryService;
-import com.alipay.sofa.rpc.core.exception.SofaRpcException;
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author zhiyuan.lzy
  * @version $Id: MeshTest.java, v 0.1 2018-06-25 19:26 zhiyuan.lzy Exp $$
  */
 @SpringBootApplication
-@SpringBootTest(properties = { "com.alipay.sofa.rpc.registries.gateway=zookeeper://127.0.0.1:2181" }, classes = MultiRegistryTest.class)
+@SpringBootTest(properties = {"com.alipay.sofa.rpc.registries.gateway=zookeeper://127.0.0.1:2181"}, classes = MultiRegistryTest.class)
 @RunWith(SpringRunner.class)
 @ImportResource("/spring/test_only_registry.xml")
 public class MultiRegistryTest extends ActivelyDestroyTest {

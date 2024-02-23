@@ -24,11 +24,10 @@ package com.alipay.sofa.runtime.api.client.param;
  */
 public class ReferenceParam<T> {
 
-    private String       uniqueId = "";
-    private Class<T>     interfaceType;
+    private String uniqueId = "";
+    private Class<T> interfaceType;
     private BindingParam bindingParam;
-    private boolean      jvmFirst;
-    private boolean      required = true;
+    private boolean jvmFirst;
 
     /**
      * Get the unique id of the SOFA reference to be created.
@@ -147,21 +146,5 @@ public class ReferenceParam<T> {
      */
     @Deprecated
     public void setJvmService(boolean jvmService) {
-    }
-
-    /**
-     * Weather the corresponding service is required.
-     * @return true or false
-     */
-    public boolean isRequired() {
-        return required;
-    }
-
-    /**
-     * Set the corresponding service is required.
-     * @param required true or false
-     */
-    public void setRequired(boolean required) {
-        this.required = required;
     }
 }

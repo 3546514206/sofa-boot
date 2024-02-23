@@ -16,11 +16,10 @@
  */
 package com.alipay.sofa.test.annotation;
 
+import com.alipay.sofa.test.runner.SofaJUnit4Runner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.alipay.sofa.test.runner.SofaJUnit4Runner;
 
 /**
  * @author qilong.zql

@@ -25,11 +25,11 @@ package com.alipay.sofa.runtime.api.client.param;
  */
 public class ExtensionPointParam {
     // name of the extension point
-    private String   name;
+    private String name;
     // target bean name of the extension point
-    private String   targetName;
+    private String targetName;
     // target bean of the extension point
-    private Object   target;
+    private Object target;
     // contribution description class
     private Class<?> contributionClass;
 

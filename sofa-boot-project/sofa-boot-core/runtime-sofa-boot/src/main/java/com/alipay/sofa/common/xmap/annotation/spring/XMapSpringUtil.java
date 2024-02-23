@@ -16,25 +16,25 @@
  */
 package com.alipay.sofa.common.xmap.annotation.spring;
 
+import com.alipay.sofa.common.xmap.DOMHelper;
+import com.alipay.sofa.common.xmap.XAnnotatedMember;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
-import com.alipay.sofa.common.xmap.DOMHelper;
-import com.alipay.sofa.common.xmap.XAnnotatedMember;
-
 /**
  * XMapSpring util
+ *
  * @author xi.hux@alipay.com
  * @since 2.6.0
- *
  */
 public class XMapSpringUtil {
 
     /**
      * Get spring object
-     * @param type type
-     * @param beanName bean name
+     *
+     * @param type               type
+     * @param beanName           bean name
      * @param applicationContext application context
      * @return spring object
      */
@@ -49,12 +49,13 @@ public class XMapSpringUtil {
 
     /**
      * Get spring object
-     * @param xam XAnnotated member
+     *
+     * @param xam                XAnnotated member
      * @param applicationContext application context
-     * @param base element base
+     * @param base               element base
      * @return
      */
-    public static Object getSpringObject(XAnnotatedMember xam,
+    public static Object getSpringOjbect(XAnnotatedMember xam,
                                          ApplicationContext applicationContext, Element base) {
         String val = DOMHelper.getNodeValue(base, xam.path);
         if (val != null && val.length() > 0) {

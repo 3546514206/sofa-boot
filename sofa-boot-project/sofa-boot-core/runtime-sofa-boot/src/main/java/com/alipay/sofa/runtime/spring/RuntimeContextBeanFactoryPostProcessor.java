@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.runtime.spring;
 
+import com.alipay.sofa.runtime.ext.client.ExtensionClientImpl;
 import com.alipay.sofa.runtime.spi.binding.BindingAdapterFactory;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
 import com.alipay.sofa.runtime.spi.service.BindingConverterFactory;
@@ -35,19 +36,12 @@ import org.springframework.core.annotation.Order;
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RuntimeContextBeanFactoryPostProcessor implements BeanFactoryPostProcessor,
-                                                   ApplicationContextAware {
-    protected BindingAdapterFactory   bindingAdapterFactory;
+        ApplicationContextAware {
+    private BindingAdapterFactory bindingAdapterFactory;
+    private BindingConverterFactory bindingConverterFactory;
+    private SofaRuntimeContext sofaRuntimeContext;
+    private ApplicationContext applicationContext;
 
-    protected BindingConverterFactory bindingConverterFactory;
-
-    protected SofaRuntimeContext      sofaRuntimeContext;
-
-    protected ApplicationContext      applicationContext;
-
-    public RuntimeContextBeanFactoryPostProcessor() {
-    }
-
-    @Deprecated
     public RuntimeContextBeanFactoryPostProcessor(BindingAdapterFactory bindingAdapterFactory,
                                                   BindingConverterFactory bindingConverterFactory,
                                                   SofaRuntimeContext sofaRuntimeContext) {
@@ -58,31 +52,29 @@ public class RuntimeContextBeanFactoryPostProcessor implements BeanFactoryPostPr
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
-                                                                                   throws BeansException {
+            throws BeansException {
         // work on all bean
-        beanFactory.addBeanPostProcessor(new SofaRuntimeAwareProcessor(sofaRuntimeContext
-            .getSofaRuntimeManager()));
-        beanFactory.addBeanPostProcessor(new ClientFactoryAnnotationBeanPostProcessor(
-            sofaRuntimeContext.getClientFactory()));
+        beanFactory.addBeanPostProcessor(new SofaRuntimeContextAwareProcessor(sofaRuntimeContext));
+        beanFactory.addBeanPostProcessor(new ClientFactoryBeanPostProcessor(sofaRuntimeContext
+                .getClientFactory()));
+        beanFactory.addBeanPostProcessor(new ExtensionClientBeanPostProcessor(
+                new ExtensionClientImpl(sofaRuntimeContext)));
         beanFactory
-            .addBeanPostProcessor(new ReferenceAnnotationBeanPostProcessor(applicationContext,
-                sofaRuntimeContext, bindingAdapterFactory, bindingConverterFactory));
+                .addBeanPostProcessor(new ReferenceAnnotationBeanPostProcessor(applicationContext,
+                        sofaRuntimeContext, bindingAdapterFactory, bindingConverterFactory));
+
+        beanFactory.registerSingleton(RuntimeShutdownAwarePostProcessor.class.getSimpleName(),
+                new RuntimeShutdownAwarePostProcessor(sofaRuntimeContext.getSofaRuntimeManager()));
 
         if (beanFactory instanceof AbstractAutowireCapableBeanFactory) {
             ((AbstractAutowireCapableBeanFactory) beanFactory)
-                .setParameterNameDiscoverer(new SofaParameterNameDiscoverer(applicationContext
-                    .getEnvironment()));
+                    .setParameterNameDiscoverer(new SofaParameterNameDiscoverer(applicationContext
+                            .getEnvironment()));
         }
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        this.bindingAdapterFactory = applicationContext.getBean("bindingAdapterFactory",
-            BindingAdapterFactory.class);
-        this.bindingConverterFactory = applicationContext.getBean("bindingConverterFactory",
-            BindingConverterFactory.class);
-        this.sofaRuntimeContext = applicationContext.getBean("sofaRuntimeContext",
-            SofaRuntimeContext.class);
     }
 }

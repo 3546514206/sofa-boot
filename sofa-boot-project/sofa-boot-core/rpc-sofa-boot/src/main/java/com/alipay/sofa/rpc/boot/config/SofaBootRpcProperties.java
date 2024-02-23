@@ -18,62 +18,62 @@ package com.alipay.sofa.rpc.boot.config;
 
 import com.alipay.sofa.rpc.common.SofaOptions;
 import com.google.common.base.CaseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author khotyn
  */
 @ConfigurationProperties(SofaBootRpcProperties.PREFIX)
-public class SofaBootRpcProperties implements EnvironmentAware {
-    public static final String  PREFIX     = "com.alipay.sofa.rpc";
+public class SofaBootRpcProperties {
+    public static final String PREFIX = "com.alipay.sofa.rpc";
 
-    private Environment         environment;
+    @Autowired
+    private Environment environment;
 
     /**
      * whether regulation effective (是否开启单机故障剔除功能)
      */
-    private String              aftRegulationEffective;
+    private String aftRegulationEffective;
     /**
      * whether regulation effective (是否开启降级)
      */
-    private String              aftDegradeEffective;
+    private String aftDegradeEffective;
     /**
      * aft time window of caculation (时间窗口)
      */
-    private String              aftTimeWindow;
+    private String aftTimeWindow;
     /**
      * aft least invoke times in window (最小调用次数)
      */
-    private String              aftLeastWindowCount;
+    private String aftLeastWindowCount;
     /**
      * aft least exception rate multiple than average exception rate (最小异常率)
      */
-    private String              aftLeastWindowExceptionRateMultiple;
+    private String aftLeastWindowExceptionRateMultiple;
 
     /**
      * aft weight was degraded  by this rate (降级速率)
      */
-    private String              aftWeightDegradeRate;
+    private String aftWeightDegradeRate;
     /**
      * aft weight was recovered  by this rate (恢复速率)
      */
-    private String              aftWeightRecoverRate;
+    private String aftWeightRecoverRate;
     /**
      * the least weight that aft could degrade one provider (降级最小权重)
      */
-    private String              aftDegradeLeastWeight;
+    private String aftDegradeLeastWeight;
 
     /**
      * the max ip numbers that aft could degrade (最大降级 ip)
      */
-    private String              aftDegradeMaxIpCount;
+    private String aftDegradeMaxIpCount;
     /* fault-tolerance end */
 
     /* Bolt start*/
@@ -81,118 +81,118 @@ public class SofaBootRpcProperties implements EnvironmentAware {
     /**
      * the port of bolt (bolt 端口)
      */
-    private String              boltPort;
+    private String boltPort;
 
     /**
      * the core thread pool size of bolt （bolt 核心线程数）
      */
-    private String              boltThreadPoolCoreSize;
+    private String boltThreadPoolCoreSize;
 
     /**
      * the max thread pool size of bolt （bolt 最大线程数）
      */
-    private String              boltThreadPoolMaxSize;
+    private String boltThreadPoolMaxSize;
 
     /**
      * the queue size of bolt server（bolt 线程池队列）
      */
-    private String              boltThreadPoolQueueSize;
+    private String boltThreadPoolQueueSize;
 
     /**
      * the max accept size of bolt (bolt 服务端允许客户端建立的连接数)
      */
-    private String              boltAcceptsSize;
+    private String boltAcceptsSize;
 
     /**
      * process in bolt io worker thread (bolt 服务端业务处理是否直接在worker中处理)
      */
-    private Boolean             boltProcessInIoThread;
+    private Boolean boltProcessInIoThread;
 
     /**
      * export a port to show swagger
      */
-    private Boolean             enableSwagger;
+    private Boolean enableSwagger;
 
     /**
      * Location of remote mock server . If specified ,auto enable mock.
      */
-    private String              mockUrl;
+    private String mockUrl;
     /* Bolt end*/
 
     /* H2c start*/
     /**
      * the port of http2 (http2 端口)
      */
-    private String              h2cPort;
+    private String h2cPort;
 
     /**
      * the core thread pool size of http2 （http2 核心线程数）
      */
-    private String              h2cThreadPoolCoreSize;
+    private String h2cThreadPoolCoreSize;
 
     /**
      * the max thread pool size of http2 （http2 最大线程数）
      */
-    private String              h2cThreadPoolMaxSize;
+    private String h2cThreadPoolMaxSize;
 
     /**
      * the queue size of http2 server（http2 线程池队列）
      */
-    private String              h2cThreadPoolQueueSize;
+    private String h2cThreadPoolQueueSize;
 
     /**
      * the max accept size of http2 (http2 服务端允许客户端建立的连接数)
      */
-    private String              h2cAcceptsSize;
+    private String h2cAcceptsSize;
     /* Bolt end*/
 
     /* rest start*/
     /**
      * rest host name (rest 绑定的 hostname)
      */
-    private String              restHostname;
+    private String restHostname;
     /**
      * the port of rest (rest 端口)
      */
-    private String              restPort;
+    private String restPort;
     /**
      * the io thread size of rest io (rest io 线程数)
      */
-    private String              restIoThreadSize;
+    private String restIoThreadSize;
 
     /**
      * rest context path (rest context path)
      */
-    private String              restContextPath;
+    private String restContextPath;
 
     /**
      * cors settings
      */
-    private String              restAllowedOrigins;
+    private String restAllowedOrigins;
     // has no use
     /**
      * the core thread pool size of rest （rest 核心线程数）
      */
-    private String              restThreadPoolCoreSize;
+    private String restThreadPoolCoreSize;
     /**
      * the max thread pool size of rest （rest 最大线程数）
      */
-    private String              restThreadPoolMaxSize;
+    private String restThreadPoolMaxSize;
 
     /**
      * the max request size of per request (rest 最大请求大小)
      */
-    private String              restMaxRequestSize;
+    private String restMaxRequestSize;
 
     /**
      * whether allow rest telnet (是否允许 rest telnet)
      */
-    private String              restTelnet;
+    private String restTelnet;
     /**
      * whether rest server is daemon (是否hold住端口，true的话随主线程退出而退出)
      */
-    private String              restDaemon;
-    private boolean             restSwagger;
+    private String restDaemon;
+    private boolean restSwagger;
     /* rest end */
 
     /* dubbo  start*/
@@ -200,58 +200,58 @@ public class SofaBootRpcProperties implements EnvironmentAware {
     /**
      * the port of dubbo (dubbo 端口)
      */
-    private String              dubboPort;
+    private String dubboPort;
 
     /**
      * the io thread size of dubbo io (dubbo io 线程数)
      */
-    private String              dubboIoThreadSize;
+    private String dubboIoThreadSize;
     //has no use
     /**
      * the core thread pool size of dubbo （dubbo 核心线程数）
      */
-    private String              dubboThreadPoolCoreSize;
+    private String dubboThreadPoolCoreSize;
 
     /**
      * the max thread pool size of dubbo （dubbo 最大线程数）
      */
-    private String              dubboThreadPoolMaxSize;
+    private String dubboThreadPoolMaxSize;
     //has no use
     /**
      * the queue size of dubbo server（dubbo 线程池队列）
      */
-    private String              dubboThreadPoolQueueSize;
+    private String dubboThreadPoolQueueSize;
     /**
      * the max accept size of dubbo (dubbo 服务端允许客户端建立的连接数)
      */
-    private String              dubboAcceptsSize;
+    private String dubboAcceptsSize;
     /* dubbo  end*/
 
     /* http start*/
     /**
      * the port of http (http 端口)
      */
-    private String              httpPort;
+    private String httpPort;
 
     /**
      * the core thread pool size of http （http 核心线程数）
      */
-    private String              httpThreadPoolCoreSize;
+    private String httpThreadPoolCoreSize;
 
     /**
      * the max thread pool size of http （http 最大线程数）
      */
-    private String              httpThreadPoolMaxSize;
+    private String httpThreadPoolMaxSize;
 
     /**
      * the queue size of http server（http 线程池队列）
      */
-    private String              httpThreadPoolQueueSize;
+    private String httpThreadPoolQueueSize;
 
     /**
      * the max accept size of http (http 服务端允许客户端建立的连接数)
      */
-    private String              httpAcceptsSize;
+    private String httpAcceptsSize;
     /* http end*/
 
     /* triple start*/
@@ -259,64 +259,64 @@ public class SofaBootRpcProperties implements EnvironmentAware {
     /**
      * the port of triple (triple 端口)
      */
-    private String              triplePort;
+    private String triplePort;
 
     /**
      * the core thread pool size of triple （triple 核心线程数）
      */
-    private String              tripleThreadPoolCoreSize;
+    private String tripleThreadPoolCoreSize;
 
     /**
      * the max thread pool size of triple （triple 最大线程数）
      */
-    private String              tripleThreadPoolMaxSize;
+    private String tripleThreadPoolMaxSize;
 
     /**
      * the queue size of triple server（triple 线程池队列）
      */
-    private String              tripleThreadPoolQueueSize;
+    private String tripleThreadPoolQueueSize;
 
     /**
      * the max accept size of triple (triple 服务端允许客户端建立的连接数)
      */
-    private String              tripleAcceptsSize;
+    private String tripleAcceptsSize;
     /* triple end*/
 
     /* registry */
     /**
      * registry address of rpc server （注册中心的地址）
      */
-    private String              registryAddress;
+    private String registryAddress;
 
     /**
      * virtual host for service publish（服务发布虚拟host）
      */
-    private String              virtualHost;
+    private String virtualHost;
 
     /**
      * virtual port for service publish（服务发布虚拟端口）
      */
-    private String              virtualPort;
+    private String virtualPort;
 
     /**
      * ip range which used in multi network interfaces （多网卡 ip 范围）
      */
-    private String              enabledIpRange;
+    private String enabledIpRange;
 
     /**
      * this bind network interface in multi network interfaces （绑定网卡来选择ip）
      */
-    private String              bindNetworkInterface;
+    private String bindNetworkInterface;
 
     /**
      * bound host (绑定host)
      */
-    private String              boundHost;
+    private String boundHost;
 
     /**
      * disable lookout （是否关闭lookout ）
      */
-    private String              lookoutCollectDisable;
+    private String lookoutCollectDisable;
 
     /**
      * multi registries （多注册中心）
@@ -326,25 +326,21 @@ public class SofaBootRpcProperties implements EnvironmentAware {
     /**
      * enable mesh，can be protocol,like bolt,mesh,all,now we only support bolt （是否开启mesh支持，目前只支持bolt）
      */
-    private String              enableMesh;
+    private String enableMesh;
 
     /**
      * the reference limit numbers of the same interface could be referred (允许客户端对同一个服务生成的引用代理数量，默认为3)
      */
-    private String              consumerRepeatedReferenceLimit;
+    private String consumerRepeatedReferenceLimit;
 
-    private String              hystrixEnable;
+    private String hystrixEnable;
 
-    private String              defaultTracer;
+    private String defaultTracer;
 
     /**
      * dynamic config setting
      */
-    private String              dynamicConfig;
-
-    private List<String>        providerRegisterWhiteList;
-
-    private List<String>        providerRegisterBlackList;
+    private String dynamicConfig;
 
     public String getAftRegulationEffective() {
         return StringUtils.isEmpty(aftRegulationEffective) ? getDotString(new Object() {
@@ -385,7 +381,7 @@ public class SofaBootRpcProperties implements EnvironmentAware {
     public String getAftLeastWindowExceptionRateMultiple() {
         return StringUtils.isEmpty(aftLeastWindowExceptionRateMultiple) ? getDotString(new Object() {
         }.getClass().getEnclosingMethod().getName())
-            : aftLeastWindowExceptionRateMultiple;
+                : aftLeastWindowExceptionRateMultiple;
     }
 
     public void setAftLeastWindowExceptionRateMultiple(String aftLeastWindowExceptionRateMultiple) {
@@ -838,6 +834,10 @@ public class SofaBootRpcProperties implements EnvironmentAware {
         }.getClass().getEnclosingMethod().getName()) : restAllowedOrigins;
     }
 
+    public void setRestAllowedOrigins(String restAllowedOrigins) {
+        this.restAllowedOrigins = restAllowedOrigins;
+    }
+
     public String getTriplePort() {
         return StringUtils.isEmpty(triplePort) ? getDotString(new Object() {
         }.getClass().getEnclosingMethod().getName()) : triplePort;
@@ -883,10 +883,6 @@ public class SofaBootRpcProperties implements EnvironmentAware {
         this.tripleAcceptsSize = tripleAcceptsSize;
     }
 
-    public void setRestAllowedOrigins(String restAllowedOrigins) {
-        this.restAllowedOrigins = restAllowedOrigins;
-    }
-
     private String getDotString(String enclosingMethodName) {
         if (environment == null) {
             return null;
@@ -896,11 +892,15 @@ public class SofaBootRpcProperties implements EnvironmentAware {
 
     public String camelToDot(String camelCaseString) {
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, camelCaseString).replaceAll("-",
-            ".");
+                ".");
     }
 
     public Environment getEnvironment() {
         return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 
     public boolean isRestSwagger() {
@@ -941,26 +941,5 @@ public class SofaBootRpcProperties implements EnvironmentAware {
 
     public void setBoltProcessInIoThread(Boolean boltProcessInIoThread) {
         this.boltProcessInIoThread = boltProcessInIoThread;
-    }
-
-    public List<String> getProviderRegisterWhiteList() {
-        return providerRegisterWhiteList;
-    }
-
-    public void setProviderRegisterWhiteList(List<String> providerRegisterWhiteList) {
-        this.providerRegisterWhiteList = providerRegisterWhiteList;
-    }
-
-    public List<String> getProviderRegisterBlackList() {
-        return providerRegisterBlackList;
-    }
-
-    public void setProviderRegisterBlackList(List<String> providerRegisterBlackList) {
-        this.providerRegisterBlackList = providerRegisterBlackList;
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 }

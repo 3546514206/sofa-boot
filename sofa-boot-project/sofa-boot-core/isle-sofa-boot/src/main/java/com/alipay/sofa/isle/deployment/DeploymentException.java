@@ -18,7 +18,7 @@ package com.alipay.sofa.isle.deployment;
 
 /**
  * Signals a checked exception to the caller of the deploy subsystem.
- *
+ * <p>
  * This class is thread safe.
  *
  * @author linfengqi  2011-3-26
@@ -40,7 +40,7 @@ public class DeploymentException extends Exception {
      * Creates a new <code>DeploymentException</code>, with the supplied error message and cause.
      *
      * @param message The exception's message.
-     * @param cause The exception's cause.
+     * @param cause   The exception's cause.
      */
     public DeploymentException(String message, Throwable cause) {
         super(message, cause);

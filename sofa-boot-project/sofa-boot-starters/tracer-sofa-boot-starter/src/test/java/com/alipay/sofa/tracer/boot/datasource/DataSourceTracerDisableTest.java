@@ -16,17 +16,18 @@
  */
 package com.alipay.sofa.tracer.boot.datasource;
 
-import javax.sql.DataSource;
-
+import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 
-/**DataSourceUtils
+/**
+ * DataSourceUtils
+ *
  * @author qilong.zql
  * @sicne 2.2.0
  */

@@ -16,13 +16,11 @@
  */
 package com.alipay.sofa.runtime.test.beans.processor;
 
+import com.alipay.sofa.runtime.test.beans.BeanPostProcessorOrderBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import com.alipay.sofa.runtime.test.beans.BeanPostProcessorOrderBean;
-
 /**
- *
  * @author ruoshan
  * @since 2.6.0
  */
@@ -30,13 +28,13 @@ public class LowOrderBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
-                                                                               throws BeansException {
+            throws BeansException {
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
+            throws BeansException {
         if (bean instanceof BeanPostProcessorOrderBean) {
             bean = new BeanPostProcessorOrderBean(true);
         }

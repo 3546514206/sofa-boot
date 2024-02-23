@@ -16,17 +16,15 @@
  */
 package com.alipay.sofa.healthcheck;
 
-import com.alipay.sofa.boot.error.ErrorCode;
 import com.alipay.sofa.healthcheck.log.HealthCheckLoggerFactory;
 import com.alipay.sofa.healthcheck.startup.ReadinessCheckCallback;
 import com.alipay.sofa.healthcheck.util.HealthCheckUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 
 import java.util.LinkedHashMap;
@@ -40,15 +38,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiong.zql
  * @version 2.3.0
  */
-public class AfterReadinessCheckCallbackProcessor implements ApplicationContextAware {
+public class AfterReadinessCheckCallbackProcessor {
 
-    private static final Logger                           logger                  = HealthCheckLoggerFactory.DEFAULT_LOG;
+    private static Logger logger = HealthCheckLoggerFactory
+            .getLogger(AfterReadinessCheckCallbackProcessor.class);
 
-    private final ObjectMapper                            objectMapper            = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    private final AtomicBoolean                           isInitiated             = new AtomicBoolean(
-                                                                                      false);
-    private ApplicationContext                            applicationContext;
+    private AtomicBoolean isInitiated = new AtomicBoolean(
+            false);
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private LinkedHashMap<String, ReadinessCheckCallback> readinessCheckCallbacks = null;
 
@@ -84,17 +84,17 @@ public class AfterReadinessCheckCallbackProcessor implements ApplicationContextA
             } else {
                 logger.warn(beanId + " is skipped due to the failure of " + failedBeanId);
                 healthMap.put(
-                    beanId,
-                    Health.down()
-                        .withDetail("invoking", "skipped due to the failure of " + failedBeanId)
-                        .build());
+                        beanId,
+                        Health.down()
+                                .withDetail("invoking", "skipped due to the failure of " + failedBeanId)
+                                .build());
             }
         }
 
         if (allResult) {
             logger.info("ReadinessCheckCallback readiness check result: success.");
         } else {
-            logger.error(ErrorCode.convert("01-24000"));
+            logger.error("ReadinessCheckCallback readiness check result: failed.");
         }
         return allResult;
     }
@@ -113,22 +113,18 @@ public class AfterReadinessCheckCallbackProcessor implements ApplicationContextA
                 logger.info("SOFABoot ReadinessCheckCallback[{}] check success.", beanId);
             } else {
                 logger.error(
-                        ErrorCode.convert("01-24001", beanId,
-                        objectMapper.writeValueAsString(health.getDetails())));
+                        "SOFABoot ReadinessCheckCallback[{}] check failed, the details is: {}.", beanId,
+                        objectMapper.writeValueAsString(health.getDetails()));
             }
         } catch (Throwable t) {
             if (health == null) {
                 health = new Health.Builder().down(new RuntimeException(t)).build();
             }
-            logger.error(ErrorCode.convert("01-24002", beanId), t);
+            logger.error(String
+                    .format("Error occurred while doing ReadinessCheckCallback[%s] check.", beanId), t);
         } finally {
             healthMap.put(beanId, health);
         }
         return result;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 }

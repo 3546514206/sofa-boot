@@ -33,6 +33,7 @@ public class StringUtils {
      * <p>More specifically, this method returns {@code true} if the
      * {@code String} is not {@code null}, its length is greater than 0,
      * and it contains at least one non-whitespace character.
+     *
      * @param str the {@code String} to check (may be {@code null})
      * @return {@code true} if the {@code String} is not {@code null}, its
      * length is greater than 0, and it does not contain whitespace only
@@ -54,6 +55,7 @@ public class StringUtils {
      * StringUtils.hasText("12345") = true
      * StringUtils.hasText(" 12345 ") = true
      * </pre>
+     *
      * @param str the {@code CharSequence} to check (may be {@code null})
      * @return {@code true} if the {@code CharSequence} is not {@code null},
      * its length is greater than 0, and it does not contain whitespace only
@@ -83,6 +85,7 @@ public class StringUtils {
      * StringUtils.hasLength(" ") = true
      * StringUtils.hasLength("Hello") = true
      * </pre>
+     *
      * @param str the {@code CharSequence} to check (may be {@code null})
      * @return {@code true} if the {@code CharSequence} is not {@code null} and has length
      * @see #hasText(String)

@@ -16,13 +16,11 @@
  */
 package com.alipay.sofa.rpc.boot.runtime.binding;
 
-import org.springframework.context.ApplicationContext;
-
 import com.alipay.sofa.rpc.boot.runtime.param.RpcBindingParam;
 import com.alipay.sofa.runtime.api.binding.BindingType;
+import org.springframework.context.ApplicationContext;
 
 /**
- *
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
 public class H2cBinding extends RpcBinding {

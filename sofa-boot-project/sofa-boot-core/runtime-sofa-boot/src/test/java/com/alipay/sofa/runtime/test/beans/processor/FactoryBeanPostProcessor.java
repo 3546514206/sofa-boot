@@ -16,12 +16,11 @@
  */
 package com.alipay.sofa.runtime.test.beans.processor;
 
+import com.alipay.sofa.runtime.spring.factory.ServiceFactoryBean;
+import com.alipay.sofa.runtime.test.beans.StateMessage;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.beans.BeansException;
-
-import com.alipay.sofa.runtime.spring.factory.ServiceFactoryBean;
-import com.alipay.sofa.runtime.test.beans.StateMessage;
 
 /**
  * @author qilong.zql
@@ -31,7 +30,7 @@ public class FactoryBeanPostProcessor extends AbstractAutoProxyCreator {
     @Override
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName,
                                                     TargetSource customTargetSource)
-                                                                                    throws BeansException {
+            throws BeansException {
         return new Object[0];
     }
 

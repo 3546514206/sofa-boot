@@ -47,14 +47,14 @@ public class DubboBindingAdapter extends RpcBindingAdapter {
                                  SofaRuntimeContext sofaRuntimeContext) {
         try {
             ApplicationContext applicationContext = sofaRuntimeContext.getSofaRuntimeManager()
-                .getRootApplicationContext();
+                    .getRootApplicationContext();
             ProviderConfigContainer providerConfigContainer = applicationContext
-                .getBean(ProviderConfigContainer.class);
+                    .getBean(ProviderConfigContainer.class);
             String key = providerConfigContainer.createUniqueName((Contract) contract, binding);
             providerConfigContainer.removeProviderConfig(key);
         } catch (Exception e) {
             throw new ServiceRuntimeException(
-                LogCodes.getLog(LogCodes.ERROR_PROXY_POST_UNPUBLISH_FAIL), e);
+                    LogCodes.getLog(LogCodes.ERROR_PROXY_POST_UNPUBLISH_FAIL), e);
         }
     }
 }

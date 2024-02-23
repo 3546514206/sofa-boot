@@ -16,115 +16,79 @@
  */
 package com.alipay.sofa.startup.stage;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.boot.startup.BaseStat;
-import com.alipay.sofa.boot.startup.ChildrenStat;
+import com.alipay.sofa.boot.startup.ContextRefreshStageStat;
 import com.alipay.sofa.boot.startup.ModuleStat;
+import com.alipay.sofa.boot.startup.StageStat;
 import com.alipay.sofa.runtime.log.SofaLogger;
 import com.alipay.sofa.startup.StartupReporter;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
-import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.metrics.ApplicationStartup;
-import org.springframework.util.StringUtils;
 
 import java.lang.management.ManagementFactory;
-import java.time.Duration;
 
 import static com.alipay.sofa.boot.startup.BootStageConstants.*;
 
 /**
  * SpringApplicationRunListener to record application startup time
  *
- * @author Zhijie
- * @since 2020/7/20
+ * @author: Zhijie
+ * @since: 2020/7/20
  */
 public class StartupSpringApplicationRunListener implements SpringApplicationRunListener, Ordered {
-    private final SpringApplication     application;
-    private final String[]              args;
-    private final StartupReporter       startupReporter;
-    private final ApplicationStartup    userApplicationStartup;
-    private BufferingApplicationStartup applicationStartup;
-    private BaseStat                    jvmStartingStage;
-    private BaseStat                    environmentPrepareStage;
-    private BaseStat                    applicationContextPrepareStage;
-    private BaseStat                    applicationContextLoadStage;
+    private final SpringApplication application;
+    private final String[] args;
+    private StageStat jvmStartingStage;
+    private StageStat environmentPrepareStage;
+    private StageStat applicationContextPrepareStage;
+    private StageStat applicationContextLoadStage;
 
     public StartupSpringApplicationRunListener(SpringApplication sa, String[] args) {
         this.application = sa;
         this.args = args;
-        this.startupReporter = new StartupReporter();
-        this.userApplicationStartup = sa.getApplicationStartup();
     }
 
     @Override
-    public void starting(ConfigurableBootstrapContext bootstrapContext) {
-        BaseStat stat = new BaseStat();
-        stat.setName(JVM_STARTING_STAGE);
-        stat.setStartTime(ManagementFactory.getRuntimeMXBean().getStartTime());
-        stat.setEndTime(System.currentTimeMillis());
-        this.jvmStartingStage = stat;
+    public void starting() {
+        StageStat stageStat = new StageStat();
+        stageStat.setStageName(JVM_STARTING_STAGE);
+        stageStat.setStageStartTime(ManagementFactory.getRuntimeMXBean().getStartTime());
+        stageStat.setStageEndTime(System.currentTimeMillis());
+        this.jvmStartingStage = stageStat;
     }
 
     @Override
-    public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext,
-                                    ConfigurableEnvironment environment) {
-        BaseStat stat = new BaseStat();
-        stat.setName(ENVIRONMENT_PREPARE_STAGE);
-        stat.setStartTime(jvmStartingStage.getEndTime());
-        stat.setEndTime(System.currentTimeMillis());
-        this.environmentPrepareStage = stat;
-        startupReporter.setAppName(environment.getProperty(SofaBootConstants.APP_NAME_KEY));
-        startupReporter.bindToStartupReporter(environment);
-
-        // create BufferingApplicationStartup if user not custom.
-        if (ApplicationStartup.DEFAULT == userApplicationStartup || userApplicationStartup == null) {
-            this.applicationStartup = new BufferingApplicationStartup(
-                startupReporter.getBufferSize());
-        } else if (userApplicationStartup instanceof BufferingApplicationStartup) {
-            // use user custom BufferingApplicationStartup
-            this.applicationStartup = (BufferingApplicationStartup) userApplicationStartup;
-        } else {
-            // disable startup static when user custom other type ApplicationStartup;
-            this.applicationStartup = null;
-        }
+    public void environmentPrepared(ConfigurableEnvironment environment) {
+        StageStat stageStat = new StageStat();
+        stageStat.setStageName(ENVIRONMENT_PREPARE_STAGE);
+        stageStat.setStageStartTime(jvmStartingStage.getStageEndTime());
+        stageStat.setStageEndTime(System.currentTimeMillis());
+        this.environmentPrepareStage = stageStat;
     }
 
     @Override
     public void contextPrepared(ConfigurableApplicationContext context) {
-        ChildrenStat<BaseStat> stat = new ChildrenStat<>();
-        stat.setName(APPLICATION_CONTEXT_PREPARE_STAGE);
-        stat.setStartTime(environmentPrepareStage.getEndTime());
-        stat.setEndTime(System.currentTimeMillis());
-        if (this.application instanceof StartupSpringApplication) {
-            stat.setChildren(((StartupSpringApplication) this.application)
-                .getInitializerStartupStatList());
-        }
-        this.applicationContextPrepareStage = stat;
-        if (applicationStartup != null) {
-            context.setApplicationStartup(applicationStartup);
-        }
+        StageStat stageStat = new StageStat();
+        stageStat.setStageName(APPLICATION_CONTEXT_PREPARE_STAGE);
+        stageStat.setStageStartTime(environmentPrepareStage.getStageEndTime());
+        stageStat.setStageEndTime(System.currentTimeMillis());
+        this.applicationContextPrepareStage = stageStat;
     }
 
     @Override
     public void contextLoaded(ConfigurableApplicationContext context) {
-        BaseStat stat = new BaseStat();
-        stat.setName(APPLICATION_CONTEXT_LOAD_STAGE);
-        stat.setStartTime(applicationContextPrepareStage.getEndTime());
-        stat.setEndTime(System.currentTimeMillis());
-        this.applicationContextLoadStage = stat;
-
-        context.getBeanFactory().registerSingleton("STARTUP_REPORTER_BEAN", startupReporter);
+        StageStat stageStat = new StageStat();
+        stageStat.setStageName(APPLICATION_CONTEXT_LOAD_STAGE);
+        stageStat.setStageStartTime(applicationContextPrepareStage.getStageEndTime());
+        stageStat.setStageEndTime(System.currentTimeMillis());
+        this.applicationContextLoadStage = stageStat;
     }
 
     @Override
-    public void started(ConfigurableApplicationContext context, Duration timeTaken) {
+    public void started(ConfigurableApplicationContext context) {
         StartupReporter startupReporter;
         try {
             startupReporter = context.getBean(StartupReporter.class);
@@ -134,16 +98,16 @@ public class StartupSpringApplicationRunListener implements SpringApplicationRun
             return;
         }
         // refresh applicationRefreshStage
-        ChildrenStat<ModuleStat> applicationRefreshStage = (ChildrenStat<ModuleStat>) startupReporter
-            .getStageNyName(APPLICATION_CONTEXT_REFRESH_STAGE);
-        applicationRefreshStage.setStartTime(applicationContextLoadStage.getEndTime());
-        applicationRefreshStage.setCost(applicationRefreshStage.getEndTime()
-                                        - applicationRefreshStage.getStartTime());
+        ContextRefreshStageStat applicationRefreshStage = (ContextRefreshStageStat) startupReporter
+                .getStageNyName(APPLICATION_CONTEXT_REFRESH_STAGE);
+        applicationRefreshStage.setStageStartTime(applicationContextLoadStage.getStageEndTime());
+        applicationRefreshStage.setElapsedTime(applicationRefreshStage.getStageEndTime()
+                - applicationRefreshStage.getStageStartTime());
 
         // init rootModuleStat
-        ModuleStat rootModule = applicationRefreshStage.getChildren().get(0);
-        rootModule.setStartTime(applicationRefreshStage.getStartTime());
-        rootModule.setCost(rootModule.getEndTime() - rootModule.getStartTime());
+        ModuleStat rootModule = applicationRefreshStage.getModuleStats().get(0);
+        rootModule.setModuleStartTime(applicationRefreshStage.getStageStartTime());
+        rootModule.setElapsedTime(rootModule.getModuleEndTime() - rootModule.getModuleStartTime());
 
         // report all stage
         startupReporter.addCommonStartupStat(jvmStartingStage);
@@ -151,29 +115,20 @@ public class StartupSpringApplicationRunListener implements SpringApplicationRun
         startupReporter.addCommonStartupStat(applicationContextPrepareStage);
         startupReporter.addCommonStartupStat(applicationContextLoadStage);
         startupReporter.applicationBootFinish();
+    }
 
-        SofaLogger.info(getStartedMessage(context.getEnvironment(), timeTaken));
+    @Override
+    public void running(ConfigurableApplicationContext context) {
+
+    }
+
+    @Override
+    public void failed(ConfigurableApplicationContext context, Throwable exception) {
+
     }
 
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
-    }
-
-    private String getStartedMessage(Environment environment, Duration timeTakenToStartup) {
-        StringBuilder message = new StringBuilder();
-        message.append("Started ");
-        message.append(environment.getProperty(SofaBootConstants.APP_NAME_KEY));
-        String startupLogExtraInfo = environment
-            .getProperty(SofaBootConstants.STARTUP_LOG_EXTRA_INFO);
-        if (StringUtils.hasText(startupLogExtraInfo)) {
-            message.append(" with extra info [");
-            message.append(startupLogExtraInfo);
-            message.append("]");
-        }
-        message.append(" in ");
-        message.append(timeTakenToStartup.toMillis() / 1000.0);
-        message.append(" seconds");
-        return message.toString();
     }
 }

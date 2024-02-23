@@ -16,10 +16,9 @@
  */
 package com.alipay.sofa.rpc.boot.test.config;
 
+import com.alipay.sofa.rpc.boot.config.LocalFileConfigurator;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.alipay.sofa.rpc.boot.config.LocalFileConfigurator;
 
 /**
  * @author liangen

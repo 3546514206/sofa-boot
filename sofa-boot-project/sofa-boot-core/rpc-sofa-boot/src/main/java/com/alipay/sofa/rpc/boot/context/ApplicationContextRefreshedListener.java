@@ -16,38 +16,26 @@
  */
 package com.alipay.sofa.rpc.boot.context;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-
 import com.alipay.sofa.rpc.boot.context.event.SofaBootRpcStartAfterEvent;
 import com.alipay.sofa.rpc.boot.context.event.SofaBootRpcStartEvent;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 /**
  * Spring上下文监听器.负责关闭SOFABoot RPC 的资源。
  *
  * @author <a href="mailto:leizhiyuan@gmail.com">leizhiyuan</a>
  */
-public class ApplicationContextRefreshedListener implements ApplicationContextAware,
-                                                ApplicationListener<ContextRefreshedEvent> {
-
-    private ApplicationContext applicationContext;
+public class ApplicationContextRefreshedListener implements
+        ApplicationListener<ContextRefreshedEvent> {
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (applicationContext.equals(event.getApplicationContext())) {
-            ApplicationContext applicationContext = event.getApplicationContext();
-            //rpc 开始启动事件监听器
-            applicationContext.publishEvent(new SofaBootRpcStartEvent(applicationContext));
-            //rpc 启动完毕事件监听器
-            applicationContext.publishEvent(new SofaBootRpcStartAfterEvent(applicationContext));
-        }
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        ApplicationContext applicationContext = event.getApplicationContext();
+        //rpc 开始启动事件监听器
+        applicationContext.publishEvent(new SofaBootRpcStartEvent(applicationContext));
+        //rpc 启动完毕事件监听器
+        applicationContext.publishEvent(new SofaBootRpcStartAfterEvent(applicationContext));
     }
 }

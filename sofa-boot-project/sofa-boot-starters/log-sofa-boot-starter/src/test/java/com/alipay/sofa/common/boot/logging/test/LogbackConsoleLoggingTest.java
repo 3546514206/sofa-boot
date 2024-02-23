@@ -36,10 +36,9 @@ public class LogbackConsoleLoggingTest extends LogTestBase {
     public void testSpaceConsoleLevelConfig() {
         Map<String, Object> properties = new HashMap<>();
         properties.put(
-            String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE), "true");
+                String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE), "true");
         properties.put(
-            String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_LEVEL, TEST_SPACE), "debug");
-        properties.put("logging.level.test.space", "debug");
+                String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_LEVEL, TEST_SPACE), "debug");
         SpringApplication springApplication = new SpringApplication(EmptyConfig.class);
         springApplication.setDefaultProperties(properties);
         springApplication.run();

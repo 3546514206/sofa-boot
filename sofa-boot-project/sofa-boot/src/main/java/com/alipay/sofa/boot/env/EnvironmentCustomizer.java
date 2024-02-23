@@ -18,7 +18,6 @@ package com.alipay.sofa.boot.env;
 
 import com.alipay.sofa.boot.constant.SofaBootConstants;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -26,9 +25,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -40,16 +36,6 @@ import java.util.Properties;
  */
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
 public class EnvironmentCustomizer implements EnvironmentPostProcessor {
-
-    private static final String       PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE        = "spring.autoconfigure.exclude";
-
-    private static final List<String> SOFABOOT_EXCLUDE_AUTOCONFIGURATION_CLASSES = new ArrayList<>();
-
-    static {
-        SOFABOOT_EXCLUDE_AUTOCONFIGURATION_CLASSES
-            .add("org.springframework.boot.actuate.autoconfigure.startup.StartupEndpointAutoConfiguration");
-    }
-
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
@@ -57,23 +43,24 @@ public class EnvironmentCustomizer implements EnvironmentPostProcessor {
             return;
         }
 
-        // add exclude configuration properties
-        addSpringExcludeConfigurationPropertySource(environment);
-
-        // Get SOFABoot version properties
+        /**
+         * Get SOFABoot version properties
+         */
         Properties defaultConfiguration = getSofaBootVersionProperties();
 
-        // Config default value of {@literal management.endpoints.web.exposure.include}
+        /**
+         * Config default value of {@literal management.endpoints.web.exposure.include}
+         */
         defaultConfiguration.put(SofaBootConstants.ENDPOINTS_WEB_EXPOSURE_INCLUDE_CONFIG,
-            SofaBootConstants.SOFA_DEFAULT_ENDPOINTS_WEB_EXPOSURE_VALUE);
-        defaultConfiguration.put(SofaBootConstants.ENDPOINT_AVAILABILITY_GROUP_CONFIG_KEY,
-            SofaBootConstants.DEFAULT_ENDPOINT_AVAILABILITY_GROUP_CONFIG_VALUE);
+                SofaBootConstants.SOFA_DEFAULT_ENDPOINTS_WEB_EXPOSURE_VALUE);
 
         PropertiesPropertySource propertySource = new PropertiesPropertySource(
-            SofaBootConstants.SOFA_DEFAULT_PROPERTY_SOURCE, defaultConfiguration);
+                SofaBootConstants.SOFA_DEFAULT_PROPERTY_SOURCE, defaultConfiguration);
         environment.getPropertySources().addLast(propertySource);
 
-        // set required properties, {@link MissingRequiredPropertiesException}
+        /**
+         * set required properties, {@link MissingRequiredPropertiesException}
+         **/
         environment.setRequiredProperties(SofaBootConstants.APP_NAME_KEY);
     }
 
@@ -87,34 +74,19 @@ public class EnvironmentCustomizer implements EnvironmentPostProcessor {
         // generally, it would not be null and just for test.
         sofaBootVersion = StringUtils.isEmpty(sofaBootVersion) ? "" : sofaBootVersion;
         String sofaBootFormattedVersion = sofaBootVersion.isEmpty() ? "" : String.format(" (v%s)",
-            sofaBootVersion);
+                sofaBootVersion);
         properties.setProperty(SofaBootConstants.SOFA_BOOT_VERSION, sofaBootVersion);
         properties.setProperty(SofaBootConstants.SOFA_BOOT_FORMATTED_VERSION,
-            sofaBootFormattedVersion);
+                sofaBootFormattedVersion);
         return properties;
     }
 
     /**
      * Get SOFABoot Version string.
+     *
+     * @return
      */
     protected String getSofaBootVersion() {
         return EnvironmentCustomizer.class.getPackage().getImplementationVersion();
-    }
-
-    protected void addSpringExcludeConfigurationPropertySource(ConfigurableEnvironment environment) {
-        // Append exclude autoconfigure classes config
-        Binder binder = Binder.get(environment);
-        List<String> excludeConfigs = new ArrayList<>();
-        List<String> stringList = binder.bind(PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE, String[].class).map(Arrays::asList)
-                .orElse(new ArrayList<>());
-        excludeConfigs.addAll(SOFABOOT_EXCLUDE_AUTOCONFIGURATION_CLASSES);
-        excludeConfigs.addAll(stringList);
-
-        // Update spring.autoconfigure.exclude
-        Properties properties = new Properties();
-        properties.put(PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE, StringUtils.collectionToCommaDelimitedString(excludeConfigs));
-        PropertiesPropertySource propertySource = new PropertiesPropertySource(
-                SofaBootConstants.SOFA_EXCLUDE_AUTO_CONFIGURATION_PROPERTY_SOURCE, properties);
-        environment.getPropertySources().addFirst(propertySource);
     }
 }

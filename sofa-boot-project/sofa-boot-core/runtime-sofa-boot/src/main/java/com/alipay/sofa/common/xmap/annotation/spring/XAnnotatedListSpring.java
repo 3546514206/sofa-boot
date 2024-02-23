@@ -16,25 +16,16 @@
  */
 package com.alipay.sofa.common.xmap.annotation.spring;
 
+import com.alipay.sofa.common.xmap.*;
+import com.alipay.sofa.common.xmap.spring.XNodeListSpring;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.alipay.sofa.common.xmap.Context;
-import com.alipay.sofa.common.xmap.DOMHelper;
-import com.alipay.sofa.common.xmap.Path;
-import com.alipay.sofa.common.xmap.XAnnotatedList;
-import com.alipay.sofa.common.xmap.XAnnotatedMember;
-import com.alipay.sofa.common.xmap.XGetter;
-import com.alipay.sofa.common.xmap.XMap;
-import com.alipay.sofa.common.xmap.XSetter;
-import com.alipay.sofa.common.xmap.spring.XNodeListSpring;
-
 /**
- *
  * @author xi.hux@alipay.com
  * @author ruoshan
  * @since 2.6.0
@@ -44,10 +35,10 @@ public class XAnnotatedListSpring extends XAnnotatedList {
     /**
      * dom visitor
      */
-    protected static final ElementValueVisitor   elementVisitor   = new ElementValueVisitor();
+    protected static final ElementValueVisitor elementVisitor = new ElementValueVisitor();
     protected static final AttributeValueVisitor attributeVisitor = new AttributeValueVisitor();
 
-    private XAnnotatedSpringObject               xaso;
+    private XAnnotatedSpringObject xaso;
 
     protected XAnnotatedListSpring(XMap xmap, XSetter setter, XGetter getter) {
         super(xmap, setter, getter);
@@ -87,12 +78,12 @@ public class XAnnotatedListSpring extends XAnnotatedList {
         return values;
     }
 
-    public void setXaso(XAnnotatedSpringObject xaso) {
-        this.xaso = xaso;
-    }
-
     public XAnnotatedSpringObject getXaso() {
         return xaso;
+    }
+
+    public void setXaso(XAnnotatedSpringObject xaso) {
+        this.xaso = xaso;
     }
 }
 
@@ -105,8 +96,8 @@ class ElementValueVisitor extends DOMHelper.NodeVisitor {
             if (xam.trim)
                 val = val.trim();
             Object object = XMapSpringUtil.getSpringObject(
-                ((XAnnotatedListSpring) xam).componentType, val, ((XAnnotatedListSpring) xam)
-                    .getXaso().getApplicationContext());
+                    ((XAnnotatedListSpring) xam).componentType, val, ((XAnnotatedListSpring) xam)
+                            .getXaso().getApplicationContext());
             if (object != null)
                 result.add(object);
         }
@@ -122,8 +113,8 @@ class AttributeValueVisitor extends DOMHelper.NodeVisitor {
             if (xam.trim)
                 val = val.trim();
             Object object = XMapSpringUtil.getSpringObject(
-                ((XAnnotatedListSpring) xam).componentType, val, ((XAnnotatedListSpring) xam)
-                    .getXaso().getApplicationContext());
+                    ((XAnnotatedListSpring) xam).componentType, val, ((XAnnotatedListSpring) xam)
+                            .getXaso().getApplicationContext());
             if (object != null)
                 result.add(object);
         }

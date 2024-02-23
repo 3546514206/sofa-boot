@@ -16,9 +16,14 @@
  */
 package com.alipay.sofa.runtime.test;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
+import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
+import com.alipay.sofa.runtime.spi.component.SofaRuntimeManager;
+import com.alipay.sofa.runtime.spi.spring.RuntimeShutdownAware;
+import com.alipay.sofa.runtime.test.beans.BeanPostProcessorOrderBean;
+import com.alipay.sofa.runtime.test.beans.processor.HighOrderBeanPostProcessor;
+import com.alipay.sofa.runtime.test.beans.processor.LowOrderBeanPostProcessor;
+import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
+import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,17 +35,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
-import com.alipay.sofa.runtime.spi.component.SofaRuntimeManager;
-import com.alipay.sofa.runtime.spi.spring.RuntimeShutdownAware;
-import com.alipay.sofa.runtime.test.beans.BeanPostProcessorOrderBean;
-import com.alipay.sofa.runtime.test.beans.processor.HighOrderBeanPostProcessor;
-import com.alipay.sofa.runtime.test.beans.processor.LowOrderBeanPostProcessor;
-import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
-import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
- *
  * @author ruoshan
  * @since 2.6.0
  */
@@ -56,7 +54,7 @@ public class BeanPostProcessorOrderTest {
     private BeanPostProcessorOrderBean beanPostProcessorOrderBean;
 
     @Autowired
-    private SofaRuntimeContext         sofaRuntimeContext;
+    private SofaRuntimeContext sofaRuntimeContext;
 
     @Test
     public void testClientFactoryInject() {
@@ -75,13 +73,13 @@ public class BeanPostProcessorOrderTest {
         BeanPostProcessorOrderBean testBeanAware = null;
         for (RuntimeShutdownAware applicationShutdownAware : applicationShutdownAwareList) {
             if (BeanPostProcessorOrderBean.class.getName().equals(
-                applicationShutdownAware.getClass().getName())) {
+                    applicationShutdownAware.getClass().getName())) {
                 testBeanAware = (BeanPostProcessorOrderBean) applicationShutdownAware;
             }
         }
         Assert.assertNotNull(testBeanAware);
-        Assert.assertNotEquals(testBeanAware, beanPostProcessorOrderBean);
-        Assert.assertFalse(testBeanAware.isEnhancedByLowOrderPostProcessor());
+        Assert.assertEquals(testBeanAware, beanPostProcessorOrderBean);
+        Assert.assertTrue(testBeanAware.isEnhancedByLowOrderPostProcessor());
     }
 
     @Test
@@ -93,12 +91,12 @@ public class BeanPostProcessorOrderTest {
     private List<RuntimeShutdownAware> getApplicationShutdownAwares() throws Exception {
         SofaRuntimeManager sofaRuntimeManager = sofaRuntimeContext.getSofaRuntimeManager();
         Field applicationShutdownAwaresField = sofaRuntimeManager.getClass().getDeclaredField(
-            "runtimeShutdownAwares");
+                "runtimeShutdownAwares");
         applicationShutdownAwaresField.setAccessible(true);
         return (List<RuntimeShutdownAware>) applicationShutdownAwaresField.get(sofaRuntimeManager);
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @Import(RuntimeConfiguration.class)
     static class BeanPostProcessorOrderTestConfiguration {
         @Bean

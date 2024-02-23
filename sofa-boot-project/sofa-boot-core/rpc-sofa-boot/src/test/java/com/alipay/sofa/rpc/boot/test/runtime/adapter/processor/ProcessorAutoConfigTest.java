@@ -18,8 +18,6 @@ package com.alipay.sofa.rpc.boot.test.runtime.adapter.processor;
 
 import com.alipay.sofa.rpc.boot.runtime.adapter.processor.ConsumerMockProcessor;
 import com.alipay.sofa.rpc.boot.runtime.adapter.processor.DynamicConfigProcessor;
-import com.alipay.sofa.rpc.boot.runtime.adapter.processor.ProviderRegisterProcessor;
-import com.alipay.sofa.rpc.config.ProviderConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,27 +34,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @SpringBootApplication
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = { "com.alipay.sofa.rpc.dynamic-config=apollo",
-                                  "com.alipay.sofa.rpc.mock-url=abc",
-                                  "sofa.rpc.registry.disablePub=true" })
+@TestPropertySource(properties = {"com.alipay.sofa.rpc.dynamic-config=apollo",
+        "com.alipay.sofa.rpc.mock-url=abc",})
 public class ProcessorAutoConfigTest {
 
     @Autowired
-    private DynamicConfigProcessor    dynamicConfigProcessor;
+    private DynamicConfigProcessor dynamicConfigProcessor;
 
     @Autowired
-    private ConsumerMockProcessor     consumerMockProcessor;
-
-    @Autowired
-    private ProviderRegisterProcessor providerRegisterProcessor;
+    private ConsumerMockProcessor consumerMockProcessor;
 
     @Test
     public void testProperty() {
         Assert.assertEquals("apollo", dynamicConfigProcessor.getDynamicConfig());
         Assert.assertEquals("abc", consumerMockProcessor.getMockUrl());
-        ProviderConfig providerConfig = new ProviderConfig();
-        providerConfig.setRegister(true);
-        providerRegisterProcessor.processorProvider(providerConfig);
-        Assert.assertFalse(providerConfig.isRegister());
+
     }
 }

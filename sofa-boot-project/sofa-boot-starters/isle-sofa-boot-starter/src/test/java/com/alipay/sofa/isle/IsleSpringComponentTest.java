@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.isle;
 
-import com.alipay.sofa.isle.profile.SofaModuleProfileChecker;
-import com.alipay.sofa.isle.spring.config.SofaModuleProperties;
 import com.alipay.sofa.isle.stage.ModelCreatingStage;
 import com.alipay.sofa.runtime.api.component.ComponentName;
 import com.alipay.sofa.runtime.spi.component.ComponentManager;
@@ -50,15 +48,11 @@ public class IsleSpringComponentTest implements SofaRuntimeContextAware {
     public void test() {
         ComponentManager componentManager = sofaRuntimeContext.getComponentManager();
         ComponentName componentName1 = ComponentNameFactory.createComponentName(
-            SpringContextComponent.SPRING_COMPONENT_TYPE, "com.alipay.sofa.isle.module1");
+                SpringContextComponent.SPRING_COMPONENT_TYPE, "com.alipay.sofa.isle.module1");
         ComponentName componentName2 = ComponentNameFactory.createComponentName(
-            SpringContextComponent.SPRING_COMPONENT_TYPE, "com.alipay.sofa.isle.module2");
+                SpringContextComponent.SPRING_COMPONENT_TYPE, "com.alipay.sofa.isle.module2");
         Assert.assertNotNull(componentManager.getComponentInfo(componentName1));
         Assert.assertNotNull(componentManager.getComponentInfo(componentName2));
-        Assert.assertEquals("com.alipay.sofa.isle.module1",
-            componentManager.getComponentInfo(componentName1).getApplicationContext().getId());
-        Assert.assertEquals("com.alipay.sofa.isle.module2",
-            componentManager.getComponentInfo(componentName2).getApplicationContext().getId());
     }
 
     @Override
@@ -66,16 +60,14 @@ public class IsleSpringComponentTest implements SofaRuntimeContextAware {
         this.sofaRuntimeContext = sofaRuntimeContext;
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @EnableAutoConfiguration
     static class IsleSpringComponentTestConfiguration {
         @Bean
         @ConditionalOnMissingBean
-        public ModelCreatingStage modelCreatingStage(ApplicationContext applicationContext,
-                                                     SofaModuleProperties sofaModuleProperties,
-                                                     SofaModuleProfileChecker checker) {
+        public ModelCreatingStage modelCreatingStage(ApplicationContext applicationContext) {
             return new TestModelCreatingStage((AbstractApplicationContext) applicationContext,
-                sofaModuleProperties, checker, "module1", "module2");
+                    "module1", "module2");
         }
     }
 }

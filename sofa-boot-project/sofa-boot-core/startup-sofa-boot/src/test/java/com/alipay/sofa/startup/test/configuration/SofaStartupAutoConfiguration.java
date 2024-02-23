@@ -18,27 +18,34 @@ package com.alipay.sofa.startup.test.configuration;
 
 import com.alipay.sofa.startup.StartupProperties;
 import com.alipay.sofa.startup.StartupReporter;
-import com.alipay.sofa.startup.stage.StartupContextRefreshedListener;
+import com.alipay.sofa.startup.stage.BeanCostBeanPostProcessor;
 import com.alipay.sofa.startup.test.beans.InitCostBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
- * @author Zhijie
- * @since 2020/7/8
+ * @author: Zhijie
+ * @since: 2020/7/8
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @ConditionalOnClass(StartupReporter.class)
 @EnableConfigurationProperties(StartupProperties.class)
 public class SofaStartupAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public StartupContextRefreshedListener startupContextRefreshedListener() {
-        return new StartupContextRefreshedListener();
+    public StartupReporter sofaStartupReporter(Environment environment) {
+        return new StartupReporter(environment);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public BeanCostBeanPostProcessor beanCostBeanPostProcessor(StartupProperties startupProperties) {
+        return new BeanCostBeanPostProcessor(startupProperties.getBeanInitCostThreshold());
     }
 
     @Bean

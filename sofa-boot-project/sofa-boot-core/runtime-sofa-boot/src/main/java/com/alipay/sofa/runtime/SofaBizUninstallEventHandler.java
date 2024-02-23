@@ -20,7 +20,6 @@ import com.alipay.sofa.ark.spi.event.biz.BeforeBizStopEvent;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.service.PriorityOrdered;
 import com.alipay.sofa.ark.spi.service.event.EventHandler;
-import com.alipay.sofa.runtime.invoke.DynamicJvmServiceProxyFinder;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeManager;
 
 /**
@@ -35,13 +34,10 @@ public class SofaBizUninstallEventHandler implements EventHandler<BeforeBizStopE
     }
 
     private void doUninstallBiz(Biz biz) {
-        // Remove dynamic JVM service cache
-        DynamicJvmServiceProxyFinder.getDynamicJvmServiceProxyFinder().afterBizUninstall(biz);
-
         SofaRuntimeProperties.unRegisterProperties(biz.getBizClassLoader());
         SofaRuntimeManager sofaRuntimeManager = getSofaRuntimeManager(biz);
         SofaFramework.unRegisterSofaRuntimeManager(sofaRuntimeManager);
-        sofaRuntimeManager.shutDownExternally();
+        sofaRuntimeManager.shutdown();
     }
 
     private SofaRuntimeManager getSofaRuntimeManager(Biz biz) {

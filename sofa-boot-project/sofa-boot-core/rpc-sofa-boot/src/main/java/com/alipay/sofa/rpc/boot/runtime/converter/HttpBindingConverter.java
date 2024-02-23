@@ -16,13 +16,11 @@
  */
 package com.alipay.sofa.rpc.boot.runtime.converter;
 
-import com.alipay.sofa.rpc.boot.runtime.binding.HttpBinding;
-import com.alipay.sofa.rpc.boot.runtime.param.HttpBindingParam;
-import org.springframework.context.ApplicationContext;
-
 import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
+import com.alipay.sofa.rpc.boot.runtime.binding.HttpBinding;
 import com.alipay.sofa.rpc.boot.runtime.binding.RpcBinding;
 import com.alipay.sofa.rpc.boot.runtime.binding.RpcBindingType;
+import com.alipay.sofa.rpc.boot.runtime.param.HttpBindingParam;
 import com.alipay.sofa.rpc.boot.runtime.param.RpcBindingParam;
 import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
@@ -30,9 +28,9 @@ import com.alipay.sofa.runtime.api.annotation.SofaService;
 import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
 import com.alipay.sofa.runtime.api.binding.BindingType;
 import com.alipay.sofa.runtime.spi.service.BindingConverterContext;
+import org.springframework.context.ApplicationContext;
 
 /**
- *
  * @author HuangSheng
  */
 public class HttpBindingConverter extends RpcBindingConverter {
@@ -53,9 +51,9 @@ public class HttpBindingConverter extends RpcBindingConverter {
                               BindingConverterContext bindingConverterContext) {
         RpcBindingParam bindingParam = new HttpBindingParam();
         convertServiceAnnotation(bindingParam, sofaServiceAnnotation, sofaServiceBindingAnnotation,
-            bindingConverterContext);
+                bindingConverterContext);
         return new HttpBinding(bindingParam, bindingConverterContext.getApplicationContext(),
-            bindingConverterContext.isInBinding());
+                bindingConverterContext.isInBinding());
     }
 
     @Override
@@ -64,10 +62,10 @@ public class HttpBindingConverter extends RpcBindingConverter {
                               BindingConverterContext bindingConverterContext) {
         RpcBindingParam bindingParam = new HttpBindingParam();
         convertReferenceAnnotation(bindingParam, sofaReferenceBindingAnnotation,
-            bindingConverterContext);
+                bindingConverterContext);
 
         return new HttpBinding(bindingParam, bindingConverterContext.getApplicationContext(),
-            bindingConverterContext.isInBinding());
+                bindingConverterContext.isInBinding());
     }
 
     @Override

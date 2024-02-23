@@ -21,6 +21,6 @@ package com.alipay.sofa.rpc.boot.test.bean.direct;
  */
 public interface DirectService {
 
-    String sayDirect(String string);
+    String sayDirect(String stirng);
 
 }

@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.rpc.boot.runtime.converter;
 
-import org.springframework.context.ApplicationContext;
-
 import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
 import com.alipay.sofa.rpc.boot.runtime.binding.H2cBinding;
 import com.alipay.sofa.rpc.boot.runtime.binding.RpcBinding;
@@ -30,9 +28,9 @@ import com.alipay.sofa.runtime.api.annotation.SofaService;
 import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
 import com.alipay.sofa.runtime.api.binding.BindingType;
 import com.alipay.sofa.runtime.spi.service.BindingConverterContext;
+import org.springframework.context.ApplicationContext;
 
 /**
- *
  * @author <a href="mailto:zhiyuan.lzy@antfin.com">zhiyuan.lzy</a>
  */
 public class H2cBindingConverter extends RpcBindingConverter {
@@ -53,9 +51,9 @@ public class H2cBindingConverter extends RpcBindingConverter {
                               BindingConverterContext bindingConverterContext) {
         RpcBindingParam bindingParam = new H2cBindingParam();
         convertServiceAnnotation(bindingParam, sofaServiceAnnotation, sofaServiceBindingAnnotation,
-            bindingConverterContext);
+                bindingConverterContext);
         return new H2cBinding(bindingParam, bindingConverterContext.getApplicationContext(),
-            bindingConverterContext.isInBinding());
+                bindingConverterContext.isInBinding());
     }
 
     @Override
@@ -64,10 +62,10 @@ public class H2cBindingConverter extends RpcBindingConverter {
                               BindingConverterContext bindingConverterContext) {
         RpcBindingParam bindingParam = new H2cBindingParam();
         convertReferenceAnnotation(bindingParam, sofaReferenceBindingAnnotation,
-            bindingConverterContext);
+                bindingConverterContext);
 
         return new H2cBinding(bindingParam, bindingConverterContext.getApplicationContext(),
-            bindingConverterContext.isInBinding());
+                bindingConverterContext.isInBinding());
     }
 
     @Override

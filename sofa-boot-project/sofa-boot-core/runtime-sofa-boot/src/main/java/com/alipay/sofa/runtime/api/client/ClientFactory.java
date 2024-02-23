@@ -33,7 +33,7 @@ public interface ClientFactory {
      * {@link ServiceClient}.
      *
      * @param clazz The type of the client to get.
-     * @param <T> The type of the client to get.
+     * @param <T>   The type of the client to get.
      * @return The instance of the client that matches the type specified.
      */
     <T> T getClient(Class<T> clazz);

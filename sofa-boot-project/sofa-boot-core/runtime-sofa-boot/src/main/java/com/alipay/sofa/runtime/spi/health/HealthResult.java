@@ -20,6 +20,10 @@ package com.alipay.sofa.runtime.spi.health;
  * @author xuanbei 18/2/28
  */
 public class HealthResult {
+    private String healthName;
+    private boolean isHealthy;
+    private String healthReport;
+
     public HealthResult() {
 
     }
@@ -28,14 +32,12 @@ public class HealthResult {
         this.healthName = healthName;
     }
 
-    private String  healthName;
-
-    private boolean isHealthy;
-
-    private String  healthReport;
-
     public String getHealthName() {
         return healthName;
+    }
+
+    public void setHealthName(String healthName) {
+        this.healthName = healthName;
     }
 
     public boolean isHealthy() {
@@ -44,10 +46,6 @@ public class HealthResult {
 
     public void setHealthy(boolean isHealthy) {
         this.isHealthy = isHealthy;
-    }
-
-    public void setHealthName(String healthName) {
-        this.healthName = healthName;
     }
 
     public String getHealthReport() {

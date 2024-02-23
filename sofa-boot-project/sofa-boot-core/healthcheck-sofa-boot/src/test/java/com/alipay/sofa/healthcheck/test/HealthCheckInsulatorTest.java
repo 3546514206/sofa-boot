@@ -16,15 +16,8 @@
  */
 package com.alipay.sofa.healthcheck.test;
 
-import com.alipay.sofa.healthcheck.AfterReadinessCheckCallbackProcessor;
-import com.alipay.sofa.healthcheck.HealthCheckException;
-import com.alipay.sofa.healthcheck.HealthCheckProperties;
-import com.alipay.sofa.healthcheck.HealthCheckerProcessor;
-import com.alipay.sofa.healthcheck.HealthIndicatorProcessor;
-import com.alipay.sofa.healthcheck.ReadinessCheckListener;
-import com.alipay.sofa.healthcheck.core.HealthCheckExecutor;
+import com.alipay.sofa.healthcheck.*;
 import com.alipay.sofa.healthcheck.core.HealthChecker;
-import com.alipay.sofa.runtime.configure.SofaRuntimeConfigurationProperties;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.health.Health;
@@ -32,16 +25,20 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * @author <a href="mailto:guaner.zzx@alipay.com">Alaneuler</a>
  * Created on 2020/5/18
  */
 public class HealthCheckInsulatorTest {
-    @EnableConfigurationProperties({ HealthCheckProperties.class,
-            SofaRuntimeConfigurationProperties.class })
-    @Configuration(proxyBeanMethods = false)
+    @Test(expected = HealthCheckException.class)
+    public void test() {
+        SpringApplication application = new SpringApplication(HealthCheckConfiguration.class);
+        application.run("--spring.profiles.active=health");
+    }
+
+    @EnableConfigurationProperties(HealthCheckProperties.class)
+    @Configuration
     static class HealthCheckConfiguration {
         @Bean
         public AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor() {
@@ -49,27 +46,18 @@ public class HealthCheckInsulatorTest {
         }
 
         @Bean
-        public HealthCheckerProcessor healthCheckerProcessor(HealthCheckProperties healthCheckProperties,
-                                                             HealthCheckExecutor healthCheckExecutor) {
-            return new HealthCheckerProcessor(healthCheckProperties, healthCheckExecutor);
+        public HealthCheckerProcessor healthCheckerProcessor() {
+            return new HealthCheckerProcessor();
         }
 
         @Bean
-        public HealthIndicatorProcessor healthIndicatorProcessor(HealthCheckProperties properties,
-                                                                 HealthCheckExecutor healthCheckExecutor) {
-            return new HealthIndicatorProcessor(properties, healthCheckExecutor);
+        public HealthIndicatorProcessor healthIndicatorProcessor() {
+            return new HealthIndicatorProcessor();
         }
 
         @Bean
-        public ReadinessCheckListener readinessCheckListener(Environment environment,
-                                                             HealthCheckerProcessor healthCheckerProcessor,
-                                                             HealthIndicatorProcessor healthIndicatorProcessor,
-                                                             AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor,
-                                                             SofaRuntimeConfigurationProperties sofaRuntimeConfigurationProperties,
-                                                             HealthCheckProperties healthCheckProperties) {
-            return new ReadinessCheckListener(environment, healthCheckerProcessor,
-                healthIndicatorProcessor, afterReadinessCheckCallbackProcessor,
-                sofaRuntimeConfigurationProperties, healthCheckProperties);
+        public ReadinessCheckListener readinessCheckListener() {
+            return new ReadinessCheckListener();
         }
 
         @Bean
@@ -87,16 +75,5 @@ public class HealthCheckInsulatorTest {
                 }
             };
         }
-
-        @Bean
-        public HealthCheckExecutor healthCheckExecutor(HealthCheckProperties properties) {
-            return new HealthCheckExecutor(properties);
-        }
-    }
-
-    @Test(expected = HealthCheckException.class)
-    public void test() {
-        SpringApplication application = new SpringApplication(HealthCheckConfiguration.class);
-        application.run("--spring.profiles.active=health");
     }
 }

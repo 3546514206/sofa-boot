@@ -16,6 +16,11 @@
  */
 package com.alipay.sofa.runtime.test;
 
+import com.alipay.sofa.runtime.api.annotation.SofaService;
+import com.alipay.sofa.runtime.test.beans.StateMessage;
+import com.alipay.sofa.runtime.test.beans.processor.FactoryBeanPostProcessor;
+import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
+import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -26,12 +31,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
-
-import com.alipay.sofa.runtime.api.annotation.SofaService;
-import com.alipay.sofa.runtime.test.beans.StateMessage;
-import com.alipay.sofa.runtime.test.beans.processor.FactoryBeanPostProcessor;
-import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
-import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 
 /**
  * @author qilong.zql
@@ -47,7 +46,7 @@ public class StaticBeanPostProcessorTest {
         Assert.isTrue("aop".equals(StateMessage.getFactoryMessage()));
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @EnableAutoConfiguration
     @Import(RuntimeConfiguration.class)
     static class BeanPostProcessorTestConfiguration {

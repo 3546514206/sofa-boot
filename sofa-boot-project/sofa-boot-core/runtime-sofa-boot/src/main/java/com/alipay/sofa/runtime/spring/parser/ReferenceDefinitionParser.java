@@ -16,22 +16,19 @@
  */
 package com.alipay.sofa.runtime.spring.parser;
 
-import org.springframework.beans.factory.FactoryBean;
+import com.alipay.sofa.runtime.spring.factory.ReferenceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
-import com.alipay.sofa.runtime.spring.factory.ReferenceFactoryBean;
-
 /**
  * @author xuanbei 18/3/1
  */
 public class ReferenceDefinitionParser extends AbstractContractDefinitionParser {
-    public static final String JVM_FIRST             = "jvm-first";
-    public static final String PROPERTY_JVM_FIRST    = "jvmFirst";
+    public static final String JVM_FIRST = "jvm-first";
+    public static final String PROPERTY_JVM_FIRST = "jvmFirst";
     public static final String PROPERTY_LOAD_BALANCE = "loadBalance";
-    public static final String REQUIRED              = "required";
 
     @Override
     protected void doParseInternal(Element element, ParserContext parserContext,
@@ -45,7 +42,7 @@ public class ReferenceDefinitionParser extends AbstractContractDefinitionParser 
                 builder.addPropertyValue(PROPERTY_JVM_FIRST, false);
             } else {
                 throw new RuntimeException(
-                    "Invalid value of property jvm-first, can only be true or false.");
+                        "Invalid value of property jvm-first, can only be true or false.");
             }
         }
 
@@ -53,22 +50,6 @@ public class ReferenceDefinitionParser extends AbstractContractDefinitionParser 
         if (StringUtils.hasText(loadBalance)) {
             builder.addPropertyValue(PROPERTY_LOAD_BALANCE, loadBalance);
         }
-
-        String required = element.getAttribute(REQUIRED);
-        if (StringUtils.hasText(required)) {
-            if ("true".equalsIgnoreCase(required)) {
-                builder.addPropertyValue(REQUIRED, true);
-            } else if ("false".equalsIgnoreCase(required)) {
-                builder.addPropertyValue(REQUIRED, false);
-            } else {
-                throw new RuntimeException(
-                    "Invalid value of property required, can only be true or false.");
-            }
-        }
-
-        String interfaceType = element.getAttribute(INTERFACE_ELEMENT);
-        builder.getBeanDefinition().setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE,
-            getInterfaceClass(interfaceType));
     }
 
     @Override
@@ -79,14 +60,5 @@ public class ReferenceDefinitionParser extends AbstractContractDefinitionParser 
     @Override
     public String supportTagName() {
         return "reference";
-    }
-
-    protected Class getInterfaceClass(String interfaceType) {
-        try {
-            return Thread.currentThread().getContextClassLoader().loadClass(interfaceType);
-        } catch (Throwable t) {
-            throw new IllegalArgumentException("Failed to load class for interface: "
-                                               + interfaceType, t);
-        }
     }
 }

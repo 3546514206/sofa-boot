@@ -22,17 +22,14 @@ import com.alipay.sofa.runtime.service.binding.JvmBindingParam;
 import com.alipay.sofa.runtime.service.component.Reference;
 import com.alipay.sofa.runtime.service.component.impl.ReferenceImpl;
 import com.alipay.sofa.runtime.service.helper.ReferenceRegisterHelper;
-import com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo;
 import com.alipay.sofa.runtime.spi.service.BindingConverterContext;
 import org.springframework.util.Assert;
-
-import static com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo.BEAN_ID;
 
 /**
  * @author xuanbei 18/3/1
  */
 public class ReferenceFactoryBean extends AbstractContractFactoryBean {
-    protected Object  proxy;
+    protected Object proxy;
     /**
      * jvm first or not
      */
@@ -40,9 +37,7 @@ public class ReferenceFactoryBean extends AbstractContractFactoryBean {
     /**
      * load balance
      **/
-    protected String  loadBalance;
-
-    protected boolean required = true;
+    protected String loadBalance;
 
     public ReferenceFactoryBean() {
     }
@@ -55,8 +50,8 @@ public class ReferenceFactoryBean extends AbstractContractFactoryBean {
     protected void doAfterPropertiesSet() throws Exception {
         Reference reference = buildReference();
         Assert
-            .isTrue(bindings.size() <= 1,
-                "Found more than one binding in <sofa:reference/>, <sofa:reference/> can only have one binding.");
+                .isTrue(bindings.size() <= 1,
+                        "Found more than one binding in <sofa:reference/>, <sofa:reference/> can only have one binding.");
 
         // default add jvm binding and reference jvm binding should set serialize as false
         if (bindings.size() == 0) {
@@ -67,11 +62,8 @@ public class ReferenceFactoryBean extends AbstractContractFactoryBean {
         }
 
         reference.addBinding(bindings.get(0));
-        ComponentDefinitionInfo definitionInfo = new ComponentDefinitionInfo();
-        definitionInfo.setInterfaceMode(apiType ? InterfaceMode.api : InterfaceMode.spring);
-        definitionInfo.putInfo(BEAN_ID, beanId);
         proxy = ReferenceRegisterHelper.registerReference(reference, bindingAdapterFactory,
-            sofaRuntimeContext, applicationContext, definitionInfo);
+                sofaRuntimeContext);
     }
 
     @Override
@@ -80,10 +72,7 @@ public class ReferenceFactoryBean extends AbstractContractFactoryBean {
     }
 
     protected Reference buildReference() {
-        Reference reference = new ReferenceImpl(uniqueId, getInterfaceClass(),
-            InterfaceMode.spring, jvmFirst);
-        reference.setRequired(required);
-        return reference;
+        return new ReferenceImpl(uniqueId, getInterfaceClass(), InterfaceMode.spring, jvmFirst);
     }
 
     @Override
@@ -93,13 +82,7 @@ public class ReferenceFactoryBean extends AbstractContractFactoryBean {
 
     @Override
     public Class<?> getObjectType() {
-        try {
-            Class<?> type = getInterfaceClass();
-            return type != null ? type : ReferenceFactoryBean.class;
-        } catch (Throwable t) {
-            // Class not found
-            return ReferenceFactoryBean.class;
-        }
+        return getInterfaceClass();
     }
 
     @Override
@@ -117,13 +100,5 @@ public class ReferenceFactoryBean extends AbstractContractFactoryBean {
 
     public void setLoadBalance(String loadBalance) {
         this.loadBalance = loadBalance;
-    }
-
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-
-    public boolean getRequired() {
-        return required;
     }
 }

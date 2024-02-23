@@ -16,10 +16,11 @@
  */
 package com.alipay.sofa.runtime.spring;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.CountDownLatch;
-
-import com.alipay.sofa.runtime.factory.BeanLoadCostBeanFactory;
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.runtime.log.SofaLogger;
+import com.alipay.sofa.runtime.spring.async.AsyncInitBeanHolder;
+import com.alipay.sofa.runtime.spring.async.AsyncTaskExecutor;
+import com.alipay.sofa.runtime.spring.parser.AsyncInitBeanDefinitionDecorator;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.framework.ProxyFactory;
@@ -31,11 +32,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.runtime.log.SofaLogger;
-import com.alipay.sofa.runtime.spring.async.AsyncInitBeanHolder;
-import com.alipay.sofa.runtime.spring.async.AsyncTaskExecutor;
-import org.springframework.core.PriorityOrdered;
+import java.lang.reflect.Method;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author qilong.zql
@@ -43,15 +41,15 @@ import org.springframework.core.PriorityOrdered;
  * @since 2.6.0
  */
 public class AsyncProxyBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware,
-                                        InitializingBean, PriorityOrdered {
+        InitializingBean {
 
     private ApplicationContext applicationContext;
 
-    private String             moduleName;
+    private String moduleName;
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
-                                                                               throws BeansException {
+            throws BeansException {
         String methodName = AsyncInitBeanHolder.getAsyncInitMethodName(moduleName, beanName);
         if (methodName == null || methodName.length() == 0) {
             return bean;
@@ -61,23 +59,23 @@ public class AsyncProxyBeanPostProcessor implements BeanPostProcessor, Applicati
         proxyFactory.setTargetClass(bean.getClass());
         proxyFactory.setProxyTargetClass(true);
         AsyncInitializeBeanMethodInvoker asyncInitializeBeanMethodInvoker = new AsyncInitializeBeanMethodInvoker(
-            bean, beanName, methodName);
+                bean, beanName, methodName);
         proxyFactory.addAdvice(asyncInitializeBeanMethodInvoker);
         return proxyFactory.getProxy();
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
+            throws BeansException {
         return bean;
     }
 
     @Override
     public void afterPropertiesSet() {
         ConfigurableBeanFactory beanFactory = ((AbstractApplicationContext) applicationContext)
-            .getBeanFactory();
-        if (beanFactory instanceof BeanLoadCostBeanFactory) {
-            moduleName = ((BeanLoadCostBeanFactory) beanFactory).getId();
+                .getBeanFactory();
+        if (AsyncInitBeanDefinitionDecorator.isBeanLoadCostBeanFactory(beanFactory.getClass())) {
+            moduleName = AsyncInitBeanDefinitionDecorator.getModuleNameFromBeanFactory(beanFactory);
         } else {
             moduleName = SofaBootConstants.ROOT_APPLICATION_CONTEXT;
         }
@@ -88,20 +86,15 @@ public class AsyncProxyBeanPostProcessor implements BeanPostProcessor, Applicati
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    public int getOrder() {
-        return PriorityOrdered.HIGHEST_PRECEDENCE;
-    }
-
     class AsyncInitializeBeanMethodInvoker implements MethodInterceptor {
-        private final Object         targetObject;
-        private final String         asyncMethodName;
-        private final String         beanName;
+        private final Object targetObject;
+        private final String asyncMethodName;
+        private final String beanName;
         private final CountDownLatch initCountDownLatch = new CountDownLatch(1);
         // mark async-init method is during first invocation.
-        private volatile boolean     isAsyncCalling     = false;
+        private volatile boolean isAsyncCalling = false;
         // mark init-method is called.
-        private volatile boolean     isAsyncCalled      = false;
+        private volatile boolean isAsyncCalled = false;
 
         AsyncInitializeBeanMethodInvoker(Object targetObject, String beanName, String methodName) {
             this.targetObject = targetObject;
@@ -128,9 +121,9 @@ public class AsyncProxyBeanPostProcessor implements BeanPostProcessor, Applicati
                             long startTime = System.currentTimeMillis();
                             invocation.getMethod().invoke(targetObject, invocation.getArguments());
                             SofaLogger.info(String.format(
-                                "%s(%s) %s method execute %dms, moduleName: %s.", targetObject
-                                    .getClass().getName(), beanName, methodName, (System
-                                    .currentTimeMillis() - startTime), moduleName));
+                                    "%s(%s) %s method execute %dms, moduleName: %s.", targetObject
+                                            .getClass().getName(), beanName, methodName, (System
+                                            .currentTimeMillis() - startTime), moduleName));
                         } catch (Throwable e) {
                             throw new RuntimeException(e);
                         } finally {
@@ -146,8 +139,8 @@ public class AsyncProxyBeanPostProcessor implements BeanPostProcessor, Applicati
                 long startTime = System.currentTimeMillis();
                 initCountDownLatch.await();
                 SofaLogger.info(String.format("%s(%s) %s method wait %dms, moduleName: %s.",
-                    targetObject.getClass().getName(), beanName, methodName,
-                    (System.currentTimeMillis() - startTime), moduleName));
+                        targetObject.getClass().getName(), beanName, methodName,
+                        (System.currentTimeMillis() - startTime), moduleName));
             }
             return invocation.getMethod().invoke(targetObject, invocation.getArguments());
         }

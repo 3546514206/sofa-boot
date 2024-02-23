@@ -16,9 +16,8 @@
  */
 package com.alipay.sofa.tracer.boot.zipkin.properties;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import com.alipay.common.tracer.core.samplers.SamplerProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * ZipkinSofaTracerSamplerProperties

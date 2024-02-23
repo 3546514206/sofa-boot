@@ -27,9 +27,9 @@ public class Path {
 
     public static final String[] EMPTY_SEGMENTS = new String[0];
 
-    public final String          path;
-    public String[]              segments;
-    public String                attribute;
+    public final String path;
+    public String[] segments;
+    public String attribute;
 
     public Path(String path) {
         this.path = path;

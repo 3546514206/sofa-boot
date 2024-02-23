@@ -19,7 +19,6 @@ package com.alipay.sofa.runtime.test.beans;
 import com.alipay.sofa.runtime.spi.spring.RuntimeShutdownAware;
 
 /**
- *
  * @author ruoshan
  * @since 2.6.0
  */

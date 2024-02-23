@@ -86,8 +86,8 @@ public interface BindingAdapter<T extends Binding> {
     /**
      * undo in binding
      *
-     * @param contract contract
-     * @param binding binding
+     * @param contract           contract
+     * @param binding            binding
      * @param sofaRuntimeContext sofa runtime context
      */
     void unInBinding(Object contract, T binding, SofaRuntimeContext sofaRuntimeContext);

@@ -35,7 +35,8 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/8/3 11:29 AM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/8/3 11:29 AM
+ * @since:
  **/
 @ActiveProfiles("flexible")
 public class FlexibleReporterTest extends AbstractTestBase {
@@ -58,7 +59,7 @@ public class FlexibleReporterTest extends AbstractTestBase {
         TestUtil.waitForAsyncLog();
         //wait for async output
         List<String> contents = FileUtils.readLines(new File(logDirectoryPath + File.separator
-                                                             + "biz.txt"));
+                + "biz.txt"));
         assertTrue(contents.size() == 1 && contents.get(0).equalsIgnoreCase("manualSpan"));
     }
 

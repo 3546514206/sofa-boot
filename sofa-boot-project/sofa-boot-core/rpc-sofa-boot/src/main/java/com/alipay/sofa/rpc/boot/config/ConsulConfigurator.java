@@ -16,11 +16,11 @@
  */
 package com.alipay.sofa.rpc.boot.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.alipay.sofa.rpc.common.utils.StringUtils;
 import com.alipay.sofa.rpc.config.RegistryConfig;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Consul 配置
@@ -43,9 +43,9 @@ public class ConsulConfigurator implements RegistryConfigureProcessor {
         String address = null;
 
         if (StringUtils.isNotEmpty(config)
-            && config.startsWith(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_CONSUL)) {
+                && config.startsWith(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_CONSUL)) {
             final String consulProtocol = SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_CONSUL
-                                          + "://";
+                    + "://";
             String value = config.substring(consulProtocol.length());
             if (!value.contains("?")) {
                 address = value;
@@ -106,7 +106,7 @@ public class ConsulConfigurator implements RegistryConfigureProcessor {
         String consulAddress = parseAddress(address);
         Map<String, String> map = parseParam(address);
         return new RegistryConfig().setAddress(consulAddress)
-            .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_CONSUL).setParameters(map);
+                .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_CONSUL).setParameters(map);
 
     }
 

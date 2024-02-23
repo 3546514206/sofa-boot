@@ -21,7 +21,6 @@ import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.model.ComponentStatus;
 import com.alipay.sofa.runtime.model.ComponentType;
 import com.alipay.sofa.runtime.spi.health.HealthResult;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
@@ -44,22 +43,6 @@ public interface ComponentInfo extends Component {
      * @return component name
      */
     ComponentName getName();
-
-    /**
-     * get component create in which {@link ApplicationContext}, default for compatibility
-     *
-     * @return component applicationContext
-     */
-    default ApplicationContext getApplicationContext() {
-        return null;
-    }
-
-    /**
-     * set component create in which {@link ApplicationContext}, default for compatibility
-     *
-     * @param applicationContext applicationContext
-     */
-    default void setApplicationContext(ApplicationContext applicationContext) {}
 
     /**
      * get component implementation
@@ -106,7 +89,7 @@ public interface ComponentInfo extends Component {
     /**
      * get component information
      *
-     * @return
+     * @return 1
      */
     String dump();
 
@@ -120,7 +103,7 @@ public interface ComponentInfo extends Component {
     /**
      * whether component can be duplicated defined, default is true
      *
-     * @return
+     * @return 1
      */
     boolean canBeDuplicate();
 }

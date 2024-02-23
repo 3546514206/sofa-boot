@@ -16,13 +16,13 @@
  */
 package com.alipay.sofa.tracer.boot.base;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.alipay.common.tracer.core.appender.TracerLogRootDaemon;
+import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
+import com.alipay.common.tracer.core.reporter.digest.manager.SofaTracerDigestReporterAsyncManager;
+import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterCycleTimesManager;
+import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterManager;
+import com.alipay.sofa.boot.listener.SofaBootstrapRunListener;
+import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcTracer;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -35,13 +35,12 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.alipay.common.tracer.core.appender.TracerLogRootDaemon;
-import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
-import com.alipay.common.tracer.core.reporter.digest.manager.SofaTracerDigestReporterAsyncManager;
-import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterCycleTimesManager;
-import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterManager;
-import com.alipay.sofa.boot.listener.SofaBootstrapRunListener;
-import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcTracer;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * referenced document: http://docs.spring.io/spring-boot/docs/1.4.2.RELEASE/reference/htmlsingle/#boot-features-testing
@@ -53,27 +52,18 @@ import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcTracer;
 @TestPropertySource(locations = "classpath:application.properties")
 public abstract class AbstractTestBase {
 
-    protected static String    logDirectoryPath = TracerLogRootDaemon.LOG_FILE_DIR;
-
-    @LocalServerPort
-    private int                definedPort;
-
+    protected static String logDirectoryPath = TracerLogRootDaemon.LOG_FILE_DIR;
     @Autowired
     protected TestRestTemplate testRestTemplate;
-
-    protected String           urlHttpPrefix;
+    protected String urlHttpPrefix;
+    @LocalServerPort
+    private int definedPort;
 
     @BeforeClass
     public static void beforeClass() throws IOException, NoSuchFieldException,
-                                    IllegalAccessException {
+            IllegalAccessException {
         cleanLogDirectory();
         clearSpringCloudMark();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        urlHttpPrefix = "http://localhost:" + definedPort;
-        reflectSpringMVCClear();
     }
 
     /**
@@ -98,15 +88,15 @@ public abstract class AbstractTestBase {
         field.set(null, null);
         //clear digest
         Field fieldAsync = SofaTracerDigestReporterAsyncManager.class
-            .getDeclaredField("asyncCommonDigestAppenderManager");
+                .getDeclaredField("asyncCommonDigestAppenderManager");
         fieldAsync.setAccessible(true);
         fieldAsync.set(null, null);
 
         // clear stat
         SofaTracerStatisticReporterManager statReporterManager = SofaTracerStatisticReporterCycleTimesManager
-            .getSofaTracerStatisticReporterManager(1L);
+                .getSofaTracerStatisticReporterManager(1L);
         Field fieldStat = SofaTracerStatisticReporterManager.class
-            .getDeclaredField("statReporters");
+                .getDeclaredField("statReporters");
         fieldStat.setAccessible(true);
         fieldStat.set(statReporterManager, new ConcurrentHashMap<>());
     }
@@ -130,5 +120,11 @@ public abstract class AbstractTestBase {
             AtomicBoolean atomicBoolean = new AtomicBoolean(false);
             executed.set(null, atomicBoolean);
         }
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        urlHttpPrefix = "http://localhost:" + definedPort;
+        reflectSpringMVCClear();
     }
 }

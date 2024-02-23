@@ -29,7 +29,7 @@ import org.springframework.web.client.RestTemplate;
  * @since 2018/04/30
  */
 @org.springframework.boot.autoconfigure.SpringBootApplication
-@ImportResource({ "classpath:hikariDataSource.xml" })
+@ImportResource({"classpath:hikariDataSource.xml"})
 public class SpringBootWebApplication {
 
     public static void main(String[] args) throws Exception {

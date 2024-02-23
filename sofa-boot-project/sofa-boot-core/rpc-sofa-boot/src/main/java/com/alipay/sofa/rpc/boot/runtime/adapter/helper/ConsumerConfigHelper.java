@@ -16,13 +16,6 @@
  */
 package com.alipay.sofa.rpc.boot.runtime.adapter.helper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
 import com.alipay.sofa.rpc.boot.common.SofaBootRpcRuntimeException;
 import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
 import com.alipay.sofa.rpc.boot.config.SofaBootRpcProperties;
@@ -38,6 +31,12 @@ import com.alipay.sofa.rpc.core.invoke.SofaResponseCallback;
 import com.alipay.sofa.rpc.filter.Filter;
 import com.alipay.sofa.rpc.hystrix.HystrixConstants;
 import com.alipay.sofa.runtime.spi.binding.Contract;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ConsumerConfig 工厂。
@@ -46,8 +45,8 @@ import com.alipay.sofa.runtime.spi.binding.Contract;
  */
 public class ConsumerConfigHelper {
     private final RegistryConfigContainer registryConfigContainer;
-    private final String                  appName;
-    private final SofaBootRpcProperties   sofaBootRpcProperties;
+    private final String appName;
+    private final SofaBootRpcProperties sofaBootRpcProperties;
 
     public ConsumerConfigHelper(SofaBootRpcProperties sofaBootRpcProperties,
                                 RegistryConfigContainer registryConfigContainer, String appName) {
@@ -77,7 +76,6 @@ public class ConsumerConfigHelper {
         Object callbackHandler = param.getCallbackHandler();
         String genericInterface = param.getGenericInterface();
         String loadBalancer = param.getLoadBalancer();
-        Integer connectionNum = param.getConnectionNum();
         Boolean lazy = param.getLazy();
         Boolean check = param.getCheck();
         String mockMode = param.getMockMode();
@@ -120,9 +118,6 @@ public class ConsumerConfigHelper {
         if (StringUtils.hasText(loadBalancer)) {
             consumerConfig.setLoadBalancer(loadBalancer);
         }
-        if (connectionNum != null) {
-            consumerConfig.setConnectionNum(connectionNum);
-        }
         if (lazy != null) {
             consumerConfig.setLazy(lazy);
         }
@@ -137,8 +132,8 @@ public class ConsumerConfigHelper {
                 consumerConfig.setOnReturn((SofaResponseCallback) callbackHandler);
             } else {
                 throw new SofaBootRpcRuntimeException(
-                    "callback handler must implement SofaResponseCallback [" + callbackHandler
-                            + "]");
+                        "callback handler must implement SofaResponseCallback [" + callbackHandler
+                                + "]");
             }
         }
         if (!CollectionUtils.isEmpty(filters)) {
@@ -168,12 +163,12 @@ public class ConsumerConfigHelper {
             List<String> registrys = param.getRegistrys();
             for (String registryAlias : registrys) {
                 RegistryConfig registryConfig = registryConfigContainer
-                    .getRegistryConfig(registryAlias);
+                        .getRegistryConfig(registryAlias);
                 consumerConfig.setRegistry(registryConfig);
             }
         } else if (registryConfigContainer.isMeshEnabled(protocol)) {
             RegistryConfig registryConfig = registryConfigContainer
-                .getRegistryConfig(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
+                    .getRegistryConfig(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
             consumerConfig.setRegistry(registryConfig);
         } else {
             RegistryConfig registryConfig = registryConfigContainer.getRegistryConfig();
@@ -188,7 +183,7 @@ public class ConsumerConfigHelper {
 
         if (Boolean.TRUE.toString().equals(sofaBootRpcProperties.getHystrixEnable())) {
             consumerConfig.setParameter(HystrixConstants.SOFA_HYSTRIX_ENABLED,
-                Boolean.TRUE.toString());
+                    Boolean.TRUE.toString());
         }
 
         // after sofaBootRpcProperties#getHystrixEnable for override global config
@@ -228,8 +223,8 @@ public class ConsumerConfigHelper {
                         methodConfig.setOnReturn((SofaResponseCallback) callbackHandler);
                     } else {
                         throw new SofaBootRpcRuntimeException(
-                            "callback handler must implement SofaResponseCallback ["
-                                    + callbackHandler + "]");
+                                "callback handler must implement SofaResponseCallback ["
+                                        + callbackHandler + "]");
                     }
                 }
 

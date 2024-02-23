@@ -16,8 +16,11 @@
  */
 package com.alipay.sofa.rpc.boot.test.readiness;
 
-import java.util.concurrent.TimeUnit;
-
+import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
+import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
+import com.alipay.sofa.rpc.boot.test.bean.SampleFacade;
+import com.alipay.sofa.rpc.boot.test.util.TestUtils;
+import com.alipay.sofa.rpc.core.exception.SofaRouteException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,14 +37,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
-import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
-import com.alipay.sofa.rpc.boot.test.bean.SampleFacade;
-import com.alipay.sofa.rpc.boot.test.util.TestUtils;
-import com.alipay.sofa.rpc.core.exception.SofaRouteException;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
-@SpringBootTest(properties = { "com.alipay.sofa.rpc.registry.address=zookeeper://localhost:2181" }, classes = ReadinessTest.class)
+@SpringBootTest(properties = {"com.alipay.sofa.rpc.registry.address=zookeeper://localhost:2181"}, classes = ReadinessTest.class)
 @RunWith(SpringRunner.class)
 @ImportResource("/spring/readiness.xml")
 @Import(ReadinessTest.Config.class)
@@ -49,7 +48,7 @@ public class ReadinessTest extends ActivelyDestroyTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @Autowired
-    private SampleFacade     sampleFacade;
+    private SampleFacade sampleFacade;
 
     @Test
     public void testCannotFoundAddress() throws InterruptedException {

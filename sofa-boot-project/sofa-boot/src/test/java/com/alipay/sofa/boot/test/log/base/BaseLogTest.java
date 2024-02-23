@@ -23,17 +23,17 @@ import org.junit.Before;
 
 /**
  * LogTestBase
- *
+ * <p>
  * Created by yangguanchao on 18/01/04.
  */
 public abstract class BaseLogTest {
 
     public static final String restLogLevel = Constants.LOG_LEVEL_PREFIX
-                                              + InfraLoggerFactory.INFRASTRUCTURE_LOG_SPACE;
+            + InfraLoggerFactory.INFRASTRUCTURE_LOG_SPACE;
 
     @Before
     public void before() {
         MultiAppLoggerSpaceManager
-            .removeILoggerFactoryBySpaceName(InfraLoggerFactory.INFRASTRUCTURE_LOG_SPACE);
+                .removeILoggerFactoryBySpaceName(InfraLoggerFactory.INFRASTRUCTURE_LOG_SPACE);
     }
 }

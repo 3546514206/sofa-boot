@@ -31,7 +31,6 @@ public class SpringSimpleExtensionDescriptor {
     private SimpleSpringBean value;
 
     /**
-     *
      * @return
      */
     public SimpleSpringBean getValue() {

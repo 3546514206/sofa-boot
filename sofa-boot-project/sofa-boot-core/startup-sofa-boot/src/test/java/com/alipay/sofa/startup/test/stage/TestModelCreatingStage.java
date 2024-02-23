@@ -21,8 +21,6 @@ import com.alipay.sofa.isle.ApplicationRuntimeModel;
 import com.alipay.sofa.isle.deployment.DeploymentBuilder;
 import com.alipay.sofa.isle.deployment.DeploymentDescriptor;
 import com.alipay.sofa.isle.deployment.DeploymentDescriptorConfiguration;
-import com.alipay.sofa.isle.profile.SofaModuleProfileChecker;
-import com.alipay.sofa.isle.spring.config.SofaModuleProperties;
 import com.alipay.sofa.startup.StartupReporter;
 import com.alipay.sofa.startup.stage.isle.StartupModelCreatingStage;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -40,16 +38,14 @@ import java.util.Properties;
  */
 public class TestModelCreatingStage extends StartupModelCreatingStage {
     public TestModelCreatingStage(AbstractApplicationContext applicationContext,
-                                  SofaModuleProperties sofaModuleProperties,
-                                  SofaModuleProfileChecker sofaModuleProfileChecker,
                                   StartupReporter startupReporter) {
-        super(applicationContext, sofaModuleProperties, sofaModuleProfileChecker, startupReporter);
+        super(applicationContext, startupReporter);
     }
 
     @Override
     protected void getAllDeployments(ApplicationRuntimeModel application) throws IOException {
         Enumeration<URL> urls = appClassLoader.getResources("META-INF/"
-                                                            + SofaBootConstants.SOFA_MODULE_FILE);
+                + SofaBootConstants.SOFA_MODULE_FILE);
         if (urls == null || !urls.hasMoreElements()) {
             return;
         }
@@ -60,10 +56,10 @@ public class TestModelCreatingStage extends StartupModelCreatingStage {
             Properties props = new Properties();
             props.load(urlResource.getInputStream());
             DeploymentDescriptorConfiguration deploymentDescriptorConfiguration = new DeploymentDescriptorConfiguration(
-                Collections.singletonList(SofaBootConstants.MODULE_NAME),
-                Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
+                    Collections.singletonList(SofaBootConstants.MODULE_NAME),
+                    Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
             DeploymentDescriptor dd = DeploymentBuilder.build(url, props,
-                deploymentDescriptorConfiguration, appClassLoader);
+                    deploymentDescriptorConfiguration, appClassLoader);
 
             if (application.isModuleDeployment(dd)) {
                 if (sofaModuleProfileChecker.acceptModule(dd)) {

@@ -16,9 +16,8 @@
  */
 package com.alipay.sofa.actuator.autoconfigure.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.healthcheck.impl.ModuleHealthChecker;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,8 +26,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.healthcheck.impl.ModuleHealthChecker;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author abby.zh
@@ -46,13 +45,13 @@ public class SofaModuleHealthCheckerTest {
     @Test
     public void testDefaultConfig() {
         SpringApplication springApplication = new SpringApplication(EmptyConfiguration.class);
-        this.applicationContext = springApplication.run(new String[] {});
+        this.applicationContext = springApplication.run(new String[]{});
         ModuleHealthChecker moduleHealthChecker = applicationContext
-            .getBean(ModuleHealthChecker.class);
+                .getBean(ModuleHealthChecker.class);
         Assert.assertEquals(SofaBootConstants.SOFABOOT_MODULE_CHECK_RETRY_DEFAULT_COUNT,
-            moduleHealthChecker.getRetryCount());
+                moduleHealthChecker.getRetryCount());
         Assert.assertEquals(SofaBootConstants.SOFABOOT_MODULE_CHECK_RETRY_DEFAULT_INTERVAL,
-            moduleHealthChecker.getRetryTimeInterval());
+                moduleHealthChecker.getRetryTimeInterval());
     }
 
     @Test
@@ -64,15 +63,15 @@ public class SofaModuleHealthCheckerTest {
         properties.put(SofaBootConstants.SOFABOOT_MODULE_CHECK_RETRY_INTERVAL, customRetryInterval);
         SpringApplication springApplication = new SpringApplication(EmptyConfiguration.class);
         springApplication.setDefaultProperties(properties);
-        this.applicationContext = springApplication.run(new String[] {});
+        this.applicationContext = springApplication.run(new String[]{});
         ModuleHealthChecker sofaModuleHealthChecker = applicationContext
-            .getBean(ModuleHealthChecker.class);
+                .getBean(ModuleHealthChecker.class);
         Assert.assertEquals(customRetryCount, sofaModuleHealthChecker.getRetryCount());
         Assert.assertEquals(customRetryInterval, sofaModuleHealthChecker.getRetryTimeInterval());
     }
 
     @EnableAutoConfiguration
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class EmptyConfiguration {
     }
 

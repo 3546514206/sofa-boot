@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.boot.test.spring;
 
+import com.sun.org.apache.xml.internal.utils.DefaultErrorHandler;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.xml.DefaultDocumentLoader;
@@ -24,8 +25,6 @@ import org.springframework.beans.factory.xml.DocumentLoader;
 import org.springframework.util.xml.XmlValidationModeDetector;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
-
-import com.sun.org.apache.xml.internal.utils.DefaultErrorHandler;
 
 /**
  * XML validation with rpc.xsd
@@ -77,8 +76,8 @@ public class XsdValidationTest {
     private void loadXml(String xml) throws Exception {
         DocumentLoader documentLoader = new DefaultDocumentLoader();
         documentLoader.loadDocument(new InputSource(this.getClass().getClassLoader()
-            .getResourceAsStream(xml)), new DelegatingEntityResolver(this.getClass()
-            .getClassLoader()), new DefaultErrorHandler(),
-            XmlValidationModeDetector.VALIDATION_XSD, true);
+                        .getResourceAsStream(xml)), new DelegatingEntityResolver(this.getClass()
+                        .getClassLoader()), new DefaultErrorHandler(),
+                XmlValidationModeDetector.VALIDATION_XSD, true);
     }
 }

@@ -20,15 +20,8 @@ import com.alipay.sofa.isle.deployment.DeployRegistry;
 import com.alipay.sofa.isle.deployment.DeploymentDescriptor;
 import com.alipay.sofa.isle.deployment.ModuleDeploymentValidator;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.lang.NonNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -36,27 +29,45 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author khotyn 7/25/14 8:15 PM
  */
-public class ApplicationRuntimeModel implements IsleDeploymentModel {
-    /** deploys */
-    private final List<DeploymentDescriptor>        deploys         = new ArrayList<>();
-    /** inactive deploys */
-    private final List<DeploymentDescriptor>        inactiveDeploys = new ArrayList<>();
-    /** failed deployments */
-    private final List<DeploymentDescriptor>        failed          = new CopyOnWriteArrayList<>();
-    /** installed deployments */
-    private final List<DeploymentDescriptor>        installed       = new CopyOnWriteArrayList<>();
-    /** module name to deployment */
-    private final Map<String, DeploymentDescriptor> deploymentMap   = new LinkedHashMap<>();
-    /** deploy registry */
-    private final DeployRegistry                    deployRegistry  = new DeployRegistry();
-    /** module deployment validator */
-    private ModuleDeploymentValidator               moduleDeploymentValidator;
-    /** application name */
-    private String                                  appName;
-    /** resolved deployments */
-    private List<DeploymentDescriptor>              resolvedDeployments;
+public class ApplicationRuntimeModel {
+    /**
+     * deploys
+     */
+    private final List<DeploymentDescriptor> deploys = new ArrayList<>();
+    /**
+     * inactive deploys
+     */
+    private final List<DeploymentDescriptor> inactiveDeploys = new ArrayList<>();
+    /**
+     * failed deployments
+     */
+    private final List<DeploymentDescriptor> failed = new CopyOnWriteArrayList<>();
+    /**
+     * installed deployments
+     */
+    private final List<DeploymentDescriptor> installed = new CopyOnWriteArrayList<>();
+    /**
+     * module name to deployment
+     */
+    private final Map<String, DeploymentDescriptor> springPowered = new LinkedHashMap<>();
+    /**
+     * deploy registry
+     */
+    private final DeployRegistry deployRegistry = new DeployRegistry();
+    /**
+     * module deployment validator
+     */
+    private ModuleDeploymentValidator moduleDeploymentValidator;
+    /**
+     * application name
+     */
+    private String appName;
+    /**
+     * resolved deployments
+     */
+    private List<DeploymentDescriptor> resolvedDeployments;
 
-    private SofaRuntimeContext                      sofaRuntimeContext;
+    private SofaRuntimeContext sofaRuntimeContext;
 
     public SofaRuntimeContext getSofaRuntimeContext() {
         return sofaRuntimeContext;
@@ -74,10 +85,10 @@ public class ApplicationRuntimeModel implements IsleDeploymentModel {
         return this.moduleDeploymentValidator.isModuleDeployment(deploymentDescriptor);
     }
 
-    public DeploymentDescriptor addDeployment(DeploymentDescriptor dd) {
+    public void addDeployment(DeploymentDescriptor dd) {
         deploys.add(dd);
         deployRegistry.add(dd);
-        return deploymentMap.put(dd.getModuleName(), dd);
+        springPowered.put(dd.getModuleName(), dd);
     }
 
     public List<DeploymentDescriptor> getAllDeployments() {
@@ -94,12 +105,12 @@ public class ApplicationRuntimeModel implements IsleDeploymentModel {
         return inactiveDeploys;
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
     public String getAppName() {
         return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public List<DeploymentDescriptor> getResolvedDeployments() {
@@ -115,13 +126,8 @@ public class ApplicationRuntimeModel implements IsleDeploymentModel {
         return deployRegistry;
     }
 
-    public DeploymentDescriptor getDeploymentByName(String springParent) {
-        return deploymentMap.get(springParent);
-    }
-
-    @Deprecated
     public DeploymentDescriptor getSpringPoweredDeployment(String springParent) {
-        return deploymentMap.get(springParent);
+        return springPowered.get(springParent);
     }
 
     public void addFailed(DeploymentDescriptor failed) {
@@ -138,13 +144,5 @@ public class ApplicationRuntimeModel implements IsleDeploymentModel {
 
     public List<DeploymentDescriptor> getInstalled() {
         return installed;
-    }
-
-    @Override
-    @NonNull
-    public Map<String, ApplicationContext> getModuleApplicationContextMap() {
-        Map<String, ApplicationContext> result = new HashMap<>(8);
-        installed.forEach(deploymentDescriptor -> result.put(deploymentDescriptor.getModuleName(), deploymentDescriptor.getApplicationContext()));
-        return result;
     }
 }

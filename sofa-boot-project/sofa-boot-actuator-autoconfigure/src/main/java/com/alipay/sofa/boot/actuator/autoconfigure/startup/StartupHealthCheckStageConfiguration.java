@@ -17,43 +17,29 @@
 package com.alipay.sofa.boot.actuator.autoconfigure.startup;
 
 import com.alipay.sofa.boot.actuator.autoconfigure.health.SofaBootHealthCheckAutoConfiguration;
-import com.alipay.sofa.healthcheck.AfterReadinessCheckCallbackProcessor;
-import com.alipay.sofa.healthcheck.HealthCheckProperties;
-import com.alipay.sofa.healthcheck.HealthCheckerProcessor;
-import com.alipay.sofa.healthcheck.HealthIndicatorProcessor;
 import com.alipay.sofa.healthcheck.ReadinessCheckListener;
 import com.alipay.sofa.healthcheck.core.HealthChecker;
-import com.alipay.sofa.runtime.configure.SofaRuntimeConfigurationProperties;
 import com.alipay.sofa.startup.StartupReporter;
 import com.alipay.sofa.startup.stage.healthcheck.StartupReadinessCheckListener;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * @author huzijie
  * @version StartupHealthCheckStageConfiguration.java, v 0.1 2020年12月31日 5:09 下午 huzijie Exp $
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @AutoConfigureBefore(SofaBootHealthCheckAutoConfiguration.class)
-@ConditionalOnClass({ HealthChecker.class, StartupReporter.class })
+@ConditionalOnClass({HealthChecker.class, StartupReporter.class})
 public class StartupHealthCheckStageConfiguration {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
-    @ConditionalOnMissingBean(value = ReadinessCheckListener.class)
-    public StartupReadinessCheckListener startupReadinessCheckListener(Environment environment,
-                                                                       HealthCheckerProcessor healthCheckerProcessor,
-                                                                       HealthIndicatorProcessor healthIndicatorProcessor,
-                                                                       AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor,
-                                                                       SofaRuntimeConfigurationProperties sofaRuntimeConfigurationProperties,
-                                                                       HealthCheckProperties healthCheckProperties,
-                                                                       StartupReporter startupReporter) {
-        return new StartupReadinessCheckListener(environment, healthCheckerProcessor,
-            healthIndicatorProcessor, afterReadinessCheckCallbackProcessor,
-            sofaRuntimeConfigurationProperties, healthCheckProperties, startupReporter);
+    @ConditionalOnMissingBean(value = ReadinessCheckListener.class, search = SearchStrategy.CURRENT)
+    public StartupReadinessCheckListener startupReadinessCheckListener(StartupReporter startupReporter) {
+        return new StartupReadinessCheckListener(startupReporter);
     }
 }

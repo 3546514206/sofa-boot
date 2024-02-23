@@ -32,7 +32,7 @@ public @interface SofaReferenceBinding {
      *
      * @return timeout
      */
-    int timeout() default 0;
+    int timeout() default 3000;
 
     /**
      * retry times
@@ -101,13 +101,6 @@ public @interface SofaReferenceBinding {
     String registry() default "";
 
     /**
-     * the number of long connections per ref
-     *
-     * @return
-     */
-    int connectionNum() default 1;
-
-    /**
      * delay init connection
      *
      * @return
@@ -155,12 +148,14 @@ public @interface SofaReferenceBinding {
 
     /**
      * mock mode of reference
+     *
      * @return "local", "remote" or empty
      */
     String mockMode() default "";
 
     /**
      * get mock from spring beans
+     *
      * @return bean name
      */
     String mockBean() default "";

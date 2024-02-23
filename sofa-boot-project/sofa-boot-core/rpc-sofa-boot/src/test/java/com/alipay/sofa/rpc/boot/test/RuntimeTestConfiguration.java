@@ -49,13 +49,13 @@ import java.util.Set;
  * @author qilong.zql
  * @since 3.2.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class RuntimeTestConfiguration {
     @Bean
     public static BindingConverterFactory bindingConverterFactory() {
         BindingConverterFactory bindingConverterFactory = new BindingConverterFactoryImpl();
         bindingConverterFactory
-            .addBindingConverters(getClassesByServiceLoader(BindingConverter.class));
+                .addBindingConverters(getClassesByServiceLoader(BindingConverter.class));
         return bindingConverterFactory;
     }
 
@@ -74,15 +74,15 @@ public class RuntimeTestConfiguration {
                                                         BindingAdapterFactory bindingAdapterFactory) {
         ClientFactoryInternal clientFactoryInternal = new ClientFactoryImpl();
         SofaRuntimeManager sofaRuntimeManager = new StandardSofaRuntimeManager(appName, Thread
-            .currentThread().getContextClassLoader(), clientFactoryInternal);
+                .currentThread().getContextClassLoader(), clientFactoryInternal);
         sofaRuntimeManager.getComponentManager().registerComponentClient(
-            ReferenceClient.class,
-            new ReferenceClientImpl(sofaRuntimeManager.getSofaRuntimeContext(),
-                bindingConverterFactory, bindingAdapterFactory));
+                ReferenceClient.class,
+                new ReferenceClientImpl(sofaRuntimeManager.getSofaRuntimeContext(),
+                        bindingConverterFactory, bindingAdapterFactory));
         sofaRuntimeManager.getComponentManager().registerComponentClient(
-            ServiceClient.class,
-            new ServiceClientImpl(sofaRuntimeManager.getSofaRuntimeContext(),
-                bindingConverterFactory, bindingAdapterFactory));
+                ServiceClient.class,
+                new ServiceClientImpl(sofaRuntimeManager.getSofaRuntimeContext(),
+                        bindingConverterFactory, bindingAdapterFactory));
         SofaFramework.registerSofaRuntimeManager(sofaRuntimeManager);
         return sofaRuntimeManager;
     }
@@ -94,23 +94,17 @@ public class RuntimeTestConfiguration {
     }
 
     @Bean
-    public static RuntimeContextBeanFactoryPostProcessor runtimeContextBeanFactoryPostProcessor() {
-        return new RuntimeContextBeanFactoryPostProcessor();
+    public static RuntimeContextBeanFactoryPostProcessor runtimeContextBeanFactoryPostProcessor(BindingAdapterFactory bindingAdapterFactory,
+                                                                                                BindingConverterFactory bindingConverterFactory,
+                                                                                                SofaRuntimeContext sofaRuntimeContext) {
+        return new RuntimeContextBeanFactoryPostProcessor(bindingAdapterFactory,
+                bindingConverterFactory, sofaRuntimeContext);
     }
 
     @Bean
-    public static ServiceBeanFactoryPostProcessor serviceBeanFactoryPostProcessor() {
-        return new ServiceBeanFactoryPostProcessor();
-    }
-
-    @Bean
-    public AsyncProxyBeanPostProcessor asyncProxyBeanPostProcessor() {
-        return new AsyncProxyBeanPostProcessor();
-    }
-
-    @Bean
-    public AsyncTaskExecutionListener asyncTaskExecutionListener() {
-        return new AsyncTaskExecutionListener();
+    public static ServiceBeanFactoryPostProcessor serviceBeanFactoryPostProcessor(SofaRuntimeContext sofaRuntimeContext,
+                                                                                  BindingConverterFactory bindingConverterFactory) {
+        return new ServiceBeanFactoryPostProcessor(sofaRuntimeContext, bindingConverterFactory);
     }
 
     public static <T> Set<T> getClassesByServiceLoader(Class<T> clazz) {
@@ -121,5 +115,15 @@ public class RuntimeTestConfiguration {
             result.add(t);
         }
         return result;
+    }
+
+    @Bean
+    public AsyncProxyBeanPostProcessor asyncProxyBeanPostProcessor() {
+        return new AsyncProxyBeanPostProcessor();
+    }
+
+    @Bean
+    public AsyncTaskExecutionListener asyncTaskExecutionListener() {
+        return new AsyncTaskExecutionListener();
     }
 }

@@ -16,18 +16,17 @@
  */
 package com.alipay.sofa.tracer.boot.datasource;
 
-import java.lang.reflect.Method;
-
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alipay.common.tracer.core.utils.ReflectionUtils;
 import com.alipay.sofa.tracer.plugins.datasource.utils.DataSourceUtils;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.tomcat.jdbc.pool.DataSource;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.lang.reflect.Method;
 
 /**
  * @author qilong.zql
@@ -40,7 +39,7 @@ public class DataSourceUrlTest {
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setUrl("test-url");
         Method method = ReflectionUtils.findMethod(druidDataSource.getClass(),
-            DataSourceUtils.METHOD_GET_URL);
+                DataSourceUtils.METHOD_GET_URL);
         Assert.assertNotNull(method);
         Assert.assertEquals("test-url", method.invoke(druidDataSource));
 
@@ -48,7 +47,7 @@ public class DataSourceUrlTest {
         BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setUrl("test-url");
         method = ReflectionUtils.findMethod(basicDataSource.getClass(),
-            DataSourceUtils.METHOD_GET_URL);
+                DataSourceUtils.METHOD_GET_URL);
         Assert.assertNotNull(method);
         Assert.assertEquals("test-url", method.invoke(basicDataSource));
 
@@ -63,7 +62,7 @@ public class DataSourceUrlTest {
         ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
         comboPooledDataSource.setJdbcUrl("test-url");
         method = ReflectionUtils.findMethod(comboPooledDataSource.getClass(),
-            DataSourceUtils.METHOD_GET_JDBC_URL);
+                DataSourceUtils.METHOD_GET_JDBC_URL);
         Assert.assertNotNull(method);
         Assert.assertEquals("test-url", method.invoke(comboPooledDataSource));
 
@@ -71,7 +70,7 @@ public class DataSourceUrlTest {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setJdbcUrl("test-url");
         method = ReflectionUtils.findMethod(hikariDataSource.getClass(),
-            DataSourceUtils.METHOD_GET_JDBC_URL);
+                DataSourceUtils.METHOD_GET_JDBC_URL);
         Assert.assertNotNull(method);
         Assert.assertEquals("test-url", method.invoke(hikariDataSource));
     }

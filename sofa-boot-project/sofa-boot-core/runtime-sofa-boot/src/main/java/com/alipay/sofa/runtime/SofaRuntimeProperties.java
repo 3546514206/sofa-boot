@@ -18,7 +18,6 @@ package com.alipay.sofa.runtime;
 
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,27 +26,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SofaRuntimeProperties {
 
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      skipJvmReferenceHealthCheckMap       = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      skipExtensionHealthCheckMap          = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      disableJvmFirstMap                   = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      skipJvmSerializeMap                  = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      extensionFailureInsulatingMap        = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      manualReadinessCallbackMap           = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      skipAllComponentShutdownMap          = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ClassLoader, Boolean>      skipCommonComponentShutdownMap       = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<ClassLoader, Boolean> skipJvmReferenceHealthCheckMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<ClassLoader, Boolean> skipExtensionHealthCheckMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<ClassLoader, Boolean> disableJvmFirstMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<ClassLoader, Boolean> skipJvmSerializeMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<ClassLoader, Boolean> extensionFailureInsulatingMap = new ConcurrentHashMap<>();
 
-    private static final ConcurrentHashMap<ClassLoader, List<String>> skipJvmReferenceHealthCheckListMap   = new ConcurrentHashMap<>();
-
-    private static boolean                                            jvmFilterEnable                      = false;
-    private static boolean                                            serviceInterfaceTypeCheck            = false;
-    private static boolean                                            dynamicJvmServiceCacheEnable         = false;
-    private static boolean                                            serviceNameWithBeanId                = false;
-    private static boolean                                            referenceHealthCheckMoreDetailEnable = false;
-    private static boolean                                            serviceCanBeDuplicate                = true;
+    private static final ConcurrentHashMap<ClassLoader, Boolean> manualReadinessCallbackMap = new ConcurrentHashMap<>();
+    private static boolean jvmFilterEnable = false;
 
     public static boolean isManualReadinessCallback(ClassLoader classLoader) {
         return manualReadinessCallbackMap.get(classLoader) != null
-               && manualReadinessCallbackMap.get(classLoader);
+                && manualReadinessCallbackMap.get(classLoader);
     }
 
     public static void setManualReadinessCallback(ClassLoader classLoader,
@@ -63,29 +53,13 @@ public class SofaRuntimeProperties {
         SofaRuntimeProperties.jvmFilterEnable = jvmFilterEnable;
     }
 
-    public static boolean isDynamicJvmServiceCacheEnable() {
-        return dynamicJvmServiceCacheEnable;
-    }
-
-    public static void setDynamicJvmServiceCacheEnable(boolean dynamicJvmServiceCacheEnable) {
-        SofaRuntimeProperties.dynamicJvmServiceCacheEnable = dynamicJvmServiceCacheEnable;
-    }
-
-    public static boolean isServiceInterfaceTypeCheck() {
-        return serviceInterfaceTypeCheck;
-    }
-
-    public static void setServiceInterfaceTypeCheck(boolean serviceInterfaceTypeCheck) {
-        SofaRuntimeProperties.serviceInterfaceTypeCheck = serviceInterfaceTypeCheck;
-    }
-
     public static boolean isSkipJvmReferenceHealthCheck(SofaRuntimeContext sofaRuntimeContext) {
         return isSkipJvmReferenceHealthCheck(sofaRuntimeContext.getAppClassLoader());
     }
 
     public static boolean isSkipJvmReferenceHealthCheck(ClassLoader classLoader) {
         return skipJvmReferenceHealthCheckMap.get(classLoader) != null
-               && skipJvmReferenceHealthCheckMap.get(classLoader);
+                && skipJvmReferenceHealthCheckMap.get(classLoader);
     }
 
     public static void setSkipJvmReferenceHealthCheck(ClassLoader classLoader,
@@ -95,7 +69,7 @@ public class SofaRuntimeProperties {
 
     public static boolean isExtensionFailureInsulating(ClassLoader classLoader) {
         return extensionFailureInsulatingMap.get(classLoader) != null
-               && extensionFailureInsulatingMap.get(classLoader);
+                && extensionFailureInsulatingMap.get(classLoader);
     }
 
     public static void setExtensionFailureInsulating(ClassLoader classLoader,
@@ -109,7 +83,7 @@ public class SofaRuntimeProperties {
 
     public static boolean isSkipExtensionHealthCheck(ClassLoader classLoader) {
         return skipExtensionHealthCheckMap.get(classLoader) != null
-               && skipExtensionHealthCheckMap.get(classLoader);
+                && skipExtensionHealthCheckMap.get(classLoader);
     }
 
     public static void setSkipExtensionHealthCheck(ClassLoader classLoader,
@@ -133,9 +107,6 @@ public class SofaRuntimeProperties {
         skipJvmReferenceHealthCheckMap.remove(classLoader);
         disableJvmFirstMap.remove(classLoader);
         skipJvmSerializeMap.remove(classLoader);
-        skipAllComponentShutdownMap.remove(classLoader);
-        skipCommonComponentShutdownMap.remove(classLoader);
-        extensionFailureInsulatingMap.remove(classLoader);
     }
 
     public static Boolean isSkipJvmSerialize(ClassLoader classLoader) {
@@ -144,59 +115,5 @@ public class SofaRuntimeProperties {
 
     public static void setSkipJvmSerialize(ClassLoader classLoader, boolean skipJvmSerialize) {
         skipJvmSerializeMap.putIfAbsent(classLoader, skipJvmSerialize);
-    }
-
-    public static boolean isSkipAllComponentShutdown(ClassLoader classLoader) {
-        return skipAllComponentShutdownMap.get(classLoader) != null
-               && skipAllComponentShutdownMap.get(classLoader);
-    }
-
-    public static void setSkipAllComponentShutdown(ClassLoader classLoader,
-                                                   boolean skipAllComponentShutdown) {
-        skipAllComponentShutdownMap.putIfAbsent(classLoader, skipAllComponentShutdown);
-    }
-
-    public static boolean isSkipCommonComponentShutdown(ClassLoader classLoader) {
-        return skipCommonComponentShutdownMap.get(classLoader) != null
-               && skipCommonComponentShutdownMap.get(classLoader);
-    }
-
-    public static void setSkipCommonComponentShutdown(ClassLoader classLoader,
-                                                      boolean skipCommonComponentShutdown) {
-        skipCommonComponentShutdownMap.putIfAbsent(classLoader, skipCommonComponentShutdown);
-    }
-
-    public static boolean isServiceNameWithBeanId() {
-        return serviceNameWithBeanId;
-    }
-
-    public static void setServiceNameWithBeanId(boolean serviceNameWithBeanId) {
-        SofaRuntimeProperties.serviceNameWithBeanId = serviceNameWithBeanId;
-    }
-
-    public static void setSkipJvmReferenceHealthCheckList(ClassLoader classLoader,
-                                                          List<String> references) {
-        skipJvmReferenceHealthCheckListMap.put(classLoader, references);
-    }
-
-    public static List<String> getSkipJvmReferenceHealthCheckList(ClassLoader classLoader) {
-        return skipJvmReferenceHealthCheckListMap.get(classLoader);
-
-    }
-
-    public static boolean isReferenceHealthCheckMoreDetailEnable() {
-        return referenceHealthCheckMoreDetailEnable;
-    }
-
-    public static void setReferenceHealthCheckMoreDetailEnable(boolean referenceHealthCheckMoreDetailEnable) {
-        SofaRuntimeProperties.referenceHealthCheckMoreDetailEnable = referenceHealthCheckMoreDetailEnable;
-    }
-
-    public static boolean isServiceCanBeDuplicate() {
-        return serviceCanBeDuplicate;
-    }
-
-    public static void setServiceCanBeDuplicate(boolean serviceCanBeDuplicate) {
-        SofaRuntimeProperties.serviceCanBeDuplicate = serviceCanBeDuplicate;
     }
 }

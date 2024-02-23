@@ -18,23 +18,13 @@ package com.alipay.sofa.healthcheck;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:guaner.zzx@alipay.com">Alaneuler</a>
  * Created on 2020/5/18
  */
 @ConfigurationProperties(prefix = "com.alipay.sofa.boot")
 public class HealthCheckProperties {
-    private boolean                          healthCheckInsulator       = false;
-    private boolean                          healthCheckParallelEnable  = false;
-    private long                             healthCheckParallelTimeout = 120 * 1000;
-
-    private List<String>                     excludedIndicators;
-    private Map<String, HealthCheckerConfig> healthCheckerConfigs       = new HashMap<>();
-    private Map<String, HealthCheckerConfig> healthIndicatorConfigs     = new HashMap<>();
+    private boolean healthCheckInsulator = false;
 
     public boolean isHealthCheckInsulator() {
         return healthCheckInsulator;
@@ -42,45 +32,5 @@ public class HealthCheckProperties {
 
     public void setHealthCheckInsulator(boolean healthCheckInsulator) {
         this.healthCheckInsulator = healthCheckInsulator;
-    }
-
-    public List<String> getExcludedIndicators() {
-        return excludedIndicators;
-    }
-
-    public void setExcludedIndicators(List<String> excludedIndicators) {
-        this.excludedIndicators = excludedIndicators;
-    }
-
-    public boolean isHealthCheckParallelEnable() {
-        return healthCheckParallelEnable;
-    }
-
-    public void setHealthCheckParallelEnable(boolean healthCheckParallelEnable) {
-        this.healthCheckParallelEnable = healthCheckParallelEnable;
-    }
-
-    public long getHealthCheckParallelTimeout() {
-        return healthCheckParallelTimeout;
-    }
-
-    public void setHealthCheckParallelTimeout(long healthCheckParallelTimeout) {
-        this.healthCheckParallelTimeout = healthCheckParallelTimeout;
-    }
-
-    public Map<String, HealthCheckerConfig> getHealthCheckerConfigs() {
-        return healthCheckerConfigs;
-    }
-
-    public void setHealthCheckerConfigs(Map<String, HealthCheckerConfig> healthCheckerConfigs) {
-        this.healthCheckerConfigs = healthCheckerConfigs;
-    }
-
-    public Map<String, HealthCheckerConfig> getHealthIndicatorConfigs() {
-        return healthIndicatorConfigs;
-    }
-
-    public void setHealthIndicatorConfigs(Map<String, HealthCheckerConfig> healthIndicatorConfigs) {
-        this.healthIndicatorConfigs = healthIndicatorConfigs;
     }
 }

@@ -42,6 +42,11 @@ public class SpringContextImplementation implements Implementation {
     }
 
     @Override
+    public void setTarget(Object target) {
+        applicationContext = (ApplicationContext) target;
+    }
+
+    @Override
     public Class<?> getTargetClass() {
         return applicationContext.getClass();
     }
@@ -54,11 +59,6 @@ public class SpringContextImplementation implements Implementation {
     @Override
     public boolean isLazyInit() {
         return false;
-    }
-
-    @Override
-    public void setTarget(Object target) {
-        applicationContext = (ApplicationContext) target;
     }
 
     @Override

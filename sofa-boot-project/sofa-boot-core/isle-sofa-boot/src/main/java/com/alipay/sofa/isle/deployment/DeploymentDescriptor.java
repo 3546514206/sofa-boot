@@ -16,11 +16,11 @@
  */
 package com.alipay.sofa.isle.deployment;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * SOFABoot Module Deployment Descriptor.
@@ -73,18 +73,18 @@ public interface DeploymentDescriptor extends Comparable<DeploymentDescriptor> {
     ClassLoader getClassLoader();
 
     /**
-     * set application context of this SOFABoot module.
-     *
-     * @param context application context of this SOFABoot module.
-     */
-    void setApplicationContext(ApplicationContext context);
-
-    /**
      * get application context of this SOFABoot module.
      *
      * @return application context of this SOFABoot module
      */
     ApplicationContext getApplicationContext();
+
+    /**
+     * set application context of this SOFABoot module.
+     *
+     * @param context application context of this SOFABoot module.
+     */
+    void setApplicationContext(ApplicationContext context);
 
     /**
      * add installed spring xml of this SOFABoot module.

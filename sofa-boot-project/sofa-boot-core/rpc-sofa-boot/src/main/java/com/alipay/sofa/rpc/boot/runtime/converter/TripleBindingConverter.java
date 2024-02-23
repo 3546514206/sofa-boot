@@ -55,9 +55,9 @@ public class TripleBindingConverter extends RpcBindingConverter {
                               BindingConverterContext bindingConverterContext) {
         RpcBindingParam bindingParam = new TripleBindingParam();
         convertServiceAnnotation(bindingParam, sofaServiceAnnotation, sofaServiceBindingAnnotation,
-            bindingConverterContext);
+                bindingConverterContext);
         return new TripleBinding(bindingParam, bindingConverterContext.getApplicationContext(),
-            bindingConverterContext.isInBinding());
+                bindingConverterContext.isInBinding());
     }
 
     @Override
@@ -66,10 +66,10 @@ public class TripleBindingConverter extends RpcBindingConverter {
                               BindingConverterContext bindingConverterContext) {
         RpcBindingParam bindingParam = new TripleBindingParam();
         convertReferenceAnnotation(bindingParam, sofaReferenceBindingAnnotation,
-            bindingConverterContext);
+                bindingConverterContext);
 
         return new TripleBinding(bindingParam, bindingConverterContext.getApplicationContext(),
-            bindingConverterContext.isInBinding());
+                bindingConverterContext.isInBinding());
     }
 
     @Override

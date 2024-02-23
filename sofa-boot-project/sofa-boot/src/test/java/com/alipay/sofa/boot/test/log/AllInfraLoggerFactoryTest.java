@@ -16,13 +16,12 @@
  */
 package com.alipay.sofa.boot.test.log;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.alipay.sofa.boot.log.InfraLoggerFactory;
 import com.alipay.sofa.boot.test.log.base.BaseLogTest;
 import com.alipay.sofa.common.log.Constants;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * @author qilong.zql

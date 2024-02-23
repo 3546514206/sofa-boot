@@ -17,17 +17,13 @@
 package com.alipay.sofa.runtime.ext.component;
 
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
-import com.alipay.sofa.runtime.api.component.ComponentLifeCycle;
-import com.alipay.sofa.runtime.model.ComponentStatus;
+import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.model.ComponentType;
-import com.alipay.sofa.runtime.spi.component.AbstractComponent;
-import com.alipay.sofa.runtime.spi.component.ComponentInfo;
-import com.alipay.sofa.runtime.spi.component.ComponentManager;
-import com.alipay.sofa.runtime.spi.component.Implementation;
-import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
-import com.alipay.sofa.runtime.spi.spring.SpringImplementationImpl;
+import com.alipay.sofa.runtime.spi.component.*;
 import com.alipay.sofa.runtime.spi.util.ComponentNameFactory;
 import com.alipay.sofa.service.api.component.ExtensionPoint;
+
+import java.util.Map;
 
 /**
  * SOFA ExtensionPoint Component
@@ -37,11 +33,11 @@ import com.alipay.sofa.service.api.component.ExtensionPoint;
  * @since 2.6.0
  */
 public class ExtensionPointComponent extends AbstractComponent {
-    private static final String       LINK_SYMBOL                    = "$";
     public static final ComponentType EXTENSION_POINT_COMPONENT_TYPE = new ComponentType(
-                                                                         "extension-point");
+            "extension-point");
+    private static final String LINK_SYMBOL = "$";
     // Extension
-    private ExtensionPoint            extensionPoint;
+    private ExtensionPoint extensionPoint;
 
     public ExtensionPointComponent(ExtensionPoint extensionPoint,
                                    SofaRuntimeContext sofaRuntimeContext,
@@ -50,13 +46,18 @@ public class ExtensionPointComponent extends AbstractComponent {
         this.sofaRuntimeContext = sofaRuntimeContext;
         this.implementation = implementation;
         this.componentName = ComponentNameFactory.createComponentName(
-            EXTENSION_POINT_COMPONENT_TYPE, implementation.getName() + LINK_SYMBOL
-                                            + this.extensionPoint.getName());
+                EXTENSION_POINT_COMPONENT_TYPE, implementation.getName() + LINK_SYMBOL
+                        + this.extensionPoint.getName());
     }
 
     @Override
     public ComponentType getType() {
         return EXTENSION_POINT_COMPONENT_TYPE;
+    }
+
+    @Override
+    public Map<String, Property> getProperties() {
+        return null;
     }
 
     @Override
@@ -67,10 +68,10 @@ public class ExtensionPointComponent extends AbstractComponent {
 
         for (ComponentInfo componentInfo : componentManager.getComponents()) {
             if (componentInfo.getType().equals(ExtensionComponent.EXTENSION_COMPONENT_TYPE)
-                && !componentInfo.isResolved()) {
+                    && !componentInfo.isResolved()) {
                 ExtensionComponent extensionComponent = (ExtensionComponent) componentInfo;
                 if (extensionComponent.getExtension().getTargetComponentName()
-                    .equals(componentName)) {
+                        .equals(componentName)) {
                     componentManager.resolvePendingResolveComponent(componentInfo.getName());
                 }
             }
@@ -85,24 +86,12 @@ public class ExtensionPointComponent extends AbstractComponent {
             if (componentInfo.getType().equals(ExtensionComponent.EXTENSION_COMPONENT_TYPE)) {
                 ExtensionComponent extensionComponent = (ExtensionComponent) componentInfo;
                 if (extensionComponent.getExtension().getTargetComponentName()
-                    .equals(componentName)) {
+                        .equals(componentName)) {
                     componentManager.unregister(componentInfo);
                 }
             }
         }
-
-        if (componentStatus != ComponentStatus.ACTIVATED) {
-            return;
-        }
-
-        // skip deactivate SpringImplementationImpl because it's already deactivated
-        if (this.implementation != null && !(implementation instanceof SpringImplementationImpl)) {
-            Object target = this.implementation.getTarget();
-            if (target instanceof ComponentLifeCycle) {
-                ((ComponentLifeCycle) target).deactivate();
-            }
-        }
-        componentStatus = ComponentStatus.RESOLVED;
+        super.deactivate();
     }
 
     public ExtensionPoint getExtensionPoint() {

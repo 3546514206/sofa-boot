@@ -22,7 +22,6 @@ import com.alipay.sofa.rpc.api.future.SofaResponseFuture;
 import com.alipay.sofa.rpc.boot.container.ConsumerConfigContainer;
 import com.alipay.sofa.rpc.boot.runtime.param.RestBindingParam;
 import com.alipay.sofa.rpc.boot.test.bean.annotation.AnnotationService;
-import com.alipay.sofa.rpc.boot.test.bean.connectionnum.ConnectionNumService;
 import com.alipay.sofa.rpc.boot.test.bean.direct.DirectService;
 import com.alipay.sofa.rpc.boot.test.bean.dubbo.DubboService;
 import com.alipay.sofa.rpc.boot.test.bean.filter.FilterService;
@@ -39,7 +38,6 @@ import com.alipay.sofa.rpc.boot.test.bean.retry.RetriesServiceImpl;
 import com.alipay.sofa.rpc.boot.test.bean.threadpool.ThreadPoolService;
 import com.alipay.sofa.rpc.config.ConsumerConfig;
 import com.alipay.sofa.rpc.core.exception.SofaRpcException;
-import com.alipay.sofa.rpc.core.exception.SofaTimeOutException;
 import com.alipay.sofa.runtime.api.annotation.SofaClientFactory;
 import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
@@ -81,110 +79,68 @@ import java.util.concurrent.ConcurrentMap;
 @ImportResource("/spring/test_all.xml")
 public class SofaBootRpcAllTest {
     @Rule
-    public ExpectedException           thrown = ExpectedException.none();
+    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
-    private HelloSyncService           helloSyncService;
+    private HelloSyncService helloSyncService;
 
     @Autowired
-    private HelloFutureService         helloFutureService;
+    private HelloFutureService helloFutureService;
 
     @Autowired
-    private HelloCallbackService       helloCallbackService;
+    private HelloCallbackService helloCallbackService;
 
     @Autowired
-    private FilterService              filterService;
+    private FilterService filterService;
 
     @Autowired
-    private GlobalFilterService        globalFilterService;
+    private GlobalFilterService globalFilterService;
 
     @Autowired
-    private DirectService              directService;
+    private DirectService directService;
 
     @Autowired
-    private GenericService             genericService;
+    private GenericService genericService;
 
     @Autowired
-    @Qualifier("threadPoolService")
-    private ThreadPoolService          threadPoolService;
+    private ThreadPoolService threadPoolService;
 
     @Autowired
-    @Qualifier("threadPoolAnnotationService")
-    private ThreadPoolService          threadPoolAnnotationService;
+    private RestService restService;
 
     @Autowired
-    private RestService                restService;
+    private DubboService dubboService;
 
     @Autowired
-    private DubboService               dubboService;
+    private RetriesService retriesServiceBolt;
 
     @Autowired
-    private RetriesService             retriesServiceBolt;
+    private RetriesService retriesServiceDubbo;
 
     @Autowired
-    private RetriesService             retriesServiceDubbo;
+    private LazyService lazyServiceBolt;
 
     @Autowired
-    private LazyService                lazyServiceBolt;
-
-    @Autowired
-    private LazyService                lazyServiceDubbo;
-
-    @Autowired
-    private ConnectionNumService       connectionNumService;
+    private LazyService lazyServiceDubbo;
 
     @Autowired
     @Qualifier("sofaGreeterTripleRef")
     private SofaGreeterTriple.IGreeter sofaGreeterTripleRef;
 
     @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt"), jvmFirst = false, uniqueId = "bolt")
-    private AnnotationService          annotationService;
+    private AnnotationService annotationService;
 
     @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", serializeType = "protobuf"), jvmFirst = false, uniqueId = "pb")
-    private AnnotationService          annotationServicePb;
+    private AnnotationService annotationServicePb;
 
     @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", loadBalancer = "roundRobin"), uniqueId = "loadbalancer")
-    private AnnotationService          annotationLoadBalancerService;
-
-    @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt"), jvmFirst = false, uniqueId = "timeout")
-    private AnnotationService          annotationProviderTimeoutService;
-
-    @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", timeout = 1000), jvmFirst = false, uniqueId = "timeout")
-    private AnnotationService          annotationConsumerTimeoutService;
-
-    @SofaReference(binding = @SofaReferenceBinding(bindingType = "rest", connectionNum = 100), jvmFirst = false, uniqueId = "connectionNum")
-    private AnnotationService          annotationConsumerConnectionNumService;
+    private AnnotationService annotationLoadBalancerService;
 
     @SofaClientFactory
-    private ClientFactory              clientFactory;
+    private ClientFactory clientFactory;
 
     @Autowired
-    private ConsumerConfigContainer    consumerConfigContainer;
-
-    @Test
-    public void testTimeoutPriority() throws InterruptedException {
-
-        //If all timeout configuration is not configured, the default timeout time 3000ms will take effect.The interface is ok.
-        Assert.assertEquals("sleep 2000 ms", annotationService.testTimeout(2000));
-
-        try {
-            //If all timeout configuration is not configured, the default timeout time 3000ms will take effect.The call will be time out.
-            annotationService.testTimeout(4000);
-            Assert.fail();
-        } catch (SofaTimeOutException e) {
-
-        }
-        //Only configure the provider side timeout 5000ms, and the default timeout time 3000ms will be invalid.
-        //Assert.assertEquals("sleep 4000 ms", annotationProviderTimeoutService.testTimeout(4000));
-        try {
-            //Configured the consumer side timeout time of 1000ms, the provider side timeout time of 5000ms and the default timeout time of 3000ms are invalid.
-            annotationConsumerTimeoutService.testTimeout(2000);
-            Assert.fail();
-        } catch (SofaTimeOutException e) {
-
-        }
-
-    }
+    private ConsumerConfigContainer consumerConfigContainer;
 
     @Test
     public void testInvoke() throws InterruptedException {
@@ -201,7 +157,7 @@ public class SofaBootRpcAllTest {
     @Test
     public void testGlobalFilter() {
         Assert.assertEquals("globalFilter_change",
-            globalFilterService.sayGlobalFilter("globalFilter"));
+                globalFilterService.sayGlobalFilter("globalFilter"));
     }
 
     @Test
@@ -221,15 +177,15 @@ public class SofaBootRpcAllTest {
     @Test
     public void testGeneric() {
         GenericObject genericObject = new GenericObject(
-            "com.alipay.sofa.rpc.boot.test.bean.generic.GenericParamModel");
+                "com.alipay.sofa.rpc.boot.test.bean.generic.GenericParamModel");
         genericObject.putField("name", "Bible");
 
         GenericObject result = (GenericObject) genericService.$genericInvoke("sayGeneric",
-            new String[] { "com.alipay.sofa.rpc.boot.test.bean.generic.GenericParamModel" },
-            new Object[] { genericObject });
+                new String[]{"com.alipay.sofa.rpc.boot.test.bean.generic.GenericParamModel"},
+                new Object[]{genericObject});
 
         Assert.assertEquals("com.alipay.sofa.rpc.boot.test.bean.generic.GenericResultModel",
-            result.getType());
+                result.getType());
         Assert.assertEquals("Bible", result.getField("name"));
         Assert.assertEquals("sample generic value", result.getField("value"));
     }
@@ -237,9 +193,8 @@ public class SofaBootRpcAllTest {
     @Test
     public void testThreadPool() {
         Assert.assertTrue(threadPoolService.sayThreadPool("threadPool").startsWith(
-            "threadPool[SOFA-customerThreadPool_name"));
-        Assert.assertTrue(threadPoolAnnotationService.sayThreadPool("threadPool").startsWith(
-            "threadPool[SOFA-customerThreadPool_name"));
+                "threadPool[SOFA-customerThreadPool_name"));
+
     }
 
     @Test
@@ -275,27 +230,22 @@ public class SofaBootRpcAllTest {
     @Test
     public void testAnnotationProtobuf() {
         thrown.expect(SofaRpcException.class);
-        if (System.getProperty("java.version").startsWith("1.8")) {
-            thrown.expectMessage("com.alipay.remoting.exception.SerializationException: 0");
-        } else {
-            thrown
-                .expectMessage("com.alipay.remoting.exception.SerializationException: Index 0 out of bounds for length 0");
-        }
+        thrown.expectMessage("com.alipay.remoting.exception.SerializationException: 0");
         annotationServicePb.hello();
     }
 
     @Test
     public void testLoadBalancerAnnotation() throws NoSuchFieldException, IllegalAccessException {
         Field consumerConfigMapField = ConsumerConfigContainer.class
-            .getDeclaredField("consumerConfigMap");
+                .getDeclaredField("consumerConfigMap");
         consumerConfigMapField.setAccessible(true);
         ConcurrentMap<Binding, ConsumerConfig> consumerConfigMap = (ConcurrentMap<Binding, ConsumerConfig>) consumerConfigMapField
-            .get(consumerConfigContainer);
+                .get(consumerConfigContainer);
 
         boolean found = false;
         for (ConsumerConfig consumerConfig : consumerConfigMap.values()) {
             if ("loadbalancer".equals(consumerConfig.getUniqueId())
-                && AnnotationService.class.getName().equals(consumerConfig.getInterfaceId())) {
+                    && AnnotationService.class.getName().equals(consumerConfig.getInterfaceId())) {
                 found = true;
                 Assert.assertEquals("roundRobin", consumerConfig.getLoadBalancer());
             }
@@ -305,38 +255,13 @@ public class SofaBootRpcAllTest {
     }
 
     @Test
-    public void testConnectionNum() throws NoSuchFieldException, IllegalAccessException {
-        Field consumerConfigMapField = ConsumerConfigContainer.class
-            .getDeclaredField("consumerConfigMap");
-        consumerConfigMapField.setAccessible(true);
-        ConcurrentMap<Binding, ConsumerConfig> consumerConfigMap = (ConcurrentMap<Binding, ConsumerConfig>) consumerConfigMapField
-            .get(consumerConfigContainer);
-
-        boolean found1 = false;
-        boolean found2 = false;
-        for (ConsumerConfig consumerConfig : consumerConfigMap.values()) {
-            if ("connectionNum".equals(consumerConfig.getUniqueId())
-                && AnnotationService.class.getName().equals(consumerConfig.getInterfaceId())) {
-                found1 = true;
-                Assert.assertEquals(100, consumerConfig.getConnectionNum());
-            } else if (connectionNumService.getClass().getName()
-                .startsWith(consumerConfig.getInterfaceId())) {
-                found2 = true;
-                Assert.assertEquals(300, consumerConfig.getConnectionNum());
-            }
-        }
-        Assert.assertTrue("Found annotation reference", found1);
-        Assert.assertTrue("Found xml reference", found2);
-    }
-
-    @Test
     public void testRestSwagger() throws IOException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpUriRequest request = new HttpGet("http://localhost:8341/swagger/openapi");
         HttpResponse response = httpClient.execute(request);
         Assert.assertEquals(200, response.getStatusLine().getStatusCode());
         Assert.assertTrue(EntityUtils.toString(response.getEntity())
-            .contains("/webapi/restService"));
+                .contains("/webapi/restService"));
     }
 
     @Test

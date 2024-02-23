@@ -27,7 +27,7 @@ import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 public interface ComponentLifeCycle {
     /**
      * Component lifecycle event occurred when component is activated.
-     * 
+     *
      * @throws ServiceRuntimeException
      */
     void activate() throws ServiceRuntimeException;

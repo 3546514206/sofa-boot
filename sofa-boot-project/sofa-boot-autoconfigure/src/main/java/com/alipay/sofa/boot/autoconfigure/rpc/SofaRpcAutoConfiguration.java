@@ -17,17 +17,7 @@
 package com.alipay.sofa.boot.autoconfigure.rpc;
 
 import com.alipay.sofa.healthcheck.startup.ReadinessCheckCallback;
-import com.alipay.sofa.rpc.boot.config.ConsulConfigurator;
-import com.alipay.sofa.rpc.boot.config.FaultToleranceConfigurator;
-import com.alipay.sofa.rpc.boot.config.LocalFileConfigurator;
-import com.alipay.sofa.rpc.boot.config.MeshConfigurator;
-import com.alipay.sofa.rpc.boot.config.MulticastConfigurator;
-import com.alipay.sofa.rpc.boot.config.NacosConfigurator;
-import com.alipay.sofa.rpc.boot.config.RegistryConfigureProcessor;
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcProperties;
-import com.alipay.sofa.rpc.boot.config.SofaRegistryConfigurator;
-import com.alipay.sofa.rpc.boot.config.ZookeeperConfigurator;
+import com.alipay.sofa.rpc.boot.config.*;
 import com.alipay.sofa.rpc.boot.container.ConsumerConfigContainer;
 import com.alipay.sofa.rpc.boot.container.ProviderConfigContainer;
 import com.alipay.sofa.rpc.boot.container.RegistryConfigContainer;
@@ -38,16 +28,11 @@ import com.alipay.sofa.rpc.boot.context.SofaBootRpcStartListener;
 import com.alipay.sofa.rpc.boot.health.RpcAfterHealthCheckCallback;
 import com.alipay.sofa.rpc.boot.runtime.adapter.helper.ConsumerConfigHelper;
 import com.alipay.sofa.rpc.boot.runtime.adapter.helper.ProviderConfigHelper;
-import com.alipay.sofa.rpc.boot.runtime.adapter.processor.ConsumerConfigProcessor;
-import com.alipay.sofa.rpc.boot.runtime.adapter.processor.ConsumerMockProcessor;
-import com.alipay.sofa.rpc.boot.runtime.adapter.processor.DynamicConfigProcessor;
-import com.alipay.sofa.rpc.boot.runtime.adapter.processor.ProcessorContainer;
-import com.alipay.sofa.rpc.boot.runtime.adapter.processor.ProviderConfigProcessor;
-import com.alipay.sofa.rpc.boot.runtime.adapter.processor.ProviderRegisterProcessor;
+import com.alipay.sofa.rpc.boot.runtime.adapter.processor.*;
 import com.alipay.sofa.rpc.boot.swagger.BoltSwaggerServiceApplicationListener;
 import com.alipay.sofa.rpc.boot.swagger.SwaggerServiceApplicationListener;
 import com.alipay.sofa.rpc.config.JAXRSProviderManager;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -58,7 +43,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
 
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseFilter;
@@ -71,27 +55,20 @@ import java.util.Map;
 /**
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @EnableConfigurationProperties(SofaBootRpcProperties.class)
 @ConditionalOnClass(SofaBootRpcProperties.class)
 public class SofaRpcAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    public ProviderConfigContainer providerConfigContainer(SofaBootRpcProperties sofaBootRpcProperties) {
-        ProviderConfigContainer providerConfigContainer = new ProviderConfigContainer();
-        providerConfigContainer.setProviderRegisterWhiteList(sofaBootRpcProperties
-            .getProviderRegisterWhiteList());
-        providerConfigContainer.setProviderRegisterBlackList(sofaBootRpcProperties
-            .getProviderRegisterBlackList());
-        return providerConfigContainer;
+    public ProviderConfigContainer providerConfigContainer() {
+        return new ProviderConfigContainer();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public FaultToleranceConfigurator faultToleranceConfigurator(SofaBootRpcProperties properties,
-                                                                 Environment environment) {
-        return new FaultToleranceConfigurator(properties,
-            environment.getProperty(SofaBootRpcConfigConstants.APP_NAME));
+    public FaultToleranceConfigurator faultToleranceConfigurator() {
+        return new FaultToleranceConfigurator();
     }
 
     @Bean
@@ -102,27 +79,24 @@ public class SofaRpcAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RegistryConfigContainer registryConfigContainer(SofaBootRpcProperties sofaBootRpcProperties,
-                                                           @Qualifier("registryConfigMap") Map<String, RegistryConfigureProcessor> registryConfigMap) {
-        return new RegistryConfigContainer(sofaBootRpcProperties, registryConfigMap);
+    public RegistryConfigContainer registryConfigContainer() {
+        return new RegistryConfigContainer();
     }
 
     @Bean
     @ConditionalOnMissingBean
     public ConsumerConfigHelper consumerConfigHelper(SofaBootRpcProperties sofaBootRpcProperties,
                                                      @Lazy RegistryConfigContainer registryConfigContainer,
-                                                     Environment environment) {
-        String appName = environment.getProperty(SofaBootRpcConfigConstants.APP_NAME);
+                                                     @Value("${"
+                                                             + SofaBootRpcConfigConstants.APP_NAME
+                                                             + "}") String appName) {
         return new ConsumerConfigHelper(sofaBootRpcProperties, registryConfigContainer, appName);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public ProviderConfigHelper providerConfigHelper(ServerConfigContainer serverConfigContainer,
-                                                     RegistryConfigContainer registryConfigContainer,
-                                                     Environment environment) {
-        String appName = environment.getProperty(SofaBootRpcConfigConstants.APP_NAME);
-        return new ProviderConfigHelper(serverConfigContainer, registryConfigContainer, appName);
+    public ProviderConfigHelper providerConfigHelper() {
+        return new ProviderConfigHelper();
     }
 
     @Bean
@@ -190,7 +164,7 @@ public class SofaRpcAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingClass({ "com.alipay.sofa.healthcheck.startup.ReadinessCheckCallback" })
+    @ConditionalOnMissingClass({"com.alipay.sofa.healthcheck.startup.ReadinessCheckCallback"})
     @ConditionalOnClass(SofaBootRpcProperties.class)
     public ApplicationContextRefreshedListener applicationContextRefreshedListener() {
         return new ApplicationContextRefreshedListener();
@@ -198,13 +172,8 @@ public class SofaRpcAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public SofaBootRpcStartListener sofaBootRpcStartListener(SofaBootRpcProperties sofaBootRpcProperties,
-                                                             ProviderConfigContainer providerConfigContainer,
-                                                             FaultToleranceConfigurator faultToleranceConfigurator,
-                                                             ServerConfigContainer serverConfigContainer,
-                                                             RegistryConfigContainer registryConfigContainer) {
-        return new SofaBootRpcStartListener(sofaBootRpcProperties, providerConfigContainer,
-            faultToleranceConfigurator, serverConfigContainer, registryConfigContainer);
+    public SofaBootRpcStartListener sofaBootRpcStartListener() {
+        return new SofaBootRpcStartListener();
     }
 
     @Bean
@@ -217,15 +186,6 @@ public class SofaRpcAutoConfiguration {
     @ConditionalOnProperty(name = "com.alipay.sofa.rpc.enable-swagger", havingValue = "true")
     public ApplicationListener boltSwaggerServiceApplicationListener() {
         return new BoltSwaggerServiceApplicationListener();
-    }
-
-    @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass({ SofaBootRpcProperties.class, ReadinessCheckCallback.class, Health.class })
-    public static class RpcAfterHealthCheckCallbackConfiguration {
-        @Bean
-        public RpcAfterHealthCheckCallback rpcAfterHealthCheckCallback() {
-            return new RpcAfterHealthCheckCallback();
-        }
     }
 
     @Bean
@@ -277,20 +237,22 @@ public class SofaRpcAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "com.alipay.sofa.rpc.mock-url")
-    public ConsumerMockProcessor consumerMockProcessor(Environment environment) {
-        return new ConsumerMockProcessor(environment.getProperty("com.alipay.sofa.rpc.mock-url"));
+    public ConsumerMockProcessor consumerMockProcessor() {
+        return new ConsumerMockProcessor();
     }
 
     @Bean
     @ConditionalOnProperty(name = "com.alipay.sofa.rpc.dynamic-config")
-    public DynamicConfigProcessor dynamicConfigProcessor(Environment environment) {
-        return new DynamicConfigProcessor(
-            environment.getProperty("com.alipay.sofa.rpc.dynamic-config"));
+    public DynamicConfigProcessor dynamicConfigProcessor() {
+        return new DynamicConfigProcessor();
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public ProviderRegisterProcessor providerRegisterProcessor() {
-        return new ProviderRegisterProcessor();
+    @Configuration
+    @ConditionalOnClass({SofaBootRpcProperties.class, ReadinessCheckCallback.class, Health.class})
+    public static class RpcAfterHealthCheckCallbackConfiguration {
+        @Bean
+        public RpcAfterHealthCheckCallback rpcAfterHealthCheckCallback() {
+            return new RpcAfterHealthCheckCallback();
+        }
     }
 }

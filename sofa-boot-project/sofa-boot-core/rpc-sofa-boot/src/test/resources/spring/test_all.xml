@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:sofa="http://sofastack.io/schema/sofaboot"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://sofastack.io/schema/sofaboot http://sofastack.io/schema/sofaboot.xsd
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
@@ -31,7 +31,8 @@
 
     <!-- invoke callback -->
     <bean id="helloCallbackServiceImpl" class="com.alipay.sofa.rpc.boot.test.bean.invoke.HelloCallbackServiceImpl"/>
-    <sofa:service ref="helloCallbackServiceImpl" interface="com.alipay.sofa.rpc.boot.test.bean.invoke.HelloCallbackService">
+    <sofa:service ref="helloCallbackServiceImpl"
+                  interface="com.alipay.sofa.rpc.boot.test.bean.invoke.HelloCallbackService">
         <sofa:binding.bolt/>
     </sofa:service>
     <bean id="callbackImpl" class="com.alipay.sofa.rpc.boot.test.bean.invoke.CallbackImpl"/>
@@ -50,7 +51,8 @@
             <sofa:global-attrs filter="testFilter"/>
         </sofa:binding.bolt>
     </sofa:service>
-    <sofa:reference jvm-first="false" id="filterService" interface="com.alipay.sofa.rpc.boot.test.bean.filter.FilterService">
+    <sofa:reference jvm-first="false" id="filterService"
+                    interface="com.alipay.sofa.rpc.boot.test.bean.filter.FilterService">
         <sofa:binding.bolt/>
     </sofa:reference>
 
@@ -59,7 +61,8 @@
     <bean id="testGlobalFilter" class="com.alipay.sofa.rpc.boot.test.bean.globalfilter.TestGlobalFilter"/>
 
     <bean id="globalFilterServiceImpl" class="com.alipay.sofa.rpc.boot.test.bean.globalfilter.GlobalFilterServiceImpl"/>
-    <sofa:service ref="globalFilterServiceImpl" interface="com.alipay.sofa.rpc.boot.test.bean.globalfilter.GlobalFilterService">
+    <sofa:service ref="globalFilterServiceImpl"
+                  interface="com.alipay.sofa.rpc.boot.test.bean.globalfilter.GlobalFilterService">
         <sofa:binding.bolt/>
     </sofa:service>
     <sofa:reference jvm-first="false" id="globalFilterService"
@@ -72,7 +75,8 @@
     <sofa:service ref="directServiceImpl" interface="com.alipay.sofa.rpc.boot.test.bean.direct.DirectService">
         <sofa:binding.bolt/>
     </sofa:service>
-    <sofa:reference jvm-first="false" id="directService" interface="com.alipay.sofa.rpc.boot.test.bean.direct.DirectService">
+    <sofa:reference jvm-first="false" id="directService"
+                    interface="com.alipay.sofa.rpc.boot.test.bean.direct.DirectService">
         <sofa:binding.bolt>
             <sofa:route target-url="bolt://127.0.0.1:12200"/>
         </sofa:binding.bolt>
@@ -97,16 +101,13 @@
         <property name="threadPoolName" value="customerThreadPool_name"/>
     </bean>
     <bean id="threadPoolServiceImpl" class="com.alipay.sofa.rpc.boot.test.bean.threadpool.ThreadPoolServiceImpl"/>
-    <sofa:service ref="threadPoolServiceImpl" interface="com.alipay.sofa.rpc.boot.test.bean.threadpool.ThreadPoolService">
+    <sofa:service ref="threadPoolServiceImpl"
+                  interface="com.alipay.sofa.rpc.boot.test.bean.threadpool.ThreadPoolService">
         <sofa:binding.bolt>
             <sofa:global-attrs thread-pool-ref="customerThreadPool"/>
         </sofa:binding.bolt>
     </sofa:service>
     <sofa:reference jvm-first="false" id="threadPoolService"
-                    interface="com.alipay.sofa.rpc.boot.test.bean.threadpool.ThreadPoolService">
-        <sofa:binding.bolt/>
-    </sofa:reference>
-    <sofa:reference jvm-first="false" id="threadPoolAnnotationService" unique-id="annotation"
                     interface="com.alipay.sofa.rpc.boot.test.bean.threadpool.ThreadPoolService">
         <sofa:binding.bolt/>
     </sofa:reference>
@@ -125,7 +126,8 @@
     <sofa:service ref="dubboServiceImpl" interface="com.alipay.sofa.rpc.boot.test.bean.dubbo.DubboService">
         <sofa:binding.dubbo/>
     </sofa:service>
-    <sofa:reference jvm-first="false" id="dubboService" interface="com.alipay.sofa.rpc.boot.test.bean.dubbo.DubboService">
+    <sofa:reference jvm-first="false" id="dubboService"
+                    interface="com.alipay.sofa.rpc.boot.test.bean.dubbo.DubboService">
         <sofa:binding.dubbo/>
     </sofa:reference>
 
@@ -135,7 +137,8 @@
         <sofa:binding.bolt/>
         <sofa:binding.dubbo/>
     </sofa:service>
-    <sofa:reference jvm-first="false" id="retriesServiceBolt" interface="com.alipay.sofa.rpc.boot.test.bean.retry.RetriesService">
+    <sofa:reference jvm-first="false" id="retriesServiceBolt"
+                    interface="com.alipay.sofa.rpc.boot.test.bean.retry.RetriesService">
         <sofa:binding.bolt>
             <sofa:global-attrs retries="2"/>
         </sofa:binding.bolt>
@@ -154,28 +157,18 @@
         <sofa:binding.dubbo/>
     </sofa:service>
 
-    <sofa:reference jvm-first="false" id="lazyServiceBolt" interface="com.alipay.sofa.rpc.boot.test.bean.lazy.LazyService">
+    <sofa:reference jvm-first="false" id="lazyServiceBolt"
+                    interface="com.alipay.sofa.rpc.boot.test.bean.lazy.LazyService">
         <sofa:binding.bolt>
             <sofa:global-attrs lazy="true"/>
         </sofa:binding.bolt>
     </sofa:reference>
 
-    <sofa:reference jvm-first="false" id="lazyServiceDubbo" interface="com.alipay.sofa.rpc.boot.test.bean.lazy.LazyService">
+    <sofa:reference jvm-first="false" id="lazyServiceDubbo"
+                    interface="com.alipay.sofa.rpc.boot.test.bean.lazy.LazyService">
         <sofa:binding.dubbo>
             <sofa:global-attrs lazy="true"/>
         </sofa:binding.dubbo>
-    </sofa:reference>
-
-    <!-- connectionNum -->
-    <bean id="connectionNumServiceImpl" class="com.alipay.sofa.rpc.boot.test.bean.connectionnum.ConnectionNumServiceImpl"/>
-    <sofa:service ref="connectionNumServiceImpl" interface="com.alipay.sofa.rpc.boot.test.bean.connectionnum.ConnectionNumService">
-        <sofa:binding.rest/>
-    </sofa:service>
-
-    <sofa:reference jvm-first="false" id="connectionNumService" interface="com.alipay.sofa.rpc.boot.test.bean.connectionnum.ConnectionNumService">
-        <sofa:binding.rest>
-            <sofa:global-attrs connect.num="300"/>
-        </sofa:binding.rest>
     </sofa:reference>
 
 

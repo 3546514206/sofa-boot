@@ -45,15 +45,19 @@ import static com.alipay.common.tracer.core.configuration.SofaTracerConfiguratio
  * @since 2.2.0
  */
 public class DataSourceBeanFactoryPostProcessor implements BeanFactoryPostProcessor,
-                                               PriorityOrdered, EnvironmentAware {
+        PriorityOrdered, EnvironmentAware {
 
     public static final String SOFA_TRACER_DATASOURCE = "s_t_d_s_";
 
-    private Environment        environment;
+    private Environment environment;
+
+    public static String transformDatasourceBeanName(String originName) {
+        return SOFA_TRACER_DATASOURCE + originName;
+    }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
-                                                                                   throws BeansException {
+            throws BeansException {
         for (String beanName : getBeanNames(beanFactory, DataSource.class)) {
             if (beanName.startsWith(SOFA_TRACER_DATASOURCE)) {
                 continue;
@@ -61,19 +65,19 @@ public class DataSourceBeanFactoryPostProcessor implements BeanFactoryPostProces
             BeanDefinition dataSource = getBeanDefinition(beanName, beanFactory);
             if (DataSourceUtils.isDruidDataSource(dataSource.getBeanClassName())) {
                 createDataSourceProxy(beanFactory, beanName, dataSource,
-                    DataSourceUtils.getDruidJdbcUrlKey());
+                        DataSourceUtils.getDruidJdbcUrlKey());
             } else if (DataSourceUtils.isC3p0DataSource(dataSource.getBeanClassName())) {
                 createDataSourceProxy(beanFactory, beanName, dataSource,
-                    DataSourceUtils.getC3p0JdbcUrlKey());
+                        DataSourceUtils.getC3p0JdbcUrlKey());
             } else if (DataSourceUtils.isDbcpDataSource(dataSource.getBeanClassName())) {
                 createDataSourceProxy(beanFactory, beanName, dataSource,
-                    DataSourceUtils.getDbcpJdbcUrlKey());
+                        DataSourceUtils.getDbcpJdbcUrlKey());
             } else if (DataSourceUtils.isTomcatDataSource(dataSource.getBeanClassName())) {
                 createDataSourceProxy(beanFactory, beanName, dataSource,
-                    DataSourceUtils.getTomcatJdbcUrlKey());
+                        DataSourceUtils.getTomcatJdbcUrlKey());
             } else if (DataSourceUtils.isHikariDataSource(dataSource.getBeanClassName())) {
                 createDataSourceProxy(beanFactory, beanName, dataSource,
-                    DataSourceUtils.getHikariJdbcUrlKey());
+                        DataSourceUtils.getHikariJdbcUrlKey());
             }
         }
     }
@@ -81,7 +85,7 @@ public class DataSourceBeanFactoryPostProcessor implements BeanFactoryPostProces
     private Iterable<String> getBeanNames(ListableBeanFactory beanFactory, Class clazzType) {
         Set<String> names = new HashSet<>();
         names.addAll(Arrays.asList(BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory,
-            clazzType, true, false)));
+                clazzType, true, false)));
         return names;
     }
 
@@ -93,7 +97,7 @@ public class DataSourceBeanFactoryPostProcessor implements BeanFactoryPostProces
             BeanFactory parentBeanFactory = beanFactory.getParentBeanFactory();
             if (parentBeanFactory instanceof ConfigurableListableBeanFactory) {
                 return getBeanDefinition(beanName,
-                    (ConfigurableListableBeanFactory) parentBeanFactory);
+                        (ConfigurableListableBeanFactory) parentBeanFactory);
             }
             throw ex;
         }
@@ -108,7 +112,7 @@ public class DataSourceBeanFactoryPostProcessor implements BeanFactoryPostProces
         boolean isPrimary = originDataSource.isPrimary();
         originDataSource.setPrimary(false);
         beanDefinitionRegistry.registerBeanDefinition(transformDatasourceBeanName(beanName),
-            originDataSource);
+                originDataSource);
         // register proxied datasource
         RootBeanDefinition proxiedBeanDefinition = new RootBeanDefinition(SmartDataSource.class);
         proxiedBeanDefinition.setRole(BeanDefinition.ROLE_APPLICATION);
@@ -122,9 +126,9 @@ public class DataSourceBeanFactoryPostProcessor implements BeanFactoryPostProces
         values.add("appName", appName);
         values.add("delegate", new RuntimeBeanReference(transformDatasourceBeanName(beanName)));
         values.add("dbType",
-            DataSourceUtils.resolveDbTypeFromUrl(unwrapPropertyValue(originValues.get(jdbcUrl))));
+                DataSourceUtils.resolveDbTypeFromUrl(unwrapPropertyValue(originValues.get(jdbcUrl))));
         values.add("database",
-            DataSourceUtils.resolveDatabaseFromUrl(unwrapPropertyValue(originValues.get(jdbcUrl))));
+                DataSourceUtils.resolveDatabaseFromUrl(unwrapPropertyValue(originValues.get(jdbcUrl))));
         proxiedBeanDefinition.setPropertyValues(values);
         beanDefinitionRegistry.registerBeanDefinition(beanName, proxiedBeanDefinition);
     }
@@ -136,11 +140,7 @@ public class DataSourceBeanFactoryPostProcessor implements BeanFactoryPostProces
             return (String) propertyValue;
         }
         throw new IllegalArgumentException(
-            "The property value of jdbcUrl must be the type of String or TypedStringValue");
-    }
-
-    public static String transformDatasourceBeanName(String originName) {
-        return SOFA_TRACER_DATASOURCE + originName;
+                "The property value of jdbcUrl must be the type of String or TypedStringValue");
     }
 
     @Override

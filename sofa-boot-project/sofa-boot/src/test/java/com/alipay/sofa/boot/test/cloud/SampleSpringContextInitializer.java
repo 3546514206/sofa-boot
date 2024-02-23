@@ -16,25 +16,24 @@
  */
 package com.alipay.sofa.boot.test.cloud;
 
-import java.util.concurrent.atomic.AtomicLong;
-
+import com.alipay.sofa.boot.util.SofaBootEnvUtils;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import com.alipay.sofa.boot.util.SofaBootEnvUtils;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author qilong.zql
  * @author 2.5.0
  */
 public class SampleSpringContextInitializer
-                                           implements
-                                           ApplicationContextInitializer<ConfigurableApplicationContext> {
+        implements
+        ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-    public static AtomicLong              bootstrapContext   = new AtomicLong(0L);
+    public static AtomicLong bootstrapContext = new AtomicLong(0L);
 
-    public static AtomicLong              applicationContext = new AtomicLong(0L);
+    public static AtomicLong applicationContext = new AtomicLong(0L);
 
     public static ConfigurableEnvironment bootstrapEnvironment;
 
@@ -43,7 +42,7 @@ public class SampleSpringContextInitializer
     @Override
     public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
         if (SofaBootEnvUtils.isSpringCloudBootstrapEnvironment(configurableApplicationContext
-            .getEnvironment())) {
+                .getEnvironment())) {
             bootstrapEnvironment = configurableApplicationContext.getEnvironment();
             bootstrapContext.incrementAndGet();
             return;

@@ -16,10 +16,9 @@
  */
 package com.alipay.sofa.runtime.spi.spring;
 
+import com.alipay.sofa.runtime.spi.component.DefaultImplementation;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
-
-import com.alipay.sofa.runtime.spi.component.DefaultImplementation;
 
 /**
  * Spring Component Implement
@@ -31,8 +30,8 @@ import com.alipay.sofa.runtime.spi.component.DefaultImplementation;
 public class SpringImplementationImpl extends DefaultImplementation {
 
     protected ApplicationContext applicationContext;
-    protected String             beanName;
-    protected Object             target;
+    protected String beanName;
+    protected Object target;
 
     public SpringImplementationImpl(String beanName, ApplicationContext applicationContext) {
         Assert.hasText(beanName, "beanName must not be empty");
@@ -48,13 +47,13 @@ public class SpringImplementationImpl extends DefaultImplementation {
     }
 
     @Override
-    public Class<?> getTargetClass() {
-        return applicationContext.getBean(this.beanName).getClass();
+    public void setTarget(Object target) {
+        this.target = target;
     }
 
     @Override
-    public void setTarget(Object target) {
-        this.target = target;
+    public Class<?> getTargetClass() {
+        return applicationContext.getBean(this.beanName).getClass();
     }
 
     @Override

@@ -16,9 +16,9 @@
  */
 package com.alipay.sofa.runtime.test.ambush;
 
+import com.alipay.sofa.runtime.filter.JvmFilter;
 import com.alipay.sofa.runtime.filter.JvmFilterContext;
 import com.alipay.sofa.runtime.filter.JvmFilterHolder;
-import com.alipay.sofa.runtime.filter.JvmFilter;
 import com.alipay.sofa.runtime.test.RuntimeTestBase;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -33,8 +33,8 @@ import java.util.List;
  * Created on 2020/8/18
  */
 @SpringBootTest(classes = JvmFilterTestConfiguration.class, properties = {
-                                                                          "spring.application.name=filterTest",
-                                                                          "com.alipay.sofa.boot.jvm-filter-enable=true" })
+        "spring.application.name=filterTest",
+        "com.alipay.sofa.boot.jvm-filter-enable=true"})
 public class JvmFilterTest extends RuntimeTestBase {
     @Autowired
     private Service myService;

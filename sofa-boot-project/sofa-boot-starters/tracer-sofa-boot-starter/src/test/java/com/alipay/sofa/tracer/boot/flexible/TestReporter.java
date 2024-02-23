@@ -28,7 +28,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/8/3 11:21 AM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/8/3 11:21 AM
+ * @since:
  **/
 public class TestReporter implements Reporter {
 

@@ -34,7 +34,7 @@ public class FileDeploymentDescriptorWhiteSpacePathTest {
     public void test() throws Exception {
         ClassLoader classLoader = this.getClass().getClassLoader();
         Enumeration<URL> urls = classLoader.getResources("white space/"
-                                                         + SofaBootConstants.SOFA_MODULE_FILE);
+                + SofaBootConstants.SOFA_MODULE_FILE);
         while (urls != null && urls.hasMoreElements()) {
             URL url = urls.nextElement();
             DeploymentDescriptor dd = DeploymentBuilder.build(url, null, null, classLoader);

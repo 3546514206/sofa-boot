@@ -16,21 +16,10 @@
  */
 package com.alipay.sofa.isle.deployment;
 
-import com.alipay.sofa.boot.error.ErrorCode;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- *
  * @author yangyanzhao
  * @version $Id: DependencyTree.java, v 0.1 2012-1-12 12:28:24 yangyanzhao Exp $
  */
@@ -39,8 +28,8 @@ public class DependencyTree<K, T> implements Iterable<DependencyTree.Entry<K, T>
 
     // the sorted list of resolved entries.
     // given an element e from that list it is ensured that any element at the left
-    // of 'e' doesn't depend on it
-    private final List<Entry<K, T>>   resolved;
+    // of 'e' doesn't depends on it
+    private final List<Entry<K, T>> resolved;
 
     public DependencyTree() {
         registry = new HashMap<>();
@@ -214,8 +203,8 @@ public class DependencyTree<K, T> implements Iterable<DependencyTree.Entry<K, T>
     }
 
     public static class Entry<K, T> {
-        private final K          key;
-        private T                object;
+        private final K key;
+        private T object;
         private Set<Entry<K, T>> waitsFor;
         private Set<Entry<K, T>> dependsOnMe;
         private Set<Entry<K, T>> dependencies;
@@ -253,9 +242,6 @@ public class DependencyTree<K, T> implements Iterable<DependencyTree.Entry<K, T>
             if (dependsOnMe == null) {
                 dependsOnMe = new HashSet<>();
             }
-            if (this.equals(entry)) {
-                throw new IllegalArgumentException(ErrorCode.convert("01-12001", this.getKey()));
-            }
             dependsOnMe.add(entry);
         }
 
@@ -266,9 +252,6 @@ public class DependencyTree<K, T> implements Iterable<DependencyTree.Entry<K, T>
         public void addDependency(Entry<K, T> entry) {
             if (dependencies == null) {
                 dependencies = new CopyOnWriteArraySet<>();
-            }
-            if (this.equals(entry)) {
-                throw new IllegalArgumentException(ErrorCode.convert("01-12001", this.getKey()));
             }
             dependencies.add(entry);
         }

@@ -20,6 +20,7 @@ import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
 import com.alipay.sofa.tracer.boot.springmvc.properties.OpenTracingSpringMvcProperties;
 import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcSofaTracerFilter;
 import com.alipay.sofa.tracer.plugins.webflux.WebfluxSofaTracerFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,20 +41,17 @@ import java.util.List;
  * @author yangguanchao
  * @since 2018/05/01
  */
-@Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({ OpenTracingSpringMvcProperties.class, SofaTracerProperties.class })
+@Configuration
+@EnableConfigurationProperties({OpenTracingSpringMvcProperties.class, SofaTracerProperties.class})
 @ConditionalOnProperty(prefix = "com.alipay.sofa.tracer.springmvc", value = "enable", matchIfMissing = true)
 @AutoConfigureAfter(SofaTracerAutoConfiguration.class)
 @ConditionalOnClass(SofaTracerProperties.class)
 public class OpenTracingSpringMvcAutoConfiguration {
 
-    private final OpenTracingSpringMvcProperties openTracingSpringProperties;
+    @Autowired
+    private OpenTracingSpringMvcProperties openTracingSpringProperties;
 
-    public OpenTracingSpringMvcAutoConfiguration(OpenTracingSpringMvcProperties openTracingSpringProperties) {
-        this.openTracingSpringProperties = openTracingSpringProperties;
-    }
-
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
     @ConditionalOnClass(SpringMvcSofaTracerFilter.class)
     public class SpringMvcDelegatingFilterProxyConfiguration {
@@ -75,7 +73,7 @@ public class OpenTracingSpringMvcAutoConfiguration {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
     @ConditionalOnClass(WebfluxSofaTracerFilter.class)
     public class WebfluxSofaTracerFilterConfiguration {

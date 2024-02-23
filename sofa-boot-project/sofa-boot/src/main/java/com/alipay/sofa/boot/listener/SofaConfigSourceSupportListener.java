@@ -18,62 +18,52 @@ package com.alipay.sofa.boot.listener;
 
 import com.alipay.sofa.common.config.SofaConfigs;
 import com.alipay.sofa.common.config.source.AbstractConfigSource;
-import com.alipay.sofa.boot.util.ApplicationListenerOrderConstants;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.StringUtils;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * add a config source based on {@link ConfigurableEnvironment}
+ *
  * @author huzijie
  * @version SofaConfigSourceListener.java, v 0.1 2020年12月22日 7:34 下午 huzijie Exp $
  */
 public class SofaConfigSourceSupportListener
-                                            implements
-                                            ApplicationListener<ApplicationEnvironmentPreparedEvent>,
-                                            Ordered {
-    private static final int    SOFA_BOOT_CONFIG_SOURCE_ORDER = ApplicationListenerOrderConstants.SOFA_CONFIG_SOURCE_SUPPORT_LISTENER_ORDER;
-
-    private final AtomicBoolean registered                    = new AtomicBoolean();
+        implements
+        ApplicationListener<ApplicationEnvironmentPreparedEvent>,
+        Ordered {
+    private static final int SOFA_BOOT_CONFIG_SOURCE_ORDER = LOWEST_PRECEDENCE;
 
     @Override
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
-        registerSofaConfigs(event.getEnvironment());
-    }
+        ConfigurableEnvironment environment = event.getEnvironment();
+        SofaConfigs.addConfigSource(new AbstractConfigSource() {
+            @Override
+            public int getOrder() {
+                return SOFA_BOOT_CONFIG_SOURCE_ORDER;
+            }
 
-    private void registerSofaConfigs(ConfigurableEnvironment environment) {
-        if (registered.compareAndSet(false, true)) {
-            SofaConfigs.addConfigSource(new AbstractConfigSource() {
+            @Override
+            public String getName() {
+                return "SOFABootEnv";
+            }
 
-                @Override
-                public int getOrder() {
-                    return SOFA_BOOT_CONFIG_SOURCE_ORDER;
-                }
+            @Override
+            public String doGetConfig(String key) {
+                return environment.getProperty(key);
+            }
 
-                @Override
-                public String getName() {
-                    return "SOFABootEnv";
-                }
-
-                @Override
-                public String doGetConfig(String key) {
-                    return environment.getProperty(key);
-                }
-
-                @Override
-                public boolean hasKey(String key) {
-                    return !StringUtils.isEmpty(environment.getProperty(key));
-                }
-            });
-        }
+            @Override
+            public boolean hasKey(String key) {
+                return !StringUtils.isEmpty(environment.getProperty(key));
+            }
+        });
     }
 
     @Override
     public int getOrder() {
-        return ApplicationListenerOrderConstants.SOFA_CONFIG_SOURCE_SUPPORT_LISTENER_ORDER;
+        return LOWEST_PRECEDENCE;
     }
 }

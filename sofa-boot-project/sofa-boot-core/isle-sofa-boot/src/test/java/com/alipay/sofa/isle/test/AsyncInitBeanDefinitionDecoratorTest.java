@@ -16,12 +16,12 @@
  */
 package com.alipay.sofa.isle.test;
 
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.isle.spring.factory.BeanLoadCostBeanFactory;
+import com.alipay.sofa.runtime.spring.parser.AsyncInitBeanDefinitionDecorator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-
-import com.alipay.sofa.runtime.factory.BeanLoadCostBeanFactory;
-import com.alipay.sofa.runtime.spring.parser.AsyncInitBeanDefinitionDecorator;
 
 /**
  * @author qilong.zql
@@ -35,15 +35,18 @@ public class AsyncInitBeanDefinitionDecoratorTest {
         String moduleName = "testModule";
         BeanLoadCostBeanFactory beanFactory = new BeanLoadCostBeanFactory(10, moduleName);
         Assert.assertTrue(AsyncInitBeanDefinitionDecorator.isBeanLoadCostBeanFactory(beanFactory
-            .getClass()));
-        Assert.assertEquals(moduleName, beanFactory.getId());
+                .getClass()));
+        Assert.assertEquals(moduleName,
+                AsyncInitBeanDefinitionDecorator.getModuleNameFromBeanFactory(beanFactory));
     }
 
     @Test
     public void testNoIsleModule() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         Assert.assertFalse(AsyncInitBeanDefinitionDecorator.isBeanLoadCostBeanFactory(beanFactory
-            .getClass()));
+                .getClass()));
+        Assert.assertEquals(SofaBootConstants.ROOT_APPLICATION_CONTEXT,
+                AsyncInitBeanDefinitionDecorator.getModuleNameFromBeanFactory(beanFactory));
     }
 
 }

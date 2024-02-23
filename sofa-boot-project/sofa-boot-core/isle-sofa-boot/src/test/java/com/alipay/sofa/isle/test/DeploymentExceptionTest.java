@@ -16,18 +16,6 @@
  */
 package com.alipay.sofa.isle.test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.net.URL;
-import java.util.Collections;
-import java.util.Properties;
-
-import com.alipay.sofa.isle.spring.config.SofaModuleProperties;
-import org.junit.Test;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-
 import com.alipay.sofa.boot.constant.SofaBootConstants;
 import com.alipay.sofa.isle.ApplicationRuntimeModel;
 import com.alipay.sofa.isle.deployment.DeploymentBuilder;
@@ -35,6 +23,16 @@ import com.alipay.sofa.isle.deployment.DeploymentDescriptorConfiguration;
 import com.alipay.sofa.isle.deployment.DeploymentException;
 import com.alipay.sofa.isle.deployment.impl.DefaultModuleDeploymentValidator;
 import com.alipay.sofa.isle.stage.SpringContextInstallStage;
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+
+import java.net.URL;
+import java.util.Collections;
+import java.util.Properties;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author xuanbei 18/5/10
@@ -47,26 +45,26 @@ public class DeploymentExceptionTest {
         application.setAppName("testCase");
         application.setModuleDeploymentValidator(new DefaultModuleDeploymentValidator());
         DeploymentDescriptorConfiguration deploymentDescriptorConfiguration = new DeploymentDescriptorConfiguration(
-            Collections.singletonList(SofaBootConstants.MODULE_NAME),
-            Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
+                Collections.singletonList(SofaBootConstants.MODULE_NAME),
+                Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
         Properties props = new Properties();
         props.setProperty(SofaBootConstants.MODULE_NAME, "com.alipay.test");
         props.setProperty(SofaBootConstants.REQUIRE_MODULE, "com.alipay.dependency");
         URL fileUrl = new URL("file:/demo/path/isle-module.config");
         application.addDeployment(DeploymentBuilder.build(fileUrl, props,
-            deploymentDescriptorConfiguration, ApplicationRuntimeModelTest.class.getClassLoader()));
+                deploymentDescriptorConfiguration, ApplicationRuntimeModelTest.class.getClassLoader()));
 
         // mock ApplicationContext
         AbstractApplicationContext applicationContext = mock(AbstractApplicationContext.class);
         when(
-            applicationContext
-                .getBean(SofaBootConstants.APPLICATION, ApplicationRuntimeModel.class)).thenReturn(
-            application);
+                applicationContext
+                        .getBean(SofaBootConstants.APPLICATION, ApplicationRuntimeModel.class)).thenReturn(
+                application);
 
         ConfigurableEnvironment environment = mock(ConfigurableEnvironment.class);
         when(applicationContext.getEnvironment()).thenReturn(environment);
         when(environment.getProperty(SofaBootConstants.APP_NAME_KEY)).thenReturn("testCase");
 
-        new SpringContextInstallStage(applicationContext, new SofaModuleProperties()).process();
+        new SpringContextInstallStage(applicationContext).process();
     }
 }

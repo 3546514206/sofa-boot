@@ -49,7 +49,7 @@ public interface ServiceClient {
      * Equivalent to {@link ServiceClient#removeService(Class, String, int)} except that the uniqueId parameter is
      * default to an empty string.
      *
-     * @param interfaceClass the interface type to be removed
+     * @param interfaceClass      the interface type to be removed
      * @param millisecondsToDelay after the specified time, then service would be removed
      */
     void removeService(Class<?> interfaceClass, int millisecondsToDelay);
@@ -57,11 +57,11 @@ public interface ServiceClient {
     /**
      * Remove a service component from SOFA runtime.
      *
-     * @param interfaceClass the interface type of the service component
-     * @param uniqueId the uniqueId of the service component
+     * @param interfaceClass      the interface type of the service component
+     * @param uniqueId            the uniqueId of the service component
      * @param millisecondsToDelay milliseconds to delay while remove a service component, only non-negative value is
-     * accepted. it is useful when remove a RPC service component since remove registry info from config server is a
-     * async-procedure
+     *                            accepted. it is useful when remove a RPC service component since remove registry info from config server is a
+     *                            async-procedure
      */
     void removeService(Class<?> interfaceClass, String uniqueId, int millisecondsToDelay);
 }

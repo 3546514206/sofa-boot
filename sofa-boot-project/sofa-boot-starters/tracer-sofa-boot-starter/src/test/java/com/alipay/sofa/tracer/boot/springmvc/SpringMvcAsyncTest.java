@@ -16,20 +16,19 @@
  */
 package com.alipay.sofa.tracer.boot.springmvc;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import com.alipay.sofa.tracer.boot.TestUtil;
+import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
+import com.alipay.sofa.tracer.boot.base.controller.SampleRestController;
+import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.alipay.sofa.tracer.boot.TestUtil;
-import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
-import com.alipay.sofa.tracer.boot.base.controller.SampleRestController;
-import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * SpringMvcFilterTest
@@ -54,7 +53,7 @@ public class SpringMvcAsyncTest extends AbstractTestBase {
 
         //wait for async output
         List<String> contents = FileUtils
-            .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
+                .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
         assertTrue(contents.size() == 1);
     }
 }

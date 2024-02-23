@@ -16,12 +16,11 @@
  */
 package com.alipay.sofa.runtime.test.spi.component;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.alipay.sofa.runtime.model.InterfaceMode;
 import com.alipay.sofa.runtime.service.component.impl.ReferenceImpl;
 import com.alipay.sofa.runtime.service.component.impl.ServiceImpl;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author xuanbei
@@ -32,21 +31,21 @@ public class ComponentToStringTest {
 
         ServiceImpl service = new ServiceImpl("uniqueId", ComponentToStringTest.class, new Object());
         Assert.assertEquals(
-            "com.alipay.sofa.runtime.test.spi.component.ComponentToStringTest:uniqueId",
-            service.toString());
+                "com.alipay.sofa.runtime.test.spi.component.ComponentToStringTest:uniqueId",
+                service.toString());
 
         service = new ServiceImpl("", ComponentToStringTest.class, new Object());
         Assert.assertEquals("com.alipay.sofa.runtime.test.spi.component.ComponentToStringTest",
-            service.toString());
+                service.toString());
 
         ReferenceImpl reference = new ReferenceImpl("uniqueId", ComponentToStringTest.class,
-            InterfaceMode.api, true);
+                InterfaceMode.api, true);
         Assert.assertEquals(
-            "com.alipay.sofa.runtime.test.spi.component.ComponentToStringTest:uniqueId",
-            reference.toString());
+                "com.alipay.sofa.runtime.test.spi.component.ComponentToStringTest:uniqueId",
+                reference.toString());
 
         reference = new ReferenceImpl(null, ComponentToStringTest.class, InterfaceMode.api, true);
         Assert.assertEquals("com.alipay.sofa.runtime.test.spi.component.ComponentToStringTest",
-            reference.toString());
+                reference.toString());
     }
 }

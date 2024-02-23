@@ -19,10 +19,7 @@ package com.alipay.sofa.common.boot.logging.test;
 import com.alipay.sofa.common.log.CommonLoggingConfigurations;
 import com.alipay.sofa.common.log.Constants;
 import com.alipay.sofa.common.log.LoggerSpaceManager;
-import com.alipay.sofa.common.log.MultiAppLoggerSpaceManager;
-import com.alipay.sofa.common.log.env.LogEnvUtils;
 import com.alipay.sofa.common.utils.StringUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,28 +35,19 @@ import java.io.PrintStream;
  * Created on 2020/12/15
  */
 public abstract class LogTestBase {
-    protected static final String   TEST_SPACE  = "test.space";
-    protected static final String   TEST_LOGGER = TEST_SPACE + ".logger";
+    protected static final String TEST_SPACE = "test.space";
+    protected static final String TEST_LOGGER = TEST_SPACE + ".logger";
 
     protected ByteArrayOutputStream outContent;
 
-    protected Logger                logger;
+    protected Logger logger;
 
     @Before
     public void setUpStreams() {
         outContent = new ByteArrayOutputStream();
-        System.setProperty("spring.application.name", "LogTest");
         System.setOut(new PrintStream(outContent));
 
         CommonLoggingConfigurations.appendConsoleLoggerName(TEST_LOGGER);
-    }
-
-    @After
-    public void clearUpStreams() {
-        LogEnvUtils.clearGlobalSystemProperties();
-        MultiAppLoggerSpaceManager.removeILoggerFactoryBySpaceName(TEST_SPACE);
-        outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
     }
 
     protected Logger getLogger() {
@@ -72,11 +60,11 @@ public abstract class LogTestBase {
             loggingRoot = environment.getProperty(Constants.LOG_PATH);
         }
         return new File(loggingRoot + File.separator + "test-space" + File.separator
-                        + "logback-common-default.log");
+                + "logback-common-default.log");
     }
 
     @EnableAutoConfiguration
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     protected static class EmptyConfig {
     }
 }

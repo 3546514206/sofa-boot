@@ -16,13 +16,12 @@
  */
 package com.alipay.sofa.runtime.ext.component;
 
+import com.alipay.sofa.common.xmap.XMap;
+import org.springframework.util.ClassUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.util.ClassUtils;
-
-import com.alipay.sofa.common.xmap.XMap;
 
 /**
  * ExtensionPoint Implementation。
@@ -32,11 +31,11 @@ import com.alipay.sofa.common.xmap.XMap;
  * @since 2.6.0
  */
 public class ExtensionPointImpl implements ExtensionPointInternal, Serializable {
-    private static final long          serialVersionUID = 3939941819263075106L;
-    protected String                   name;
-    protected String                   documentation;
-    protected transient List<Class<?>> contributions    = new ArrayList<>(2);
-    protected ClassLoader              beanClassLoader;
+    private static final long serialVersionUID = 3939941819263075106L;
+    protected String name;
+    protected String documentation;
+    protected transient List<Class<?>> contributions = new ArrayList<>(2);
+    protected ClassLoader beanClassLoader;
 
     public ExtensionPointImpl(String name, Class<?> contributionClass) {
         this.name = name;
@@ -80,7 +79,7 @@ public class ExtensionPointImpl implements ExtensionPointInternal, Serializable 
                 xmap.register(contrib);
             }
             Object[] contributions = xmap.loadAll(new XMapContext(extension.getAppClassLoader()),
-                extension.getElement());
+                    extension.getElement());
             extension.setContributions(contributions);
             return contributions;
         }

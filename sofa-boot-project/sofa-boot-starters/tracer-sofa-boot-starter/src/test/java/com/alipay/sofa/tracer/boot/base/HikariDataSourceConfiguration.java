@@ -16,19 +16,18 @@
  */
 package com.alipay.sofa.tracer.boot.base;
 
-import javax.sql.DataSource;
-
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 
 /**
  * @author qilong.zql
  * @since 2.3.2
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class HikariDataSourceConfiguration {
     @Value("${spring.datasource.url}")
     private String jdbcUrl;

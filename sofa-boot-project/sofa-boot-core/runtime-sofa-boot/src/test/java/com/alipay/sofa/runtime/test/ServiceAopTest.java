@@ -16,6 +16,13 @@
  */
 package com.alipay.sofa.runtime.test;
 
+import com.alipay.sofa.runtime.api.annotation.SofaReference;
+import com.alipay.sofa.runtime.api.annotation.SofaService;
+import com.alipay.sofa.runtime.test.beans.ClientFactoryAwareBean;
+import com.alipay.sofa.runtime.test.beans.StateAspect;
+import com.alipay.sofa.runtime.test.beans.facade.SampleService;
+import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
+import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -30,14 +37,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.alipay.sofa.runtime.api.annotation.SofaReference;
-import com.alipay.sofa.runtime.api.annotation.SofaService;
-import com.alipay.sofa.runtime.test.beans.ClientFactoryAwareBean;
-import com.alipay.sofa.runtime.test.beans.StateAspect;
-import com.alipay.sofa.runtime.test.beans.facade.SampleService;
-import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
-import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 
 /**
  * @author qilong.zql
@@ -67,8 +66,8 @@ public class ServiceAopTest {
         Assert.assertFalse(StateAspect.isAspectInvoked());
     }
 
-    @Configuration(proxyBeanMethods = false)
-    @Import({ AopAutoConfiguration.class, RuntimeConfiguration.class })
+    @Configuration
+    @Import({AopAutoConfiguration.class, RuntimeConfiguration.class})
     @Aspect
     static class ServiceAopTestConfiguration {
         @Bean

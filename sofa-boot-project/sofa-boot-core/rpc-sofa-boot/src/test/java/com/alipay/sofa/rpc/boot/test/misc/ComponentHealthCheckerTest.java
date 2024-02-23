@@ -39,7 +39,7 @@ import java.util.Map;
  */
 @SpringBootApplication
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ComponentHealthCheckerTest.class, properties = { "timeout=10000" })
+@SpringBootTest(classes = ComponentHealthCheckerTest.class, properties = {"timeout=10000"})
 @ImportResource("/spring/service_reference.xml")
 public class ComponentHealthCheckerTest {
     @Autowired
@@ -48,7 +48,7 @@ public class ComponentHealthCheckerTest {
     @Test
     public void componentHealthCheckerTest() {
         ComponentHealthChecker componentHealthChecker = applicationContext
-            .getBean(ComponentHealthChecker.class);
+                .getBean(ComponentHealthChecker.class);
         Health health = componentHealthChecker.isHealthy();
         Map<String, Object> details = health.getDetails();
         for (String key : details.keySet()) {
@@ -56,7 +56,7 @@ public class ComponentHealthCheckerTest {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class ComponentHealthCheckerTestConfiguration {
         @Bean
         public ComponentHealthChecker sofaComponentHealthChecker(SofaRuntimeContext sofaRuntimeContext) {

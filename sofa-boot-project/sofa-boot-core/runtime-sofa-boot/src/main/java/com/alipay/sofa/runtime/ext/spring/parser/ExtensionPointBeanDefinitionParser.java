@@ -16,9 +16,9 @@
  */
 package com.alipay.sofa.runtime.ext.spring.parser;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
+import com.alipay.sofa.runtime.ext.spring.ExtensionPointFactoryBean;
+import com.alipay.sofa.runtime.log.SofaLogger;
+import com.alipay.sofa.runtime.spi.util.ParserUtils;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -28,9 +28,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.alipay.sofa.runtime.ext.spring.ExtensionPointFactoryBean;
-import com.alipay.sofa.runtime.log.SofaLogger;
-import com.alipay.sofa.runtime.spi.util.ParserUtils;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Extension point definition parser
@@ -42,13 +41,13 @@ import com.alipay.sofa.runtime.spi.util.ParserUtils;
  */
 public class ExtensionPointBeanDefinitionParser extends AbstractExtBeanDefinitionParser {
 
-    public static final String                              CLASS        = "class";
+    public static final String CLASS = "class";
 
-    public static final String                              OBJECT       = "object";
+    public static final String OBJECT = "object";
 
-    public static final String                              CONTRIBUTION = "contribution";
+    public static final String CONTRIBUTION = "contribution";
 
-    private static final ExtensionPointBeanDefinitionParser instance     = new ExtensionPointBeanDefinitionParser();
+    private static final ExtensionPointBeanDefinitionParser instance = new ExtensionPointBeanDefinitionParser();
 
     public ExtensionPointBeanDefinitionParser() {
     }
@@ -82,29 +81,29 @@ public class ExtensionPointBeanDefinitionParser extends AbstractExtBeanDefinitio
                 // sofa:object
                 if (OBJECT.equals(subElement.getLocalName())) {
                     ParserUtils.parseCustomAttributes(subElement, parserContext, builder,
-                        new ParserUtils.AttributeCallback() {
+                            new ParserUtils.AttributeCallback() {
 
-                            public void process(Element parent, Attr attribute,
-                                                BeanDefinitionBuilder builder,
-                                                ParserContext parserContext) {
+                                public void process(Element parent, Attr attribute,
+                                                    BeanDefinitionBuilder builder,
+                                                    ParserContext parserContext) {
 
-                                String name = attribute.getLocalName();
-                                if (CLASS.equals(name)) {
-                                    contributions.add(attribute.getValue());
-                                } else {
-                                    builder.addPropertyValue(
-                                        Conventions.attributeNameToPropertyName(name),
-                                        attribute.getValue());
+                                    String name = attribute.getLocalName();
+                                    if (CLASS.equals(name)) {
+                                        contributions.add(attribute.getValue());
+                                    } else {
+                                        builder.addPropertyValue(
+                                                Conventions.attributeNameToPropertyName(name),
+                                                attribute.getValue());
+                                    }
                                 }
-                            }
-                        });
+                            });
                 } else {
                     if (element.hasAttribute(REF)) {
                         SofaLogger
-                            .error("nested bean definition/reference cannot be used when attribute 'ref' is specified");
+                                .error("nested bean definition/reference cannot be used when attribute 'ref' is specified");
                     }
                     target = parserContext.getDelegate().parsePropertySubElement(subElement,
-                        builder.getBeanDefinition());
+                            builder.getBeanDefinition());
                 }
             }
         }
@@ -112,7 +111,7 @@ public class ExtensionPointBeanDefinitionParser extends AbstractExtBeanDefinitio
         // do we have a bean reference ?
         if (target instanceof RuntimeBeanReference) {
             builder.addPropertyValue("targetBeanName",
-                ((RuntimeBeanReference) target).getBeanName());
+                    ((RuntimeBeanReference) target).getBeanName());
         }
         // or a nested bean? -- not supported yet
         else {

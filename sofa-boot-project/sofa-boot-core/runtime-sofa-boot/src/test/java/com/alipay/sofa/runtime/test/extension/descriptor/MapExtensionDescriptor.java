@@ -16,12 +16,12 @@
  */
 package com.alipay.sofa.runtime.test.extension.descriptor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.alipay.sofa.common.xmap.annotation.XNodeMap;
 import com.alipay.sofa.common.xmap.annotation.XObject;
 import com.alipay.sofa.runtime.test.extension.bean.SimpleSpringMapBean;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ruoshan
@@ -31,7 +31,7 @@ import com.alipay.sofa.runtime.test.extension.bean.SimpleSpringMapBean;
 public class MapExtensionDescriptor {
 
     @XNodeMap(value = "value", key = "@name", componentType = String.class, type = HashMap.class)
-    private Map<String, String>                    values;
+    private Map<String, String> values;
 
     @XNodeMap(value = "simple", key = "@key", componentType = SimpleExtensionDescriptor.class, type = HashMap.class)
     private Map<String, SimpleExtensionDescriptor> simpleValues;

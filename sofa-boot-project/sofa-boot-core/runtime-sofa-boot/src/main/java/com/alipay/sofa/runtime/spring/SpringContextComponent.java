@@ -24,8 +24,6 @@ import com.alipay.sofa.runtime.model.ComponentType;
 import com.alipay.sofa.runtime.spi.component.AbstractComponent;
 import com.alipay.sofa.runtime.spi.component.Implementation;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.Map;
 
@@ -55,26 +53,11 @@ public class SpringContextComponent extends AbstractComponent {
     }
 
     @Override
-    public ApplicationContext getApplicationContext() {
-        return (ApplicationContext) implementation.getTarget();
-    }
-
-    @Override
     public void activate() throws ServiceRuntimeException {
         if (componentStatus != ComponentStatus.RESOLVED) {
             return;
         }
 
         componentStatus = ComponentStatus.ACTIVATED;
-    }
-
-    @Override
-    public void deactivate() throws ServiceRuntimeException {
-        if (implementation instanceof SpringContextImplementation) {
-            AbstractApplicationContext applicationContext = (AbstractApplicationContext) implementation
-                .getTarget();
-            applicationContext.close();
-        }
-        super.deactivate();
     }
 }

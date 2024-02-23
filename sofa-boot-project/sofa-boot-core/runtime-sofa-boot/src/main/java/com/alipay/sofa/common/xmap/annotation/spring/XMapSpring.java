@@ -16,26 +16,17 @@
  */
 package com.alipay.sofa.common.xmap.annotation.spring;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import org.springframework.context.ApplicationContext;
-
-import com.alipay.sofa.common.xmap.XAnnotatedMember;
-import com.alipay.sofa.common.xmap.XAnnotatedObject;
-import com.alipay.sofa.common.xmap.XFieldGetter;
-import com.alipay.sofa.common.xmap.XFieldSetter;
-import com.alipay.sofa.common.xmap.XGetter;
-import com.alipay.sofa.common.xmap.XMap;
-import com.alipay.sofa.common.xmap.XMethodGetter;
-import com.alipay.sofa.common.xmap.XMethodSetter;
-import com.alipay.sofa.common.xmap.XSetter;
+import com.alipay.sofa.common.xmap.*;
 import com.alipay.sofa.common.xmap.annotation.XMemberAnnotation;
 import com.alipay.sofa.common.xmap.annotation.XObject;
 import com.alipay.sofa.common.xmap.spring.XNodeListSpring;
 import com.alipay.sofa.common.xmap.spring.XNodeMapSpring;
 import com.alipay.sofa.common.xmap.spring.XNodeSpring;
+import org.springframework.context.ApplicationContext;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Integrate XMap with spring
@@ -119,13 +110,13 @@ public class XMapSpring extends XMap {
         int type = annotation.annotationType().getAnnotation(XMemberAnnotation.class).value();
         if (type == XMemberAnnotation.NODE_SPRING) {
             member = new XAnnotatedSpring(this, setter, getter, (XNodeSpring) annotation,
-                (XAnnotatedSpringObject) xob);
+                    (XAnnotatedSpringObject) xob);
         } else if (type == XMemberAnnotation.NODE_LIST_SPRING) {
             member = new XAnnotatedListSpring(this, setter, getter, (XNodeListSpring) annotation,
-                (XAnnotatedSpringObject) xob);
+                    (XAnnotatedSpringObject) xob);
         } else if (type == XMemberAnnotation.NODE_MAP_SPRING) {
             member = new XAnnotatedMapSpring(this, setter, getter, (XNodeMapSpring) annotation,
-                (XAnnotatedSpringObject) xob);
+                    (XAnnotatedSpringObject) xob);
         }
         return member;
     }

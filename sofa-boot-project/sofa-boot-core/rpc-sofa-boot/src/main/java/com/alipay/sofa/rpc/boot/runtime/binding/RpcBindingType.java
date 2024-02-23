@@ -19,20 +19,19 @@ package com.alipay.sofa.rpc.boot.runtime.binding;
 import com.alipay.sofa.runtime.api.binding.BindingType;
 
 /**
- *
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
 public class RpcBindingType {
 
-    public static final BindingType BOLT_BINDING_TYPE   = new BindingType("bolt");
+    public static final BindingType BOLT_BINDING_TYPE = new BindingType("bolt");
 
-    public static final BindingType REST_BINDING_TYPE   = new BindingType("rest");
+    public static final BindingType REST_BINDING_TYPE = new BindingType("rest");
 
-    public static final BindingType DUBBO_BINDING_TYPE  = new BindingType("dubbo");
+    public static final BindingType DUBBO_BINDING_TYPE = new BindingType("dubbo");
 
-    public static final BindingType H2C_BINDING_TYPE    = new BindingType("h2c");
+    public static final BindingType H2C_BINDING_TYPE = new BindingType("h2c");
 
-    public static final BindingType HTTP_BINDING_TYPE   = new BindingType("http");
+    public static final BindingType HTTP_BINDING_TYPE = new BindingType("http");
 
     public static final BindingType TRIPLE_BINDING_TYPE = new BindingType("tri");
 

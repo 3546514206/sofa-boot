@@ -17,7 +17,6 @@
 package com.alipay.sofa.runtime.api.annotation;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -40,14 +39,13 @@ import java.lang.annotation.Target;
  * @author xuanbei 18/3/1
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-@Repeatable(SofaServices.class)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface SofaService {
 
     /**
-     * The interface type of the SOFA service to be created. Default to the only interface of the annotated Spring bean
+     * The interface type of the SOFA service to be create. Default to the only interface of the annotated Spring bean
      * when not specified. When the annotated Spring bean has more than one interface, this field must be specified.
-     * When you want to create a SOFA service which interface type is not a java interface but concrete java
+     * When you want to create a SOFA service which's interface type is not a java interface but and concrete java
      * class, this field must be specified.
      *
      * @return return interface type
@@ -66,5 +64,5 @@ public @interface SofaService {
      *
      * @return bindings of service
      */
-    SofaServiceBinding[] bindings() default { @SofaServiceBinding };
+    SofaServiceBinding[] bindings() default {@SofaServiceBinding};
 }

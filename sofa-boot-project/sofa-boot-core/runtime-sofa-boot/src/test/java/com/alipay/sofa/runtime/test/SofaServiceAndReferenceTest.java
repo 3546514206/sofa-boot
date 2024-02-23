@@ -16,23 +16,6 @@
  */
 package com.alipay.sofa.runtime.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
 import com.alipay.sofa.boot.util.StringUtils;
 import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
@@ -45,35 +28,50 @@ import com.alipay.sofa.runtime.test.beans.facade.SampleService;
 import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
 import com.alipay.sofa.runtime.test.configuration.MultiSofaServiceConfiguration;
 import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author qilong.zql
- * @since  3.1.0
+ * @since 3.1.0
  */
 public class SofaServiceAndReferenceTest {
+    @SofaReference
+    private static SampleService staticSampleService;
     private SampleService sampleService;
+
+    public static SampleService getStaticSampleService() {
+        return staticSampleService;
+    }
+
+    @AfterClass
+    public static void clearLogFiles() throws IOException {
+        final String logRootPath = StringUtils.hasText(System.getProperty("logging.path")) ? System
+                .getProperty("logging.path") : "./logs";
+        FileUtils.deleteDirectory(new File(logRootPath));
+    }
 
     public SampleService getSampleService() {
         return sampleService;
     }
 
     @SofaReference
-    private static SampleService staticSampleService;
-
-    public static SampleService getStaticSampleService() {
-        return staticSampleService;
-    }
-
-    @SofaReference
     public void setSampleService(SampleService sampleService) {
         this.sampleService = sampleService;
-    }
-
-    @AfterClass
-    public static void clearLogFiles() throws IOException {
-        final String logRootPath = StringUtils.hasText(System.getProperty("logging.path")) ? System
-            .getProperty("logging.path") : "./logs";
-        FileUtils.deleteDirectory(new File(logRootPath));
     }
 
     @Test
@@ -83,14 +81,14 @@ public class SofaServiceAndReferenceTest {
         Throwable throwable = null;
         try {
             SpringApplication springApplication = new SpringApplication(
-                TestSofaReferenceConfiguration.class, RuntimeConfiguration.class);
+                    TestSofaReferenceConfiguration.class, RuntimeConfiguration.class);
             springApplication.setWebApplicationType(WebApplicationType.NONE);
             springApplication.setDefaultProperties(properties);
             springApplication.run();
         } catch (Throwable t) {
             throwable = t;
-            Assert.assertTrue(t.getMessage().contains(
-                "Only jvm type of @SofaReference on parameter is supported."));
+            Assert.assertEquals("Only jvm type of @SofaReference on parameter is supported.",
+                    t.getMessage());
         }
         Assert.assertNotNull(throwable);
     }
@@ -100,12 +98,12 @@ public class SofaServiceAndReferenceTest {
         Map<String, Object> properties = new HashMap<>();
         properties.put("spring.application.name", "SofaServiceAndReferenceTest");
         SpringApplication springApplication = new SpringApplication(
-            TestSofaReferenceOnMethodConfiguration.class, RuntimeConfiguration.class);
+                TestSofaReferenceOnMethodConfiguration.class, RuntimeConfiguration.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.setDefaultProperties(properties);
         ApplicationContext ctx = springApplication.run();
         SofaServiceAndReferenceTest sofaServiceAndReferenceTest = ctx
-            .getBean(SofaServiceAndReferenceTest.class);
+                .getBean(SofaServiceAndReferenceTest.class);
         sampleService = sofaServiceAndReferenceTest.getSampleService();
         Assert.assertNotNull(sampleService);
         Assert.assertEquals("TestSofaReferenceOnMethodConfiguration", sampleService.service());
@@ -114,24 +112,24 @@ public class SofaServiceAndReferenceTest {
     @Test
     public void testMultiSofaServiceWithSameInterfaceAndUniqueId() throws IOException {
         String logRootPath = StringUtils.hasText(System.getProperty("logging.path")) ? System
-            .getProperty("logging.path") : "./logs";
+                .getProperty("logging.path") : "./logs";
         File sofaLog = new File(logRootPath + File.separator + "sofa-runtime" + File.separator
-                                + "sofa-default.log");
+                + "common-error.log");
         FileUtils.write(sofaLog, "", System.getProperty("file.encoding"));
         Map<String, Object> properties = new HashMap<>();
         properties.put("spring.application.name", "SofaServiceAndReferenceTest");
         properties.put("logging.path", logRootPath);
 
         SpringApplication springApplication = new SpringApplication(
-            TestSofaServiceConfiguration.class);
+                TestSofaServiceConfiguration.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.setDefaultProperties(properties);
         springApplication.run();
 
         String content = FileUtils.readFileToString(sofaLog, System.getProperty("file.encoding"));
         Assert.assertTrue(content.contains("SofaService was already registered: "
-                                           + SofaBeanNameGenerator.generateSofaServiceBeanName(
-                                               SampleService.class, "")));
+                + SofaBeanNameGenerator.generateSofaServiceBeanName(
+                SampleService.class, "")));
     }
 
     @Test
@@ -140,7 +138,7 @@ public class SofaServiceAndReferenceTest {
         properties.put("spring.application.name", "SofaServiceAndReferenceTest");
 
         SpringApplication springApplication = new SpringApplication(
-            MultiSofaServiceConfiguration.class);
+                MultiSofaServiceConfiguration.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.setDefaultProperties(properties);
         springApplication.run();
@@ -151,7 +149,7 @@ public class SofaServiceAndReferenceTest {
         Map<String, Object> properties = new HashMap<>();
         properties.put("spring.application.name", "SofaServiceAndReferenceTest");
         SpringApplication springApplication = new SpringApplication(
-            MultipleBindingsSofaServiceConfiguration.class, RuntimeConfiguration.class);
+                MultipleBindingsSofaServiceConfiguration.class, RuntimeConfiguration.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.setDefaultProperties(properties);
         ApplicationContext ctx = springApplication.run();
@@ -164,16 +162,16 @@ public class SofaServiceAndReferenceTest {
     @Test
     public void testSofaReferenceOnStaticField() throws IOException, NoSuchFieldException {
         String logRootPath = StringUtils.hasText(System.getProperty("logging.path")) ? System
-            .getProperty("logging.path") : "./logs";
+                .getProperty("logging.path") : "./logs";
         File sofaLog = new File(logRootPath + File.separator + "sofa-runtime" + File.separator
-                                + "sofa-default.log");
+                + "sofa-default.log");
         FileUtils.write(sofaLog, "", System.getProperty("file.encoding"));
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("spring.application.name", "SofaServiceAndReferenceTest");
         properties.put("logging.path", logRootPath);
         SpringApplication springApplication = new SpringApplication(
-            TestSofaReferenceOnMethodConfiguration.class, RuntimeConfiguration.class);
+                TestSofaReferenceOnMethodConfiguration.class, RuntimeConfiguration.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.setDefaultProperties(properties);
         springApplication.run();
@@ -182,24 +180,24 @@ public class SofaServiceAndReferenceTest {
         Assert.assertNull(staticSampleService);
         String content = FileUtils.readFileToString(sofaLog, System.getProperty("file.encoding"));
         Assert.assertTrue(content
-            .contains("SofaReference annotation is not supported on static fields: "
-                      + SofaServiceAndReferenceTest.class.getDeclaredField("staticSampleService")));
+                .contains("SofaReference annotation is not supported on static fields: "
+                        + SofaServiceAndReferenceTest.class.getDeclaredField("staticSampleService")));
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class MultipleBindingsSofaServiceConfiguration {
         /**
          * since the sofa-boot does not have any binding converter implementation,
          * we can use two jvm bindings for now.
          */
         @Bean
-        @SofaService(bindings = { @SofaServiceBinding, @SofaServiceBinding })
+        @SofaService(bindings = {@SofaServiceBinding, @SofaServiceBinding})
         SampleService sampleService() {
             return new DefaultSampleService();
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class TestSofaReferenceConfiguration {
         @Bean
         public SampleService sampleService(@SofaReference(uniqueId = "rpc", binding = @SofaReferenceBinding(bindingType = "bolt")) SampleService sampleService) {
@@ -207,7 +205,7 @@ public class SofaServiceAndReferenceTest {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class TestSofaReferenceOnMethodConfiguration {
         @Bean
         public SofaServiceAndReferenceTest sofaServiceAndReferenceTest() {
@@ -221,7 +219,7 @@ public class SofaServiceAndReferenceTest {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @Import(RuntimeConfiguration.class)
     @EnableAutoConfiguration
     static class TestSofaServiceConfiguration {

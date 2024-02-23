@@ -46,15 +46,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ImportResource("/spring/test_only_mock_bean.xml")
-@TestPropertySource(properties = { SofaBootRpcProperties.PREFIX
-                                   + ".consumer.repeated.reference.limit=10", })
+@TestPropertySource(properties = {SofaBootRpcProperties.PREFIX
+        + ".consumer.repeated.reference.limit=10",})
 public class MockBeanConfigTest {
 
     @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", mockMode = MockMode.LOCAL, mockBean = "mockHello"))
-    private HelloSyncService     helloSyncService;
+    private HelloSyncService helloSyncService;
 
     @Autowired
     private ConsumerConfigHelper consumerConfigHelper;
+    @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", mockMode = MockMode.REMOTE, parameters = @SofaParameter(key = "mockUrl", value = "http://127.0.0.1:1235/")))
+    private HelloSyncService remoteMock;
 
     @Test
     public void testLocalMock() {
@@ -74,9 +76,6 @@ public class MockBeanConfigTest {
             // success;
         }
     }
-
-    @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", mockMode = MockMode.REMOTE, parameters = @SofaParameter(key = "mockUrl", value = "http://127.0.0.1:1235/")))
-    private HelloSyncService remoteMock;
 
     @Test
     public void testRemote() {

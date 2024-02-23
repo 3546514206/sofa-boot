@@ -16,11 +16,10 @@
  */
 package com.alipay.sofa.rpc.boot.test.config;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.alipay.sofa.rpc.boot.config.ZookeeperConfigurator;
 import com.alipay.sofa.rpc.config.RegistryConfig;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>

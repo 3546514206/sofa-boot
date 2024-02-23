@@ -16,6 +16,18 @@
  */
 package com.alipay.sofa.common.xmap;
 
+import com.alipay.sofa.common.xmap.annotation.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.beans.Introspector;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,31 +37,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.alipay.sofa.common.xmap.annotation.XContent;
-import com.alipay.sofa.common.xmap.annotation.XMemberAnnotation;
-import com.alipay.sofa.common.xmap.annotation.XNode;
-import com.alipay.sofa.common.xmap.annotation.XNodeList;
-import com.alipay.sofa.common.xmap.annotation.XNodeMap;
-import com.alipay.sofa.common.xmap.annotation.XObject;
-import com.alipay.sofa.common.xmap.annotation.XParent;
+import java.util.*;
 
 /**
  * XMap maps an XML file to a java object.
@@ -83,15 +71,12 @@ import com.alipay.sofa.common.xmap.annotation.XParent;
 
 public class XMap {
 
+    private static final String DDD = "http://apache.org/xml/features/disallow-doctype-decl";
     // top level objects
     protected final Map<String, XAnnotatedObject> roots;
-
     // the scanned objects
-    protected final Map<Class, XAnnotatedObject>  objects;
-
-    protected final Map<Class, XValueFactory>     factories;
-
-    private static final String                   DDD = "http://apache.org/xml/features/disallow-doctype-decl";
+    protected final Map<Class, XAnnotatedObject> objects;
+    protected final Map<Class, XValueFactory> factories;
 
     /**
      * Creates a new XMap object.
@@ -100,6 +85,20 @@ public class XMap {
         objects = new Hashtable<>();
         roots = new Hashtable<>();
         factories = new Hashtable<>(XValueFactory.defaultFactories);
+    }
+
+    protected static Annotation checkMemberAnnotation(AnnotatedElement ae) {
+        Annotation[] annos = ae.getAnnotations();
+        for (Annotation anno : annos) {
+            if (anno.annotationType().isAnnotationPresent(XMemberAnnotation.class)) {
+                return anno;
+            }
+        }
+        return null;
+    }
+
+    protected static XObject checkObjectAnnotation(AnnotatedElement ae, ClassLoader classLoader) {
+        return ae.getAnnotation(XObject.class);
     }
 
     /**
@@ -505,7 +504,7 @@ public class XMap {
     }
 
     public String asXmlString(Object contribution, String encoding, List<String> filters)
-                                                                                         throws Exception {
+            throws Exception {
         return asXmlString(contribution, encoding, filters, false);
 
     }
@@ -560,20 +559,6 @@ public class XMap {
                 p = p.getNextSibling();
             }
         }
-    }
-
-    protected static Annotation checkMemberAnnotation(AnnotatedElement ae) {
-        Annotation[] annos = ae.getAnnotations();
-        for (Annotation anno : annos) {
-            if (anno.annotationType().isAnnotationPresent(XMemberAnnotation.class)) {
-                return anno;
-            }
-        }
-        return null;
-    }
-
-    protected static XObject checkObjectAnnotation(AnnotatedElement ae, ClassLoader classLoader) {
-        return ae.getAnnotation(XObject.class);
     }
 
     private XAnnotatedMember createMember(Annotation annotation, XSetter setter, XGetter getter) {

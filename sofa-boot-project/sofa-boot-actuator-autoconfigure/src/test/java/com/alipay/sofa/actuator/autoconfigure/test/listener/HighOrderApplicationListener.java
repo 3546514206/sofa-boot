@@ -33,16 +33,16 @@ import org.springframework.web.client.ResourceAccessException;
  * @since 2.6.0
  */
 public class HighOrderApplicationListener implements ApplicationListener<ContextRefreshedEvent>,
-                                         PriorityOrdered {
+        PriorityOrdered {
 
     @Autowired
-    private TestRestTemplate       testRestTemplate;
+    private TestRestTemplate testRestTemplate;
 
     @Value("${management.server.port}")
-    private String                 managementPort;
+    private String managementPort;
 
     @Autowired
-    private ApplicationContext     applicationContext;
+    private ApplicationContext applicationContext;
 
     private ResponseEntity<String> readinessCheckResponse;
 
@@ -56,29 +56,29 @@ public class HighOrderApplicationListener implements ApplicationListener<Context
         }
 
         System.out.println(contextRefreshedEvent.getApplicationContext().getEnvironment()
-            .getProperty("management.server.port"));
+                .getProperty("management.server.port"));
 
         try {
             readinessCheckResponse = testRestTemplate.getForEntity("http://localhost:"
-                                                                   + managementPort
-                                                                   + "/actuator/readiness",
-                String.class);
+                            + managementPort
+                            + "/actuator/readiness",
+                    String.class);
         } catch (ResourceAccessException e) {
             readinessCheckResponse = new ResponseEntity<>(
-                SofaBootConstants.SOFABOOT_HEALTH_CHECK_NOT_READY_MSG, null,
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    SofaBootConstants.SOFABOOT_HEALTH_CHECK_NOT_READY_MSG, null,
+                    HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
 
         try {
             livenessCheckResponse = testRestTemplate.getForEntity("http://localhost:"
-                                                                  + managementPort
-                                                                  + "/actuator/health",
-                String.class);
+                            + managementPort
+                            + "/actuator/health",
+                    String.class);
         } catch (ResourceAccessException e) {
             livenessCheckResponse = new ResponseEntity<>(
-                SofaBootConstants.SOFABOOT_HEALTH_CHECK_NOT_READY_MSG, null,
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    SofaBootConstants.SOFABOOT_HEALTH_CHECK_NOT_READY_MSG, null,
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }

@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/9/12 12:02 AM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/9/12 12:02 AM
+ * @since:
  **/
 public class SofaTracerRestTemplateEnhance {
 
@@ -43,7 +44,7 @@ public class SofaTracerRestTemplateEnhance {
             return;
         }
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>(
-            restTemplate.getInterceptors());
+                restTemplate.getInterceptors());
         interceptors.add(0, this.restTemplateInterceptor);
         restTemplate.setInterceptors(interceptors);
     }

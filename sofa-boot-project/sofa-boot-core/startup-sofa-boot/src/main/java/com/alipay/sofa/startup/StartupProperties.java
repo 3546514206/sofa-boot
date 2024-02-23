@@ -19,14 +19,12 @@ package com.alipay.sofa.startup;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * @author Zhijie
- * @since 2020/7/13
+ * @author: Zhijie
+ * @since: 2020/7/13
  */
 @ConfigurationProperties(prefix = "com.alipay.sofa.boot.startup")
 public class StartupProperties {
-    private long    beanInitCostThreshold = 100;
-    private boolean skipSofaBean          = false;
-    private int     bufferSize            = 4096;
+    private long beanInitCostThreshold = 100;
 
     public long getBeanInitCostThreshold() {
         return beanInitCostThreshold;
@@ -34,21 +32,5 @@ public class StartupProperties {
 
     public void setBeanInitCostThreshold(long beanInitCostThreshold) {
         this.beanInitCostThreshold = beanInitCostThreshold;
-    }
-
-    public boolean isSkipSofaBean() {
-        return skipSofaBean;
-    }
-
-    public void setSkipSofaBean(boolean skipSofaBean) {
-        this.skipSofaBean = skipSofaBean;
-    }
-
-    public int getBufferSize() {
-        return bufferSize;
-    }
-
-    public void setBufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
     }
 }

@@ -48,6 +48,6 @@ public class SwaggerTest {
         HttpResponse response = httpClient.execute(request);
         Assert.assertEquals(200, response.getStatusLine().getStatusCode());
         Assert.assertTrue(EntityUtils.toString(response.getEntity()).contains(
-            "/com.alipay.sofa.rpc.boot.test.bean.invoke.HelloSyncService/saySync"));
+                "/com.alipay.sofa.rpc.boot.test.bean.invoke.HelloSyncService/saySync"));
     }
 }

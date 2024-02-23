@@ -29,15 +29,12 @@ import org.springframework.core.Ordered;
  * @since 2.6.0
  */
 public class AbstractExtFactoryBean extends CommonContextBean implements BeanFactoryAware,
-                                                             FactoryBean, Ordered {
-    /* Spring bean context for looking up spring's bean */
-    protected BeanFactory      beanFactory;
-
-    protected String           targetBeanName;
-
-    protected Object           target;
-
+        FactoryBean, Ordered {
     public final static String LINK_SYMBOL = "$";
+    /* Spring bean context for looking up spring's bean */
+    protected BeanFactory beanFactory;
+    protected String targetBeanName;
+    protected Object target;
 
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
@@ -46,6 +43,7 @@ public class AbstractExtFactoryBean extends CommonContextBean implements BeanFac
 
     /**
      * no real bean exist
+     *
      * @return null
      * @throws Exception any exception
      */
@@ -55,6 +53,7 @@ public class AbstractExtFactoryBean extends CommonContextBean implements BeanFac
 
     /**
      * no real bean exist
+     *
      * @return String.class
      */
     public Class<?> getObjectType() {

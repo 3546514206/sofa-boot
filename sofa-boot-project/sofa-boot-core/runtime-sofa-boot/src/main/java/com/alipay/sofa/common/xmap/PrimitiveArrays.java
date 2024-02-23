@@ -29,7 +29,7 @@ public final class PrimitiveArrays {
     private PrimitiveArrays() {
     }
 
-    @SuppressWarnings({ "ObjectEquality" })
+    @SuppressWarnings({"ObjectEquality"})
     public static Object toPrimitiveArray(Collection<Object> col, Class primitiveArrayType) {
         if (primitiveArrayType == Integer.TYPE) {
             return toIntArray(col);

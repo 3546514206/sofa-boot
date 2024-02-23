@@ -16,7 +16,9 @@
  */
 package com.alipay.sofa.runtime.spring.parser;
 
-import com.alipay.sofa.runtime.factory.BeanLoadCostBeanFactory;
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.boot.spring.namespace.spi.SofaBootTagNameSupport;
+import com.alipay.sofa.runtime.spring.async.AsyncInitBeanHolder;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -27,17 +29,40 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.boot.spring.namespace.spi.SofaBootTagNameSupport;
-import com.alipay.sofa.runtime.spring.async.AsyncInitBeanHolder;
-
 /**
  * @author qilong.zql
  * @author xuanbei
  * @since 2.6.0
  */
 public class AsyncInitBeanDefinitionDecorator implements BeanDefinitionDecorator,
-                                             SofaBootTagNameSupport {
+        SofaBootTagNameSupport {
+
+    private static final String BEAN_LOAD_COST_FACTORY_CLASS = "com.alipay.sofa.isle.spring.factory.BeanLoadCostBeanFactory";
+    private static final String GET_MODULE_NAME_METHOD = "getModuleName";
+
+    public static boolean isBeanLoadCostBeanFactory(Class factoryClass) {
+        if (factoryClass == null) {
+            return false;
+        }
+        if (BEAN_LOAD_COST_FACTORY_CLASS.equals(factoryClass.getName())) {
+            return true;
+        }
+
+        if (!Object.class.equals(factoryClass)) {
+            return isBeanLoadCostBeanFactory(factoryClass.getSuperclass());
+        }
+
+        return false;
+    }
+
+    public static String getModuleNameFromBeanFactory(Object factory) {
+        try {
+            return (String) factory.getClass().getMethod(GET_MODULE_NAME_METHOD).invoke(factory);
+        } catch (Throwable e) {
+            return SofaBootConstants.ROOT_APPLICATION_CONTEXT;
+        }
+    }
+
     @Override
     public BeanDefinitionHolder decorate(Node node, BeanDefinitionHolder definition,
                                          ParserContext parserContext) {
@@ -48,7 +73,7 @@ public class AsyncInitBeanDefinitionDecorator implements BeanDefinitionDecorator
         String moduleName = getModuleName(parserContext);
         if (moduleName != null && moduleName.trim().length() > 0) {
             AsyncInitBeanHolder.registerAsyncInitBean(moduleName, definition.getBeanName(),
-                ((AbstractBeanDefinition) definition.getBeanDefinition()).getInitMethodName());
+                    ((AbstractBeanDefinition) definition.getBeanDefinition()).getInitMethodName());
         }
         return definition;
     }
@@ -62,21 +87,15 @@ public class AsyncInitBeanDefinitionDecorator implements BeanDefinitionDecorator
         BeanDefinitionRegistry registry = parserContext.getRegistry();
         if (registry instanceof AbstractApplicationContext) {
             BeanFactory beanFactory = ((AbstractApplicationContext) registry).getBeanFactory();
-            if (beanFactory instanceof BeanLoadCostBeanFactory) {
-                return ((BeanLoadCostBeanFactory) beanFactory).getId();
+            if (isBeanLoadCostBeanFactory(beanFactory.getClass())) {
+                return getModuleNameFromBeanFactory(beanFactory);
             }
         }
 
-        if (registry instanceof BeanLoadCostBeanFactory) {
-            return ((BeanLoadCostBeanFactory) registry).getId();
+        if (isBeanLoadCostBeanFactory(registry.getClass())) {
+            return getModuleNameFromBeanFactory(registry);
         }
-        return SofaBootConstants.ROOT_APPLICATION_CONTEXT;
-    }
 
-    public static boolean isBeanLoadCostBeanFactory(Class factoryClass) {
-        if (factoryClass == null) {
-            return false;
-        }
-        return BeanLoadCostBeanFactory.class.isAssignableFrom(factoryClass);
+        return SofaBootConstants.ROOT_APPLICATION_CONTEXT;
     }
 }

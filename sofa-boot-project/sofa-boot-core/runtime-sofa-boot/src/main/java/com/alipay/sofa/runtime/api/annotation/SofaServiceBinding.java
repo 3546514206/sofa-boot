@@ -74,7 +74,7 @@ public @interface SofaServiceBinding {
      *
      * @return timeout
      */
-    int timeout() default 0;
+    int timeout() default 3000;
 
     /**
      * specify serialize type
@@ -94,7 +94,7 @@ public @interface SofaServiceBinding {
      * serialization between biz, default is true.
      * only serialize of reference and service is false
      * then invocation between biz would skip serialization
-     *
+     * <p>
      * Note that the serialize of {@link SofaReferenceBinding} is false
      *
      * @return

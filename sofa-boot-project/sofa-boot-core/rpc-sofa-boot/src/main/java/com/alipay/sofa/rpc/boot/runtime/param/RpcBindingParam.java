@@ -37,63 +37,58 @@ public abstract class RpcBindingParam implements BindingParam {
     /**
      * global attr
      */
-    protected Integer                    timeout;
+    protected Integer timeout;
 
-    protected Integer                    addressWaitTime;
+    protected Integer addressWaitTime;
 
-    protected Integer                    connectTimeout;
+    protected Integer connectTimeout;
 
-    protected Integer                    connectionNum;
+    protected Integer retries;
 
-    protected Integer                    retries;
+    protected String type;
 
-    protected String                     type;
+    protected String callbackClass;
 
-    protected String                     callbackClass;
+    protected String callbackRef;
 
-    protected String                     callbackRef;
+    protected Object callbackHandler;
 
-    protected Object                     callbackHandler;
+    protected Integer weight;
 
-    protected Integer                    weight;
+    protected Integer warmUpTime;
 
-    protected Integer                    warmUpTime;
+    protected Integer warmUpWeight;
 
-    protected Integer                    warmUpWeight;
+    protected UserThreadPool userThreadPool;
 
-    protected UserThreadPool             userThreadPool;
+    protected String genericInterface;
 
-    protected String                     genericInterface;
+    protected String loadBalancer;
 
-    protected String                     loadBalancer;
+    protected Boolean lazy;
 
-    protected Boolean                    lazy;
-
-    protected Boolean                    check;
+    protected Boolean check;
 
     /**
      * other
      */
-    protected List<Filter>               filters;
+    protected List<Filter> filters;
 
     protected List<RpcBindingMethodInfo> methodInfos;
 
-    protected String                     targetUrl;
+    protected String targetUrl;
 
-    protected String                     serialization;
+    protected String serialization;
 
-    protected Map<String, String>        parameters = new ConcurrentHashMap<String, String>();
+    protected Map<String, String> parameters = new ConcurrentHashMap<String, String>();
 
-    protected List<String>               registrys  = new ArrayList<String>();
-
-    private Integer                      repeatReferLimit;
-
-    protected String                     mockMode;
-
-    protected String                     mockBean;
+    protected List<String> registrys = new ArrayList<String>();
+    protected String mockMode;
+    protected String mockBean;
+    private Integer repeatReferLimit;
 
     /**
-     * Getter method for property <code>timeout</code>.
+     * Getter method for property <tt>timeout</tt>.
      *
      * @return property value of timeout
      */
@@ -102,7 +97,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>timeout</code>.
+     * Setter method for property <tt>timeout</tt>.
      *
      * @param timeout value to be assigned to property timeout
      */
@@ -111,7 +106,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>addressWaitTime</code>.
+     * Getter method for property <tt>addressWaitTime</tt>.
      *
      * @return property value of addressWaitTime
      */
@@ -120,7 +115,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>addressWaitTime</code>.
+     * Setter method for property <tt>addressWaitTime</tt>.
      *
      * @param addressWaitTime value to be assigned to property addressWaitTime
      */
@@ -129,7 +124,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>connectTimeout</code>.
+     * Getter method for property <tt>connectTimeout</tt>.
      *
      * @return property value of connectTimeout
      */
@@ -138,7 +133,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>connectTimeout</code>.
+     * Setter method for property <tt>connectTimeout</tt>.
      *
      * @param connectTimeout value to be assigned to property connectTimeout
      */
@@ -147,25 +142,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>connectionNum</code>.
-     *
-     * @return property value of connectionNum
-     */
-    public Integer getConnectionNum() {
-        return connectionNum;
-    }
-
-    /**
-     * Setter method for property <code>connectionNum</code>.
-     *
-     * @param connectionNum value to be assigned to property connectionNum
-     */
-    public void setConnectionNum(Integer connectionNum) {
-        this.connectionNum = connectionNum;
-    }
-
-    /**
-     * Getter method for property <code>retries</code>.
+     * Getter method for property <tt>retries</tt>.
      *
      * @return property value of retries
      */
@@ -174,7 +151,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>retries</code>.
+     * Setter method for property <tt>retries</tt>.
      *
      * @param retries value to be assigned to property retries
      */
@@ -183,7 +160,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>type</code>.
+     * Getter method for property <tt>type</tt>.
      *
      * @return property value of type
      */
@@ -192,7 +169,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>type</code>.
+     * Setter method for property <tt>type</tt>.
      *
      * @param type value to be assigned to property type
      */
@@ -201,7 +178,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>callbackClass</code>.
+     * Getter method for property <tt>callbackClass</tt>.
      *
      * @return property value of callbackClass
      */
@@ -210,7 +187,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>callbackClass</code>.
+     * Setter method for property <tt>callbackClass</tt>.
      *
      * @param callbackClass value to be assigned to property callbackClass
      */
@@ -219,7 +196,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>callbackRef</code>.
+     * Getter method for property <tt>callbackRef</tt>.
      *
      * @return property value of callbackRef
      */
@@ -228,7 +205,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>callbackRef</code>.
+     * Setter method for property <tt>callbackRef</tt>.
      *
      * @param callbackRef value to be assigned to property callbackRef
      */
@@ -237,7 +214,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>callbackHandler</code>.
+     * Getter method for property <tt>callbackHandler</tt>.
      *
      * @return property value of callbackHandler
      */
@@ -246,7 +223,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>callbackHandler</code>.
+     * Setter method for property <tt>callbackHandler</tt>.
      *
      * @param callbackHandler value to be assigned to property callbackHandler
      */
@@ -255,7 +232,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>weight</code>.
+     * Getter method for property <tt>weight</tt>.
      *
      * @return property value of weight
      */
@@ -264,7 +241,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>weight</code>.
+     * Setter method for property <tt>weight</tt>.
      *
      * @param weight value to be assigned to property weight
      */
@@ -273,7 +250,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>warmUpTime</code>.
+     * Getter method for property <tt>warmUpTime</tt>.
      *
      * @return property value of warmUpTime
      */
@@ -282,7 +259,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>warmUpTime</code>.
+     * Setter method for property <tt>warmUpTime</tt>.
      *
      * @param warmUpTime value to be assigned to property warmUpTime
      */
@@ -291,7 +268,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>warmUpWeight</code>.
+     * Getter method for property <tt>warmUpWeight</tt>.
      *
      * @return property value of warmUpWeight
      */
@@ -300,7 +277,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>warmUpWeight</code>.
+     * Setter method for property <tt>warmUpWeight</tt>.
      *
      * @param warmUpWeight value to be assigned to property warmUpWeight
      */
@@ -309,7 +286,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>filters</code>.
+     * Getter method for property <tt>filters</tt>.
      *
      * @return property value of filters
      */
@@ -318,7 +295,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>filters</code>.
+     * Setter method for property <tt>filters</tt>.
      *
      * @param filters value to be assigned to property filters
      */
@@ -327,7 +304,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>methodInfos</code>.
+     * Getter method for property <tt>methodInfos</tt>.
      *
      * @return property value of methodInfos
      */
@@ -336,7 +313,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>methodInfos</code>.
+     * Setter method for property <tt>methodInfos</tt>.
      *
      * @param methodInfos value to be assigned to property methodInfos
      */
@@ -345,7 +322,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>targetUrl</code>.
+     * Getter method for property <tt>targetUrl</tt>.
      *
      * @return property value of targetUrl
      */
@@ -354,7 +331,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>targetUrl</code>.
+     * Setter method for property <tt>targetUrl</tt>.
      *
      * @param targetUrl value to be assigned to property targetUrl
      */
@@ -363,7 +340,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>userThreadPool</code>.
+     * Getter method for property <tt>userThreadPool</tt>.
      *
      * @return property value of userThreadPool
      */
@@ -372,7 +349,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>userThreadPool</code>.
+     * Setter method for property <tt>userThreadPool</tt>.
      *
      * @param userThreadPool value to be assigned to property userThreadPool
      */
@@ -381,7 +358,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>genericInterface</code>.
+     * Getter method for property <tt>genericInterface</tt>.
      *
      * @return property value of genericInterface
      */
@@ -390,7 +367,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>genericInterface</code>.
+     * Setter method for property <tt>genericInterface</tt>.
      *
      * @param genericInterface value to be assigned to property genericInterface
      */
@@ -399,7 +376,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>loadBalancer</code>.
+     * Getter method for property <tt>loadBalancer</tt>.
      *
      * @return property value of loadBalancer
      */
@@ -408,7 +385,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>loadBalancer</code>.
+     * Setter method for property <tt>loadBalancer</tt>.
      *
      * @param loadBalancer value to be assigned to property loadBalancer
      */
@@ -417,7 +394,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>lazy</code>.
+     * Getter method for property <tt>lazy</tt>.
      *
      * @return property value of lazy
      */
@@ -426,7 +403,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>lazy</code>.
+     * Setter method for property <tt>lazy</tt>.
      *
      * @param lazy value to be assigned to property lazy
      */
@@ -435,7 +412,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Getter method for property <code>check</code>.
+     * Getter method for property <tt>check</tt>.
      *
      * @return property value of check
      */
@@ -444,7 +421,7 @@ public abstract class RpcBindingParam implements BindingParam {
     }
 
     /**
-     * Setter method for property <code>check</code>.
+     * Setter method for property <tt>check</tt>.
      *
      * @param check value to be assigned to property check
      */
@@ -501,15 +478,11 @@ public abstract class RpcBindingParam implements BindingParam {
             return false;
         }
         if (addressWaitTime != null ? !addressWaitTime.equals(that.addressWaitTime)
-            : that.addressWaitTime != null) {
+                : that.addressWaitTime != null) {
             return false;
         }
         if (connectTimeout != null ? !connectTimeout.equals(that.connectTimeout)
-            : that.connectTimeout != null) {
-            return false;
-        }
-        if (connectionNum != null ? !connectionNum.equals(that.connectionNum)
-            : that.connectionNum != null) {
+                : that.connectTimeout != null) {
             return false;
         }
         if (retries != null ? !retries.equals(that.retries) : that.retries != null) {
@@ -519,14 +492,14 @@ public abstract class RpcBindingParam implements BindingParam {
             return false;
         }
         if (callbackClass != null ? !callbackClass.equals(that.callbackClass)
-            : that.callbackClass != null) {
+                : that.callbackClass != null) {
             return false;
         }
         if (callbackRef != null ? !callbackRef.equals(that.callbackRef) : that.callbackRef != null) {
             return false;
         }
         if (callbackHandler != null ? !callbackHandler.equals(that.callbackHandler)
-            : that.callbackHandler != null) {
+                : that.callbackHandler != null) {
             return false;
         }
         if (weight != null ? !weight.equals(that.weight) : that.weight != null) {
@@ -536,19 +509,19 @@ public abstract class RpcBindingParam implements BindingParam {
             return false;
         }
         if (warmUpWeight != null ? !warmUpWeight.equals(that.warmUpWeight)
-            : that.warmUpWeight != null) {
+                : that.warmUpWeight != null) {
             return false;
         }
         if (userThreadPool != null ? !userThreadPool.equals(that.userThreadPool)
-            : that.userThreadPool != null) {
+                : that.userThreadPool != null) {
             return false;
         }
         if (genericInterface != null ? !genericInterface.equals(that.genericInterface)
-            : that.genericInterface != null) {
+                : that.genericInterface != null) {
             return false;
         }
         if (loadBalancer != null ? !loadBalancer.equals(that.loadBalancer)
-            : that.loadBalancer != null) {
+                : that.loadBalancer != null) {
             return false;
         }
         if (lazy != null ? !lazy.equals(that.lazy) : that.lazy != null) {
@@ -567,7 +540,7 @@ public abstract class RpcBindingParam implements BindingParam {
             return false;
         }
         if (serialization != null ? !serialization.equals(that.serialization)
-            : that.serialization != null) {
+                : that.serialization != null) {
             return false;
         }
         if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) {
@@ -581,7 +554,6 @@ public abstract class RpcBindingParam implements BindingParam {
         int result = timeout != null ? timeout.hashCode() : 0;
         result = 31 * result + (addressWaitTime != null ? addressWaitTime.hashCode() : 0);
         result = 31 * result + (connectTimeout != null ? connectTimeout.hashCode() : 0);
-        result = 31 * result + (connectionNum != null ? connectionNum.hashCode() : 0);
         result = 31 * result + (retries != null ? retries.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (callbackClass != null ? callbackClass.hashCode() : 0);

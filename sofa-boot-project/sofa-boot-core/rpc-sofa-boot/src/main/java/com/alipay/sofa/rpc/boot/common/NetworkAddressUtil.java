@@ -16,14 +16,14 @@
  */
 package com.alipay.sofa.rpc.boot.common;
 
+import com.alipay.sofa.rpc.common.utils.StringUtils;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.alipay.sofa.rpc.common.utils.StringUtils;
 
 /**
  * 地址处理类
@@ -33,17 +33,17 @@ import com.alipay.sofa.rpc.common.utils.StringUtils;
  */
 public class NetworkAddressUtil {
 
-    private static final char      COLON                = ':';
+    private static final char COLON = ':';
 
-    protected static List<IpRange> IP_RANGES            = null;
-    private static String          NETWORK_ADDRESS;
-    private static String          BIND_NETWORK_ADDRESS = null;
-    private static String          HOST_NAME;
+    protected static List<IpRange> IP_RANGES = null;
+    private static String NETWORK_ADDRESS;
+    private static String BIND_NETWORK_ADDRESS = null;
+    private static String HOST_NAME;
 
-    private static String          DEFAULT_HOST_NAME    = "app";
+    private static String DEFAULT_HOST_NAME = "app";
 
     /**
-     * this method should be invoked first
+     * this method should be invoked fisrt
      *
      * @param enabledIpRange
      * @param bindNetworkInterface
@@ -93,7 +93,7 @@ public class NetworkAddressUtil {
                 NetworkInterface ni = netInterfaces.nextElement();
                 if (!StringUtils.isBlank(bindNetworkInterface)) {
                     if (bindNetworkInterface.equals(ni.getDisplayName())
-                        || bindNetworkInterface.equals(ni.getName())) {
+                            || bindNetworkInterface.equals(ni.getName())) {
                         useNi = true;
                     } else {
                         continue;
@@ -104,7 +104,7 @@ public class NetworkAddressUtil {
                 while (addresses.hasMoreElements()) {
                     ip = addresses.nextElement();
                     if (!ip.isLoopbackAddress() && ip.getHostAddress().indexOf(COLON) == -1
-                        && (useNi || ipEnabled(ip.getHostAddress()))) {
+                            && (useNi || ipEnabled(ip.getHostAddress()))) {
                         return ip.getHostAddress();
                     }
                 }
@@ -200,12 +200,12 @@ public class NetworkAddressUtil {
         }
 
         private long parseStart(String ip) {
-            int[] starts = { 0, 0, 0, 0 };
+            int[] starts = {0, 0, 0, 0};
             return parse(starts, ip);
         }
 
         private long parseEnd(String ip) {
-            int[] ends = { 255, 255, 255, 255 };
+            int[] ends = {255, 255, 255, 255};
             return parse(ends, ip);
         }
 

@@ -16,13 +16,12 @@
  */
 package com.alipay.sofa.isle.deployment;
 
-import java.net.URL;
-import java.util.Properties;
-
-import org.springframework.util.ResourceUtils;
-
 import com.alipay.sofa.isle.deployment.impl.FileDeploymentDescriptor;
 import com.alipay.sofa.isle.deployment.impl.JarDeploymentDescriptor;
+import org.springframework.util.ResourceUtils;
+
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * SOFABoot Module deployment creator
@@ -34,8 +33,8 @@ public class DeploymentBuilder {
     /**
      * build a SOFABoot Module deployment descriptor
      *
-     * @param url SOFABoot module file url
-     * @param props properties
+     * @param url                               SOFABoot module file url
+     * @param props                             properties
      * @param deploymentDescriptorConfiguration deployment descriptor configuration
      * @return deployment descriptor
      */
@@ -45,10 +44,10 @@ public class DeploymentBuilder {
                                              ClassLoader classLoader) {
         if (ResourceUtils.isJarURL(url)) {
             return new JarDeploymentDescriptor(url, props, deploymentDescriptorConfiguration,
-                classLoader);
+                    classLoader);
         } else {
             return new FileDeploymentDescriptor(url, props, deploymentDescriptorConfiguration,
-                classLoader);
+                    classLoader);
         }
     }
 }

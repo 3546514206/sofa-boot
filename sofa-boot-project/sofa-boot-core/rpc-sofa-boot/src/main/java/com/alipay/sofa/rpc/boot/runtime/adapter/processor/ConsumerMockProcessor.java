@@ -19,6 +19,7 @@ package com.alipay.sofa.rpc.boot.runtime.adapter.processor;
 import com.alipay.sofa.boot.util.StringUtils;
 import com.alipay.sofa.rpc.common.MockMode;
 import com.alipay.sofa.rpc.config.ConsumerConfig;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @author zhaowang
@@ -27,17 +28,14 @@ import com.alipay.sofa.rpc.config.ConsumerConfig;
 public class ConsumerMockProcessor implements ConsumerConfigProcessor {
 
     public static final String MOCK_URL = "mockUrl";
-    private String             mockUrl;
-
-    public ConsumerMockProcessor(String mockUrl) {
-        this.mockUrl = mockUrl;
-    }
+    @Value("${com.alipay.sofa.rpc.mock-url}")
+    private String mockUrl;
 
     @Override
     public void processorConsumer(ConsumerConfig consumerConfig) {
         String mockMode = consumerConfig.getMockMode();
         if (StringUtils.hasText(mockUrl)
-            && (!StringUtils.hasText(mockMode) || MockMode.REMOTE.equals(mockMode))) {
+                && (!StringUtils.hasText(mockMode) || MockMode.REMOTE.equals(mockMode))) {
             String originMockUrl = consumerConfig.getParameter(MOCK_URL);
             if (!StringUtils.hasText(originMockUrl)) {
                 consumerConfig.setMockMode(MockMode.REMOTE);

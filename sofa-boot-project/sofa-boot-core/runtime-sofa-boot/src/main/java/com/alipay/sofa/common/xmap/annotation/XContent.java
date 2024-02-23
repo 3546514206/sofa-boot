@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * @since 2.6.0
  */
 @XMemberAnnotation(XMemberAnnotation.CONTENT)
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XContent {
 

@@ -16,6 +16,12 @@
  */
 package com.alipay.sofa.runtime.spring.async;
 
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.boot.util.NamedThreadFactory;
+import com.alipay.sofa.common.thread.SofaThreadPoolExecutor;
+import com.alipay.sofa.runtime.log.SofaLogger;
+import org.springframework.core.env.Environment;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -25,27 +31,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.springframework.core.env.Environment;
-
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.boot.util.NamedThreadFactory;
-import com.alipay.sofa.common.thread.SofaThreadPoolExecutor;
-import com.alipay.sofa.runtime.log.SofaLogger;
-
 /**
  * @author qilong.zql
  * @author xuanbei
  * @since 2.6.0
  */
 public class AsyncTaskExecutor {
-    protected static final int                                 CPU_COUNT       = Runtime
-                                                                                   .getRuntime()
-                                                                                   .availableProcessors();
+    protected static final int CPU_COUNT = Runtime
+            .getRuntime()
+            .availableProcessors();
     protected static final AtomicReference<ThreadPoolExecutor> THREAD_POOL_REF = new AtomicReference<ThreadPoolExecutor>();
 
-    protected static final List<Future>                        FUTURES         = new ArrayList<>();
-    protected static final AtomicBoolean                       STARTED         = new AtomicBoolean(
-                                                                                   false);
+    protected static final List<Future> FUTURES = new ArrayList<>();
+    protected static final AtomicBoolean STARTED = new AtomicBoolean(
+            false);
 
     public static Future submitTask(Environment environment, Runnable runnable) {
         if (THREAD_POOL_REF.get() == null) {
@@ -62,6 +61,7 @@ public class AsyncTaskExecutor {
 
     /**
      * Create thread pool to execute async init task
+     *
      * @return
      */
     private static ThreadPoolExecutor createThreadPoolExecutor(Environment environment) {
@@ -78,12 +78,12 @@ public class AsyncTaskExecutor {
         }
 
         SofaLogger.info(String.format(
-            "create async-init-bean thread pool, corePoolSize: %d, maxPoolSize: %d.",
-            threadPoolCoreSize, threadPoolMaxSize));
+                "create async-init-bean thread pool, corePoolSize: %d, maxPoolSize: %d.",
+                threadPoolCoreSize, threadPoolMaxSize));
         return new SofaThreadPoolExecutor(threadPoolCoreSize, threadPoolMaxSize, 30,
-            TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new NamedThreadFactory(
+                TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new NamedThreadFactory(
                 "async-init-bean"), new ThreadPoolExecutor.CallerRunsPolicy(), "async-init-bean",
-            "sofa-boot");
+                "sofa-boot");
     }
 
     public static void ensureAsyncTasksFinish() {

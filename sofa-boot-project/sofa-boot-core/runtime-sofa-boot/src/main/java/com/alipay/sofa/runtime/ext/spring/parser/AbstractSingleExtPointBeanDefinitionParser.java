@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
  * @since 2.6.0
  */
 public abstract class AbstractSingleExtPointBeanDefinitionParser extends
-                                                                AbstractExtPointBeanDefinitionParser {
+        AbstractExtPointBeanDefinitionParser {
 
     /**
      * Creates a {@link BeanDefinitionBuilder} instance for the

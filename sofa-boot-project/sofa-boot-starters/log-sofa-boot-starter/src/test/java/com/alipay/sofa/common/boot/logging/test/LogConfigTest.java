@@ -38,6 +38,7 @@ import java.util.Map;
 public class LogConfigTest extends LogTestBase {
     /**
      * test logging.config.{space id} config
+     *
      * @throws IOException not handling
      */
     @Test
@@ -51,10 +52,10 @@ public class LogConfigTest extends LogTestBase {
         logger = getLogger();
         File logFile = getLogbackDefaultFile(environment);
         FileUtils.write(logFile, StringUtil.EMPTY_STRING,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         logger.info("info level");
         List<String> contents = FileUtils.readLines(logFile,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         Assert.assertEquals(1, contents.size());
         Assert.assertTrue(contents.get(0).contains("logback-test-conf"));
     }

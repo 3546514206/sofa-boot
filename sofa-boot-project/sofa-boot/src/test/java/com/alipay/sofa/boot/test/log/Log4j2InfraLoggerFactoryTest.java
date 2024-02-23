@@ -16,17 +16,16 @@
  */
 package com.alipay.sofa.boot.test.log;
 
-import static junit.framework.TestCase.assertTrue;
-
+import com.alipay.sofa.boot.log.InfraLoggerFactory;
+import com.alipay.sofa.boot.test.log.base.BaseLogTest;
+import com.alipay.sofa.common.log.Constants;
+import com.alipay.sofa.common.log.env.LogEnvUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 
-import com.alipay.sofa.boot.log.InfraLoggerFactory;
-import com.alipay.sofa.boot.test.log.base.BaseLogTest;
-import com.alipay.sofa.common.log.Constants;
-import com.alipay.sofa.common.log.env.LogEnvUtils;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Log4jInfrastructureHealthCheckLoggerFactory Tester.

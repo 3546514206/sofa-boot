@@ -16,14 +16,12 @@
  */
 package com.alipay.sofa.rpc.boot.test.config;
 
+import com.alipay.sofa.rpc.boot.config.MeshConfigurator;
+import com.alipay.sofa.rpc.config.RegistryConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.alipay.sofa.rpc.boot.config.MeshConfigurator;
-import com.alipay.sofa.rpc.config.RegistryConfig;
-
 /**
- *
  * @author zhuoyu.sjw
  * @version $Id: MeshConfiguratorTest.java, v 0.1 2018-12-03 17:39 zhuoyu.sjw Exp $$
  */

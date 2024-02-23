@@ -16,21 +16,20 @@
  */
 package com.alipay.sofa.rpc.boot.test.converter;
 
-import java.util.List;
-
+import com.alipay.sofa.rpc.boot.runtime.binding.RpcBindingMethodInfo;
+import com.alipay.sofa.rpc.boot.runtime.converter.BoltBindingConverter;
+import com.alipay.sofa.rpc.boot.runtime.converter.RpcBindingConverter;
 import com.alipay.sofa.rpc.boot.test.RuntimeTestConfiguration;
+import com.alipay.sofa.runtime.api.annotation.SofaMethod;
+import com.alipay.sofa.runtime.api.annotation.SofaReference;
+import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
 import com.alipay.sofa.runtime.service.impl.BindingConverterFactoryImpl;
 import com.alipay.sofa.runtime.spi.service.BindingConverter;
 import com.alipay.sofa.runtime.spi.service.BindingConverterFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.alipay.sofa.rpc.boot.runtime.binding.RpcBindingMethodInfo;
-import com.alipay.sofa.rpc.boot.runtime.converter.BoltBindingConverter;
-import com.alipay.sofa.rpc.boot.runtime.converter.RpcBindingConverter;
-import com.alipay.sofa.runtime.api.annotation.SofaMethod;
-import com.alipay.sofa.runtime.api.annotation.SofaReference;
-import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
+import java.util.List;
 
 /**
  * @author qilong.zql
@@ -38,7 +37,7 @@ import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
  */
 public class RpcBindingConverterTest {
 
-    @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", methodInfos = { @SofaMethod(name = "test", retries = 1, invokeType = "callback", callbackClass = "class", callbackRef = "ref", timeout = 2000) }))
+    @SofaReference(binding = @SofaReferenceBinding(bindingType = "bolt", methodInfos = {@SofaMethod(name = "test", retries = 1, invokeType = "callback", callbackClass = "class", callbackRef = "ref", timeout = 2000)}))
     private String testAnnotation;
 
     @Test
@@ -49,12 +48,12 @@ public class RpcBindingConverterTest {
         SofaReference reference = null;
         try {
             reference = RpcBindingConverterTest.class.getDeclaredField("testAnnotation")
-                .getAnnotation(SofaReference.class);
+                    .getAnnotation(SofaReference.class);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
         List<RpcBindingMethodInfo> result = rpcBindingConverter.parseSofaMethods(reference
-            .binding().methodInfos());
+                .binding().methodInfos());
 
         Assert.assertEquals(1, result.size());
         final RpcBindingMethodInfo rpcBindingMethodInfo = result.get(0);
@@ -72,10 +71,10 @@ public class RpcBindingConverterTest {
     public void testOrder() {
         BindingConverterFactory factory = new BindingConverterFactoryImpl();
         factory.addBindingConverters(RuntimeTestConfiguration
-            .getClassesByServiceLoader(BindingConverter.class));
+                .getClassesByServiceLoader(BindingConverter.class));
         BindingConverter bindingConverter = factory.getBindingConverter(TestBindingConverter.TEST);
         BindingConverter bindingConverterByTagName = factory
-            .getBindingConverterByTagName(TestBindingConverter.TARGET_NAME);
+                .getBindingConverterByTagName(TestBindingConverter.TARGET_NAME);
 
         Assert.assertTrue(bindingConverter instanceof TestBindingConverter2);
         Assert.assertTrue(bindingConverterByTagName instanceof TestBindingConverter2);

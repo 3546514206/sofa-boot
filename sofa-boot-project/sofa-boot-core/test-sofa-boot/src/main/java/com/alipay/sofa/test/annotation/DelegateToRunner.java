@@ -16,13 +16,9 @@
  */
 package com.alipay.sofa.test.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.junit.runner.Runner;
+
+import java.lang.annotation.*;
 
 /**
  * @author qilong.zql

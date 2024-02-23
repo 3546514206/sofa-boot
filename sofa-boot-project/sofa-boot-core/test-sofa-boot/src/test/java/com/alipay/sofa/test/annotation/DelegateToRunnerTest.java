@@ -30,7 +30,7 @@ public class DelegateToRunnerTest {
     @Test
     public void testDelegateToRunnerTest() {
         DelegateToRunner annotation = AnnotationUtils.getAnnotation(SampleClass.class,
-            DelegateToRunner.class);
+                DelegateToRunner.class);
         Assert.assertTrue(annotation.value().equals(JUnit4.class));
     }
 

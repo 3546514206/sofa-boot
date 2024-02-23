@@ -16,10 +16,6 @@
  */
 package com.alipay.sofa.runtime.service.client;
 
-import java.util.Collection;
-import java.util.Map;
-
-import com.alipay.sofa.boot.error.ErrorCode;
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 import com.alipay.sofa.runtime.api.client.ServiceClient;
 import com.alipay.sofa.runtime.api.client.param.BindingParam;
@@ -40,15 +36,18 @@ import com.alipay.sofa.runtime.spi.service.BindingConverter;
 import com.alipay.sofa.runtime.spi.service.BindingConverterContext;
 import com.alipay.sofa.runtime.spi.service.BindingConverterFactory;
 
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Service Client Implementation，you can publish a service by this class
  *
  * @author xuanbei 18/3/1
  */
 public class ServiceClientImpl implements ServiceClient {
-    private SofaRuntimeContext      sofaRuntimeContext;
+    private SofaRuntimeContext sofaRuntimeContext;
     private BindingConverterFactory bindingConverterFactory;
-    private BindingAdapterFactory   bindingAdapterFactory;
+    private BindingAdapterFactory bindingAdapterFactory;
 
     public ServiceClientImpl(SofaRuntimeContext sofaRuntimeContext,
                              BindingConverterFactory bindingConverterFactory,
@@ -64,18 +63,20 @@ public class ServiceClientImpl implements ServiceClient {
         implementation.setTarget(serviceParam.getInstance());
 
         if (serviceParam.getInterfaceType() == null) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-00201"));
+            throw new ServiceRuntimeException(
+                    "Interface type is null. Interface type is required while publish a service.");
         }
         Service service = new ServiceImpl(serviceParam.getUniqueId(),
-            serviceParam.getInterfaceType(), InterfaceMode.api, serviceParam.getInstance(), null);
+                serviceParam.getInterfaceType(), InterfaceMode.api, serviceParam.getInstance(), null);
 
         for (BindingParam bindingParam : serviceParam.getBindingParams()) {
             BindingConverter bindingConverter = bindingConverterFactory
-                .getBindingConverter(bindingParam.getBindingType());
+                    .getBindingConverter(bindingParam.getBindingType());
 
             if (bindingConverter == null) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00200",
-                    bindingParam.getBindingType()));
+                throw new ServiceRuntimeException(
+                        "Can not found binding converter for binding type "
+                                + bindingParam.getBindingType());
             }
             BindingConverterContext bindingConverterContext = new BindingConverterContext();
             bindingConverterContext.setInBinding(false);
@@ -98,7 +99,7 @@ public class ServiceClientImpl implements ServiceClient {
         }
 
         ComponentInfo componentInfo = new ServiceComponent(implementation, service,
-            bindingAdapterFactory, sofaRuntimeContext);
+                bindingAdapterFactory, sofaRuntimeContext);
         sofaRuntimeContext.getComponentManager().register(componentInfo);
     }
 
@@ -110,11 +111,11 @@ public class ServiceClientImpl implements ServiceClient {
     @Override
     public void removeService(Class<?> interfaceClass, String uniqueId, int millisecondsToDelay) {
         if (millisecondsToDelay < 0) {
-            throw new IllegalArgumentException(ErrorCode.convert("01-00202"));
+            throw new IllegalArgumentException("Argument delay must be a positive integer or zero.");
         }
 
         Collection<ComponentInfo> serviceComponents = sofaRuntimeContext.getComponentManager()
-            .getComponentInfosByType(ServiceComponent.SERVICE_COMPONENT_TYPE);
+                .getComponentInfosByType(ServiceComponent.SERVICE_COMPONENT_TYPE);
 
         for (ComponentInfo componentInfo : serviceComponents) {
             if (!(componentInfo instanceof ServiceComponent)) {
@@ -124,7 +125,7 @@ public class ServiceClientImpl implements ServiceClient {
             ServiceComponent serviceComponent = (ServiceComponent) componentInfo;
 
             if (serviceComponent.getService().getInterfaceType() == interfaceClass
-                && serviceComponent.getService().getUniqueId().equals(uniqueId)) {
+                    && serviceComponent.getService().getUniqueId().equals(uniqueId)) {
                 Map<String, Property> properties = serviceComponent.getProperties();
                 Property property = new Property();
                 property.setValue(millisecondsToDelay);

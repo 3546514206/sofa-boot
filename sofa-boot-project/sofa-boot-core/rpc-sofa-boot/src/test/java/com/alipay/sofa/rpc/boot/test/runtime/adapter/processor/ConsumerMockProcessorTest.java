@@ -30,8 +30,8 @@ import org.junit.Test;
  */
 public class ConsumerMockProcessorTest {
 
-    public static final String    MOCK_URL  = "mock";
-    private ConsumerMockProcessor processor = new ConsumerMockProcessor("");
+    public static final String MOCK_URL = "mock";
+    private ConsumerMockProcessor processor = new ConsumerMockProcessor();
 
     @Before
     public void before() {
@@ -50,7 +50,7 @@ public class ConsumerMockProcessorTest {
         processor.processorConsumer(consumerConfig2);
         Assert.assertFalse(StringUtils.hasText(consumerConfig2.getMockMode()));
         Assert.assertFalse(StringUtils.hasText(consumerConfig2
-            .getParameter(ConsumerMockProcessor.MOCK_URL)));
+                .getParameter(ConsumerMockProcessor.MOCK_URL)));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ConsumerMockProcessorTest {
         consumerConfig.setMockMode(MockMode.LOCAL);
         processor.processorConsumer(consumerConfig);
         Assert.assertFalse(StringUtils.hasText(consumerConfig
-            .getParameter(ConsumerMockProcessor.MOCK_URL)));
+                .getParameter(ConsumerMockProcessor.MOCK_URL)));
         Assert.assertEquals(MockMode.LOCAL, consumerConfig.getMockMode());
 
         consumerConfig = new ConsumerConfig();

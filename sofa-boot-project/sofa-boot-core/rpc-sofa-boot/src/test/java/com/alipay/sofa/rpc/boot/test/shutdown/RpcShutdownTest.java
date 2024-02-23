@@ -16,6 +16,9 @@
  */
 package com.alipay.sofa.rpc.boot.test.shutdown;
 
+import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
+import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
+import com.alipay.sofa.rpc.boot.test.util.TestUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,12 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
-import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
-import com.alipay.sofa.rpc.boot.test.util.TestUtils;
 
 @SpringBootApplication
 @SpringBootTest(classes = RpcShutdownTest.class)
@@ -41,21 +39,15 @@ import com.alipay.sofa.rpc.boot.test.util.TestUtils;
 public class RpcShutdownTest extends ActivelyDestroyTest implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
-    @Test
-    @DirtiesContext
-    public void test() {
-        Assert.assertFalse(TestUtils.available(SofaBootRpcConfigConstants.BOLT_PORT_DEFAULT));
-    }
-
     @AfterClass
     public static void testRpcGracefulShutdown() {
         ((ConfigurableApplicationContext) applicationContext).close();
 
-        boolean portAvailable = false;
+        boolean portAvailale = false;
         //in case of graceful shutdown too slow
         for (int i = 0; i < 3; i++) {
-            portAvailable = TestUtils.available(SofaBootRpcConfigConstants.BOLT_PORT_DEFAULT);
-            if (portAvailable) {
+            portAvailale = TestUtils.available(SofaBootRpcConfigConstants.BOLT_PORT_DEFAULT);
+            if (portAvailale) {
                 break;
             }
             try {
@@ -64,7 +56,13 @@ public class RpcShutdownTest extends ActivelyDestroyTest implements ApplicationC
                 e.printStackTrace();
             }
         }
-        Assert.assertTrue(portAvailable);
+        Assert.assertTrue(portAvailale);
+
+    }
+
+    @Test
+    public void test() {
+        Assert.assertFalse(TestUtils.available(SofaBootRpcConfigConstants.BOLT_PORT_DEFAULT));
     }
 
     @Override

@@ -16,6 +16,11 @@
  */
 package com.alipay.sofa.runtime.test;
 
+import com.alipay.sofa.runtime.api.annotation.SofaService;
+import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
+import com.alipay.sofa.runtime.test.beans.facade.SampleService;
+import com.alipay.sofa.runtime.test.beans.service.LifeCycleSampleService;
+import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,12 +31,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.alipay.sofa.runtime.api.annotation.SofaService;
-import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
-import com.alipay.sofa.runtime.test.beans.facade.SampleService;
-import com.alipay.sofa.runtime.test.beans.service.LifeCycleSampleService;
-import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 
 /**
  * @author qilong.zql
@@ -46,7 +45,7 @@ public class ComponentLifeCycleTest {
     private LifeCycleSampleService lifeCycleSampleService;
 
     @Autowired
-    private SofaRuntimeContext     sofaRuntimeContext;
+    private SofaRuntimeContext sofaRuntimeContext;
 
     @Test
     public void testComponentLifeCycle() {
@@ -55,7 +54,7 @@ public class ComponentLifeCycleTest {
         Assert.assertEquals("deactivated", lifeCycleSampleService.service());
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @Import(RuntimeConfiguration.class)
     static class ComponentLifeCycleTestConfiguration {
         @Bean

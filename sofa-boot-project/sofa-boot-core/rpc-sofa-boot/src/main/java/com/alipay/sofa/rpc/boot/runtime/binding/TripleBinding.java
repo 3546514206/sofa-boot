@@ -21,7 +21,6 @@ import com.alipay.sofa.runtime.api.binding.BindingType;
 import org.springframework.context.ApplicationContext;
 
 /**
- *
  * @author <a href="mailto:zhiyuan.lzy@antfin.com">zhiyuan.lzy</a>
  */
 public class TripleBinding extends RpcBinding {

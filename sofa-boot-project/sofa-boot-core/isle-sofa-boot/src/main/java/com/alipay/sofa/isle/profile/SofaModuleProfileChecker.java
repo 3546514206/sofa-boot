@@ -26,7 +26,7 @@ import com.alipay.sofa.isle.deployment.DeploymentDescriptor;
 public interface SofaModuleProfileChecker {
 
     /***
-     * determine whether the module should be activated
+     * determine whether the module should be activate
      *
      * @param sofaModuleProfiles sofa module profiles
      * @return true or false
@@ -34,7 +34,7 @@ public interface SofaModuleProfileChecker {
     boolean acceptProfiles(String[] sofaModuleProfiles);
 
     /**
-     * determine whether the module should be activated
+     * determine whether the module should be activate
      *
      * @param deploymentDescriptor
      * @return

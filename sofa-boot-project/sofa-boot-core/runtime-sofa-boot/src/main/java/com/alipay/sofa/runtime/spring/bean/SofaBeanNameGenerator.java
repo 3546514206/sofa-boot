@@ -16,56 +16,33 @@
  */
 package com.alipay.sofa.runtime.spring.bean;
 
-import com.alipay.sofa.runtime.SofaRuntimeProperties;
+import com.alipay.sofa.runtime.spring.parser.AbstractContractDefinitionParser;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.util.StringUtils;
-
-import com.alipay.sofa.runtime.spring.parser.AbstractContractDefinitionParser;
-
-import static com.alipay.sofa.runtime.spring.parser.ServiceDefinitionParser.BEAN_ID;
 
 /**
  * @author qilong.zql
  * @since 3.1.0
  */
 public class SofaBeanNameGenerator {
-    private static final String SERVICE_BEAN_NAME_PREFIX   = "ServiceFactoryBean#";
+    private static final String SERVICE_BEAN_NAME_PREFIX = "ServiceFactoryBean#";
     private static final String REFERENCE_BEAN_NAME_PREFIX = "ReferenceFactoryBean#";
 
     public static String generateSofaServiceBeanName(BeanDefinition definition) {
         String interfaceName = (String) definition.getPropertyValues().get(
-            AbstractContractDefinitionParser.INTERFACE_PROPERTY);
+                AbstractContractDefinitionParser.INTERFACE_PROPERTY);
         Class clazz = (Class) definition.getPropertyValues().get(
-            AbstractContractDefinitionParser.INTERFACE_CLASS_PROPERTY);
+                AbstractContractDefinitionParser.INTERFACE_CLASS_PROPERTY);
         if (clazz != null) {
             interfaceName = clazz.getCanonicalName();
         }
         String uniqueId = (String) definition.getPropertyValues().get(
-            AbstractContractDefinitionParser.UNIQUE_ID_PROPERTY);
-        return generateSofaServiceBeanName(interfaceName, uniqueId, (String) definition
-            .getPropertyValues().get(BEAN_ID));
+                AbstractContractDefinitionParser.UNIQUE_ID_PROPERTY);
+        return generateSofaServiceBeanName(interfaceName, uniqueId);
     }
 
     public static String generateSofaServiceBeanName(Class<?> interfaceType, String uniqueId) {
         return generateSofaServiceBeanName(interfaceType.getCanonicalName(), uniqueId);
-    }
-
-    public static String generateSofaServiceBeanName(String interfaceName, String uniqueId,
-                                                     String beanId) {
-        if (SofaRuntimeProperties.isServiceNameWithBeanId() && StringUtils.hasText(beanId)) {
-            return generateSofaServiceBeanName(interfaceName, uniqueId) + ":" + beanId;
-        } else {
-            return generateSofaServiceBeanName(interfaceName, uniqueId);
-        }
-    }
-
-    public static String generateSofaServiceBeanName(Class<?> interfaceType, String uniqueId,
-                                                     String beanId) {
-        if (SofaRuntimeProperties.isServiceNameWithBeanId() && StringUtils.hasText(beanId)) {
-            return generateSofaServiceBeanName(interfaceType, uniqueId) + ":" + beanId;
-        } else {
-            return generateSofaServiceBeanName(interfaceType, uniqueId);
-        }
     }
 
     public static String generateSofaServiceBeanName(String interfaceName, String uniqueId) {

@@ -26,9 +26,12 @@ import com.alipay.sofa.rpc.common.SofaOptions;
 import com.alipay.sofa.rpc.common.utils.StringUtils;
 import com.alipay.sofa.rpc.config.RegistryConfig;
 import com.alipay.sofa.rpc.log.LogCodes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,31 +43,31 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RegistryConfigContainer {
 
-    private static final String                     DEFAULT_REGISTRY = "DEFAULT";
+    private static final String DEFAULT_REGISTRY = "DEFAULT";
 
-    private final SofaBootRpcProperties             sofaBootRpcProperties;
+    @Autowired
+    private SofaBootRpcProperties sofaBootRpcProperties;
 
-    private Map<String, RegistryConfigureProcessor> registryConfigMap;
+    @Resource(name = "registryConfigMap")
+    private Map<String, RegistryConfigureProcessor> registryConfigMap = new HashMap<String, RegistryConfigureProcessor>(
+            4);
 
     /**
      * for cache
      */
-    private Map<String, RegistryConfig>             registryConfigs  = new ConcurrentHashMap<String, RegistryConfig>();
+    private Map<String, RegistryConfig> registryConfigs = new ConcurrentHashMap<String, RegistryConfig>();
 
     /**
      * for custom extends
      */
-    private String                                  customDefaultRegistry;
+    private String customDefaultRegistry;
 
     /**
      * for default address for  customDefaultRegistry
      */
-    private String                                  customDefaultRegistryAddress;
+    private String customDefaultRegistryAddress;
 
-    public RegistryConfigContainer(SofaBootRpcProperties sofaBootRpcProperties,
-                                   Map<String, RegistryConfigureProcessor> registryConfigMap) {
-        this.sofaBootRpcProperties = sofaBootRpcProperties;
-        this.registryConfigMap = registryConfigMap;
+    public RegistryConfigContainer() {
         customDefaultRegistry = SofaConfigs.getOrDefault(SofaBootRpcConfigKeys.DEFAULT_REGISTRY);
         if (StringUtils.isNotBlank(customDefaultRegistry)) {
             customDefaultRegistryAddress = System.getProperty(customDefaultRegistry);
@@ -77,7 +80,7 @@ public class RegistryConfigContainer {
      * @throws SofaBootRpcRuntimeException
      */
     public RegistryConfig getRegistryConfig(String registryAlias)
-                                                                 throws SofaBootRpcRuntimeException {
+            throws SofaBootRpcRuntimeException {
         RegistryConfig registryConfig;
         String registryProtocol;
         String registryAddress;
@@ -123,21 +126,21 @@ public class RegistryConfigContainer {
 
         if (registryConfigMap.get(registryProtocol) != null) {
             RegistryConfigureProcessor registryConfigureProcessor = registryConfigMap
-                .get(registryProtocol);
+                    .get(registryProtocol);
             registryConfig = registryConfigureProcessor.buildFromAddress(registryAddress);
             registryConfigs.put(registryAlias, registryConfig);
             //不再处理以.分隔的.
             final Environment environment = sofaBootRpcProperties.getEnvironment();
             if (environment.containsProperty(SofaOptions.CONFIG_RPC_REGISTER_REGISTRY_IGNORE)) {
                 if (Boolean.TRUE.toString().equalsIgnoreCase(
-                    environment.getProperty(SofaOptions.CONFIG_RPC_REGISTER_REGISTRY_IGNORE))) {
+                        environment.getProperty(SofaOptions.CONFIG_RPC_REGISTER_REGISTRY_IGNORE))) {
                     registryConfig.setRegister(false);
                 }
             }
             return registryConfig;
         } else {
             throw new SofaBootRpcRuntimeException(LogCodes.getLog(
-                LogCodes.ERROR_REGISTRY_NOT_SUPPORT, registryAddress));
+                    LogCodes.ERROR_REGISTRY_NOT_SUPPORT, registryAddress));
         }
     }
 
@@ -186,7 +189,7 @@ public class RegistryConfigContainer {
         String meshConfig = sofaBootRpcProperties.getEnableMesh();
         final Map<String, String> registries = sofaBootRpcProperties.getRegistries();
         if (StringUtils.isNotBlank(meshConfig) && registries != null
-            && registries.get(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH) != null) {
+                && registries.get(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH) != null) {
             if (meshConfig.equalsIgnoreCase(SofaBootRpcConfigConstants.ENABLE_MESH_ALL)) {
                 return true;
             } else {

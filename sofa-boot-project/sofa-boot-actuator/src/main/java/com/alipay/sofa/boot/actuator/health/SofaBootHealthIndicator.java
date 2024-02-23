@@ -20,8 +20,10 @@ import com.alipay.sofa.boot.constant.SofaBootConstants;
 import com.alipay.sofa.boot.health.NonReadinessCheck;
 import com.alipay.sofa.healthcheck.HealthCheckerProcessor;
 import com.alipay.sofa.healthcheck.ReadinessCheckListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,26 +37,18 @@ import java.util.Map;
  */
 public class SofaBootHealthIndicator implements HealthIndicator, NonReadinessCheck {
 
-    private static final String          CHECK_RESULT_PREFIX = "Middleware";
+    private static final String CHECK_RESULT_PREFIX = "Middleware";
 
-    private final HealthCheckerProcessor healthCheckerProcessor;
+    @Autowired
+    private HealthCheckerProcessor healthCheckerProcessor;
 
-    private final ReadinessCheckListener readinessCheckListener;
-
-    public SofaBootHealthIndicator(HealthCheckerProcessor healthCheckerProcessor,
-                                   ReadinessCheckListener readinessCheckListener) {
-        this.healthCheckerProcessor = healthCheckerProcessor;
-        this.readinessCheckListener = readinessCheckListener;
-    }
+    @Autowired
+    private ReadinessCheckListener readinessCheckListener;
 
     @Override
     public Health health() {
-        if (!readinessCheckListener.isReadinessCheckFinish()) {
-            return Health
-                .down()
-                .withDetail(CHECK_RESULT_PREFIX,
-                    SofaBootConstants.SOFABOOT_HEALTH_CHECK_NOT_READY_MSG).build();
-        }
+        Assert.isTrue(readinessCheckListener.isReadinessCheckFinish(),
+                SofaBootConstants.SOFABOOT_HEALTH_CHECK_NOT_READY_MSG);
 
         Map<String, Health> healths = new HashMap<>();
         boolean checkSuccessful = healthCheckerProcessor.livenessHealthCheck(healths);

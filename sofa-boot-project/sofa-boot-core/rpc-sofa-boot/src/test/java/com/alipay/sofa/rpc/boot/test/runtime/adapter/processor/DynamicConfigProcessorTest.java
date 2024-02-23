@@ -30,9 +30,9 @@ import org.junit.Test;
  */
 public class DynamicConfigProcessorTest {
 
-    public static final String     CONFIG    = "config";
-    public static final String     ANOTHER   = "another";
-    private DynamicConfigProcessor processor = new DynamicConfigProcessor("");
+    public static final String CONFIG = "config";
+    public static final String ANOTHER = "another";
+    private DynamicConfigProcessor processor = new DynamicConfigProcessor();
 
     @Test
     public void test() {
@@ -60,12 +60,12 @@ public class DynamicConfigProcessorTest {
         consumerConfig = new ConsumerConfig();
         processor.processorConsumer(consumerConfig);
         Assert.assertFalse(StringUtils.hasText(consumerConfig
-            .getParameter(DynamicConfigKeys.DYNAMIC_ALIAS)));
+                .getParameter(DynamicConfigKeys.DYNAMIC_ALIAS)));
 
         providerConfig = new ProviderConfig();
         processor.processorProvider(providerConfig);
         Assert.assertFalse(StringUtils.hasText(providerConfig
-            .getParameter(DynamicConfigKeys.DYNAMIC_ALIAS)));
+                .getParameter(DynamicConfigKeys.DYNAMIC_ALIAS)));
 
     }
 

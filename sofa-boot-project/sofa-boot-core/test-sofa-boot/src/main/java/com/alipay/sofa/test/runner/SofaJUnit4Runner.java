@@ -16,20 +16,15 @@
  */
 package com.alipay.sofa.test.runner;
 
+import com.alipay.sofa.test.annotation.DelegateToRunner;
+import com.alipay.sofa.test.utils.TestModeUtil;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.manipulation.Filter;
-import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.manipulation.Sortable;
-import org.junit.runner.manipulation.Sorter;
+import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.ClassUtils;
-
-import com.alipay.sofa.test.annotation.DelegateToRunner;
-import com.alipay.sofa.test.utils.TestModeUtil;
 
 /**
  * @author qilong.zql
@@ -37,11 +32,11 @@ import com.alipay.sofa.test.utils.TestModeUtil;
  */
 public class SofaJUnit4Runner extends Runner implements Filterable, Sortable {
 
-    private static final String DEFAULT_JUNIT4_RUNNER  = "org.junit.runners.JUnit4";
+    private static final String DEFAULT_JUNIT4_RUNNER = "org.junit.runners.JUnit4";
 
     private static final String SOFA_ARK_JUNIT4_RUNNER = "com.alipay.sofa.ark.support.runner.ArkJUnit4Runner";
 
-    protected Runner            runner;
+    protected Runner runner;
 
     @SuppressWarnings("unchecked")
     public SofaJUnit4Runner(Class<?> klazz) {
@@ -65,12 +60,12 @@ public class SofaJUnit4Runner extends Runner implements Filterable, Sortable {
             }
 
             if (TestModeUtil.isArkMode()
-                && SpringJUnit4ClassRunner.class.isAssignableFrom(runnerClass)) {
+                    && SpringJUnit4ClassRunner.class.isAssignableFrom(runnerClass)) {
                 throw new RuntimeException(
-                    String
-                        .format(
-                            "As TestRunner is %s, dependency of sofa-ark-springboot-starter should be removed from classpath!",
-                            runnerClass.getCanonicalName()));
+                        String
+                                .format(
+                                        "As TestRunner is %s, dependency of sofa-ark-springboot-starter should be removed from classpath!",
+                                        runnerClass.getCanonicalName()));
             }
 
             runner = (Runner) runnerClass.getConstructor(Class.class).newInstance(klazz);

@@ -28,7 +28,8 @@ import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 3:12 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 3:12 PM
+ * @since:
  **/
 public class TracerAnnotationClassPointcut extends DynamicMethodMatcherPointcut {
 
@@ -40,6 +41,30 @@ public class TracerAnnotationClassPointcut extends DynamicMethodMatcherPointcut 
     @Override
     public ClassFilter getClassFilter() {
         return (clazz) -> new AnnotationClassOrMethodFilter(Tracer.class).matches(clazz);
+    }
+
+    private static class AnnotationMethodsResolver {
+
+        private final Class<? extends Annotation> annotationType;
+
+        AnnotationMethodsResolver(Class<? extends Annotation> annotationType) {
+            this.annotationType = annotationType;
+        }
+
+        boolean hasAnnotatedMethods(Class<?> clazz) {
+            final AtomicBoolean found = new AtomicBoolean(false);
+            ReflectionUtils.doWithMethods(clazz, (method) -> {
+                if (found.get()) {
+                    return;
+                }
+                Annotation annotation = AnnotationUtils.findAnnotation(method,
+                        AnnotationMethodsResolver.this.annotationType);
+                if (annotation != null) {
+                    found.set(true);
+                }
+            });
+            return found.get();
+        }
     }
 
     private final class AnnotationClassOrMethodFilter extends AnnotationClassFilter {
@@ -56,29 +81,5 @@ public class TracerAnnotationClassPointcut extends DynamicMethodMatcherPointcut 
             return super.matches(clazz) || this.methodsResolver.hasAnnotatedMethods(clazz);
         }
 
-    }
-
-    private static class AnnotationMethodsResolver {
-
-        private final Class<? extends Annotation> annotationType;
-
-        AnnotationMethodsResolver(Class<? extends Annotation> annotationType) {
-            this.annotationType = annotationType;
-        }
-
-        boolean hasAnnotatedMethods(Class<?> clazz) {
-            final AtomicBoolean found = new AtomicBoolean(false);
-            ReflectionUtils.doWithMethods(clazz, (method) ->{
-                if (found.get()) {
-                    return;
-                }
-                Annotation annotation = AnnotationUtils.findAnnotation(method,
-                        AnnotationMethodsResolver.this.annotationType);
-                if (annotation != null) {
-                    found.set(true);
-                }
-            });
-            return found.get();
-        }
     }
 }

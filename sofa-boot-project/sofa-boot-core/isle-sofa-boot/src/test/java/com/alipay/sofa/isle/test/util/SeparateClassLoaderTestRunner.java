@@ -16,15 +16,13 @@
  */
 package com.alipay.sofa.isle.test.util;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
 
 /**
  * @author xuanbei
@@ -35,8 +33,8 @@ public class SeparateClassLoaderTestRunner extends SpringJUnit4ClassRunner {
 
     private final SeparateClassLoader separateClassloader = new SeparateClassLoader();
 
-    private Method                    runMethod;
-    private Object                    runnerObject;
+    private Method runMethod;
+    private Object runnerObject;
 
     public SeparateClassLoaderTestRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
@@ -48,7 +46,7 @@ public class SeparateClassLoaderTestRunner extends SpringJUnit4ClassRunner {
                 }
             }
             Class springJUnit4ClassRunnerClass = separateClassloader
-                .loadClass(SpringJUnit4ClassRunner.class.getName());
+                    .loadClass(SpringJUnit4ClassRunner.class.getName());
             Constructor constructor = springJUnit4ClassRunnerClass.getConstructor(Class.class);
             runnerObject = constructor.newInstance(separateClassloader.loadClass(clazz.getName()));
             runMethod = springJUnit4ClassRunnerClass.getMethod("run", RunNotifier.class);
@@ -56,6 +54,16 @@ public class SeparateClassLoaderTestRunner extends SpringJUnit4ClassRunner {
         } catch (Throwable e) {
             throw new InitializationError(e);
         }
+    }
+
+    public static AddCustomJar getAddCustomJarAnnotationRecursively(Class<?> klass) {
+        AddCustomJar addCustomJar = klass.getAnnotation(AddCustomJar.class);
+
+        if (addCustomJar != null || klass == Object.class) {
+            return addCustomJar;
+        }
+
+        return getAddCustomJarAnnotationRecursively(klass.getSuperclass());
     }
 
     @Override
@@ -71,37 +79,15 @@ public class SeparateClassLoaderTestRunner extends SpringJUnit4ClassRunner {
         }
     }
 
-    public static AddCustomJar getAddCustomJarAnnotationRecursively(Class<?> klass) {
-        AddCustomJar addCustomJar = klass.getAnnotation(AddCustomJar.class);
-
-        if (addCustomJar != null || klass == Object.class) {
-            return addCustomJar;
-        }
-
-        return getAddCustomJarAnnotationRecursively(klass.getSuperclass());
-    }
-
     public static class SeparateClassLoader extends URLClassLoader {
         public SeparateClassLoader() {
-            super(new URL[0], null);
-
-            try {
-                Field f = getSystemClassLoader().getClass().getDeclaredField("ucp");
-                f.setAccessible(true);
-                Object path = f.get(getSystemClassLoader());
-                Method m = path.getClass().getDeclaredMethod("getURLs");
-                for (URL url : (URL[]) m.invoke(path)) {
-                    addURL(url);
-                }
-            } catch (Throwable e) {
-                // ignore
-            }
+            super(((URLClassLoader) getSystemClassLoader()).getURLs(), null);
         }
 
         @Override
         public Class<?> loadClass(String name) throws ClassNotFoundException {
             if (name.startsWith("org.junit") || name.startsWith("java")
-                || name.startsWith("org.apache.logging")) {
+                    || name.startsWith("org.apache.logging")) {
                 return getSystemClassLoader().loadClass(name);
             }
 

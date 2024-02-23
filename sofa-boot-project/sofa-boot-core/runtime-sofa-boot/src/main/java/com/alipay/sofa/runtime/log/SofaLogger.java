@@ -22,7 +22,9 @@ import org.slf4j.Logger;
  * @author xuanbei 18/2/28
  */
 public class SofaLogger {
-    /** SOFA Default Logger */
+    /**
+     * SOFA Default Logger
+     */
     private static final Logger DEFAULT_LOG = RuntimeLoggerFactory.getLogger("com.alipay.sofa");
 
     public static boolean isDebugEnabled() {

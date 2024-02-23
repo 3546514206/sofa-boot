@@ -42,21 +42,21 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 public class RegistryConfigContainerTest {
     @Rule
-    public ExpectedException           thrown                = ExpectedException.none();
+    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
-    private SofaBootRpcProperties      sofaBootRpcProperties;
+    private SofaBootRpcProperties sofaBootRpcProperties;
     @Autowired
-    private RegistryConfigContainer    registryConfigContainer;
+    private RegistryConfigContainer registryConfigContainer;
 
     private RegistryConfigureProcessor localFileConfigurator = new LocalFileConfigurator();
 
-    private RegistryConfigureProcessor zkFileConfigurator    = new ZookeeperConfigurator();
+    private RegistryConfigureProcessor zkFileConfigurator = new ZookeeperConfigurator();
 
     @Test
     public void testGetLocalRegistryConfig() {
         RegistryConfig registryConfigLocal = localFileConfigurator
-            .buildFromAddress("local:///home/admin/local");
+                .buildFromAddress("local:///home/admin/local");
         Assert.assertEquals("local", registryConfigLocal.getProtocol());
         Assert.assertEquals("/home/admin/local", registryConfigLocal.getFile());
     }
@@ -64,7 +64,7 @@ public class RegistryConfigContainerTest {
     @Test
     public void testZooKeeperRegistryConfig() {
         RegistryConfig registryConfigZk = zkFileConfigurator
-            .buildFromAddress("zookeeper://127.0.0.1:2181?file=/home/admin/zookeeper");
+                .buildFromAddress("zookeeper://127.0.0.1:2181?file=/home/admin/zookeeper");
         Assert.assertEquals("zookeeper", registryConfigZk.getProtocol());
         Assert.assertEquals("/home/admin/zookeeper", registryConfigZk.getFile());
     }

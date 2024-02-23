@@ -16,12 +16,11 @@
  */
 package com.alipay.sofa.rpc.boot.test.config;
 
-import java.util.Map;
-
+import com.alipay.sofa.rpc.boot.config.ConsulConfigurator;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.alipay.sofa.rpc.boot.config.ConsulConfigurator;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:zhiyuan.lzy@antfin.com">zhiyuan.lzy</a>

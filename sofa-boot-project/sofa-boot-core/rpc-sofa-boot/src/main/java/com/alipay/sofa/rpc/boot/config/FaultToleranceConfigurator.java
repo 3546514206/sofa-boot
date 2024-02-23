@@ -19,6 +19,8 @@ package com.alipay.sofa.rpc.boot.config;
 import com.alipay.sofa.rpc.boot.common.SofaBootRpcParserUtil;
 import com.alipay.sofa.rpc.client.aft.FaultToleranceConfig;
 import com.alipay.sofa.rpc.client.aft.FaultToleranceConfigManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 自动故障剔除初始化器
@@ -26,13 +28,10 @@ import com.alipay.sofa.rpc.client.aft.FaultToleranceConfigManager;
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
 public class FaultToleranceConfigurator {
+    @Autowired
     private SofaBootRpcProperties sofaBootRpcProperties;
-    private String                appName;
-
-    public FaultToleranceConfigurator(SofaBootRpcProperties sofaBootRpcProperties, String appName) {
-        this.sofaBootRpcProperties = sofaBootRpcProperties;
-        this.appName = appName;
-    }
+    @Value("${" + SofaBootRpcConfigConstants.APP_NAME + "}")
+    private String appName;
 
     /**
      * 解析并生效自动故障剔除配置参数
@@ -43,7 +42,7 @@ public class FaultToleranceConfigurator {
         String timeWindowStr = sofaBootRpcProperties.getAftTimeWindow();
         String leastWindowCountStr = sofaBootRpcProperties.getAftLeastWindowCount();
         String leastWindowExceptionRateMultipleStr = sofaBootRpcProperties
-            .getAftLeastWindowExceptionRateMultiple();
+                .getAftLeastWindowExceptionRateMultiple();
         String weightDegradeRateStr = sofaBootRpcProperties.getAftWeightDegradeRate();
         String weightRecoverRateStr = sofaBootRpcProperties.getAftWeightRecoverRate();
         String degradeLeastWeightStr = sofaBootRpcProperties.getAftDegradeLeastWeight();
@@ -54,7 +53,7 @@ public class FaultToleranceConfigurator {
         Long timeWindow = SofaBootRpcParserUtil.parseLong(timeWindowStr);
         Long leastWindowCount = SofaBootRpcParserUtil.parseLong(leastWindowCountStr);
         Double leastWindowExceptionRateMultiple = SofaBootRpcParserUtil
-            .parseDouble(leastWindowExceptionRateMultipleStr);
+                .parseDouble(leastWindowExceptionRateMultipleStr);
         Double weightDegradeRate = SofaBootRpcParserUtil.parseDouble(weightDegradeRateStr);
         Double weightRecoverRate = SofaBootRpcParserUtil.parseDouble(weightRecoverRateStr);
         Integer degradeLeastWeight = SofaBootRpcParserUtil.parseInteger(degradeLeastWeightStr);
@@ -75,7 +74,7 @@ public class FaultToleranceConfigurator {
         }
         if (leastWindowExceptionRateMultiple != null) {
             faultToleranceConfig
-                .setLeastWindowExceptionRateMultiple(leastWindowExceptionRateMultiple);
+                    .setLeastWindowExceptionRateMultiple(leastWindowExceptionRateMultiple);
         }
         if (weightDegradeRate != null) {
             faultToleranceConfig.setWeightDegradeRate(weightDegradeRate);

@@ -16,19 +16,11 @@
  */
 package com.alipay.sofa.healthcheck.test;
 
-import com.alipay.sofa.healthcheck.AfterReadinessCheckCallbackProcessor;
-import com.alipay.sofa.healthcheck.HealthCheckProperties;
-import com.alipay.sofa.healthcheck.HealthCheckerProcessor;
-import com.alipay.sofa.healthcheck.HealthIndicatorProcessor;
-import com.alipay.sofa.healthcheck.ReadinessCheckListener;
-import com.alipay.sofa.healthcheck.core.HealthCheckExecutor;
+import com.alipay.sofa.healthcheck.*;
 import com.alipay.sofa.healthcheck.test.bean.DiskHealthIndicator;
 import com.alipay.sofa.healthcheck.test.bean.MemoryHealthChecker;
 import com.alipay.sofa.healthcheck.test.bean.MiddlewareHealthCheckCallback;
-import com.alipay.sofa.runtime.SofaRuntimeProperties;
-import com.alipay.sofa.runtime.configure.SofaRuntimeConfigurationProperties;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -36,22 +28,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
-import org.springframework.boot.autoconfigure.availability.ApplicationAvailabilityAutoConfiguration;
-import org.springframework.boot.availability.ApplicationAvailability;
-import org.springframework.boot.availability.ReadinessState;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author liangen
@@ -63,15 +46,43 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ReadinessCheckListenerTest {
 
     @Autowired
-    private ApplicationContext      applicationContext;
+    private ApplicationContext applicationContext;
 
-    @Autowired
-    private ApplicationAvailability applicationAvailability;
+    @Test
+    public void testReadinessCheck() throws BeansException {
+        ReadinessCheckListener readinessCheckListener = applicationContext
+                .getBean(ReadinessCheckListener.class);
+        Assert.assertNotNull(readinessCheckListener);
+        Assert.assertFalse(readinessCheckListener.skipAllCheck());
+        Assert.assertFalse(readinessCheckListener.skipComponent());
+        Assert.assertFalse(readinessCheckListener.skipIndicator());
+        Assert.assertTrue(readinessCheckListener.getHealthCheckerStatus());
+        Assert.assertTrue(readinessCheckListener.getHealthIndicatorStatus());
+        Assert.assertTrue(readinessCheckListener.getHealthCallbackStatus());
+        Assert.assertTrue(readinessCheckListener.getReadinessCallbackTriggered().get());
+        Assert.assertEquals(1, readinessCheckListener.getHealthCheckerDetails().size());
 
-    @Configuration(proxyBeanMethods = false)
-    @EnableConfigurationProperties({ HealthCheckProperties.class,
-            SofaRuntimeConfigurationProperties.class })
-    @Import(ApplicationAvailabilityAutoConfiguration.class)
+        Health health = readinessCheckListener.getHealthCheckerDetails().get("memoryHealthChecker");
+        Assert.assertEquals("memory is bad", health.getDetails().get("memory"));
+        health = readinessCheckListener.getHealthCallbackDetails().get(
+                "middlewareHealthCheckCallback");
+        Assert.assertEquals("server is ok", health.getDetails().get("server"));
+        health = readinessCheckListener.getHealthIndicatorDetails().get("disk");
+        Assert.assertEquals("hard disk is ok", health.getDetails().get("disk"));
+
+        readinessCheckListener.triggerReadinessCallback();
+    }
+
+    @Test
+    public void testAggregateReadinessHealth() {
+        ReadinessCheckListener readinessCheckListener = applicationContext
+                .getBean(ReadinessCheckListener.class);
+        Health health = readinessCheckListener.aggregateReadinessHealth();
+        Assert.assertEquals(Status.UP, health.getStatus());
+    }
+
+    @Configuration
+    @EnableConfigurationProperties(HealthCheckProperties.class)
     static class HealthCheckConfiguration {
         @Bean
         public MemoryHealthChecker memoryHealthChecker(@Value("${memory-health-checker.count:0}") int count,
@@ -96,85 +107,18 @@ public class ReadinessCheckListenerTest {
         }
 
         @Bean
-        public ReadinessCheckListener readinessCheckListener(Environment environment,
-                                                             HealthCheckerProcessor healthCheckerProcessor,
-                                                             HealthIndicatorProcessor healthIndicatorProcessor,
-                                                             AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor,
-                                                             SofaRuntimeConfigurationProperties sofaRuntimeConfigurationProperties,
-                                                             HealthCheckProperties healthCheckProperties) {
-            return new ReadinessCheckListener(environment, healthCheckerProcessor,
-                healthIndicatorProcessor, afterReadinessCheckCallbackProcessor,
-                sofaRuntimeConfigurationProperties, healthCheckProperties);
+        public ReadinessCheckListener readinessCheckListener() {
+            return new ReadinessCheckListener();
         }
 
         @Bean
-        public HealthCheckerProcessor healthCheckerProcessor(HealthCheckProperties healthCheckProperties,
-                                                             HealthCheckExecutor healthCheckExecutor) {
-            return new HealthCheckerProcessor(healthCheckProperties, healthCheckExecutor);
+        public HealthCheckerProcessor healthCheckerProcessor() {
+            return new HealthCheckerProcessor();
         }
 
         @Bean
-        public HealthIndicatorProcessor healthIndicatorProcessor(HealthCheckProperties properties,
-                                                                 HealthCheckExecutor healthCheckExecutor) {
-            return new HealthIndicatorProcessor(properties, healthCheckExecutor);
+        public HealthIndicatorProcessor healthIndicatorProcessor() {
+            return new HealthIndicatorProcessor();
         }
-
-        @Bean
-        public HealthCheckExecutor healthCheckExecutor(HealthCheckProperties properties) {
-            return new HealthCheckExecutor(properties);
-        }
-    }
-
-    @BeforeClass
-    public static void beforeClass() {
-        try {
-            Field f1 = SofaRuntimeProperties.class.getDeclaredField("manualReadinessCallbackMap");
-            f1.setAccessible(true);
-            Field modifiers = f1.getClass().getDeclaredField("modifiers");
-            modifiers.setAccessible(true);
-            modifiers.setInt(f1, f1.getModifiers() & ~Modifier.FINAL);
-            f1.set(SofaRuntimeProperties.class, new ConcurrentHashMap<>());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    @Test
-    public void testReadinessCheck() throws BeansException {
-        ReadinessCheckListener readinessCheckListener = applicationContext
-            .getBean(ReadinessCheckListener.class);
-        Assert.assertNotNull(readinessCheckListener);
-        Assert.assertFalse(readinessCheckListener.skipAllCheck());
-        Assert.assertFalse(readinessCheckListener.skipComponent());
-        Assert.assertFalse(readinessCheckListener.skipIndicator());
-        Assert.assertTrue(readinessCheckListener.getHealthCheckerStatus());
-        Assert.assertTrue(readinessCheckListener.getHealthIndicatorStatus());
-        Assert.assertTrue(readinessCheckListener.getHealthCallbackStatus());
-        Assert.assertTrue(readinessCheckListener.getReadinessCallbackTriggered().get());
-        Assert.assertEquals(1, readinessCheckListener.getHealthCheckerDetails().size());
-
-        Health health = readinessCheckListener.getHealthCheckerDetails().get("memoryHealthChecker");
-        Assert.assertEquals("memory is bad", health.getDetails().get("memory"));
-        health = readinessCheckListener.getHealthCallbackDetails().get(
-            "middlewareHealthCheckCallback");
-        Assert.assertEquals("server is ok", health.getDetails().get("server"));
-        health = readinessCheckListener.getHealthIndicatorDetails().get("disk");
-        Assert.assertEquals("hard disk is ok", health.getDetails().get("disk"));
-
-        readinessCheckListener.triggerReadinessCallback();
-    }
-
-    @Test
-    public void testAggregateReadinessHealth() {
-        ReadinessCheckListener readinessCheckListener = applicationContext
-            .getBean(ReadinessCheckListener.class);
-        Health health = readinessCheckListener.aggregateReadinessHealth();
-        Assert.assertEquals(Status.UP, health.getStatus());
-    }
-
-    @Test
-    public void testAvailabilityReadinessUp() {
-        Assert.assertEquals(ReadinessState.ACCEPTING_TRAFFIC,
-            applicationAvailability.getReadinessState());
     }
 }

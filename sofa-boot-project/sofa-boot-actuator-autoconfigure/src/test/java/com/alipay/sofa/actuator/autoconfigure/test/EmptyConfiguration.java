@@ -24,6 +24,6 @@ import org.springframework.context.annotation.Configuration;
  * @since 3.2.0
  */
 @EnableAutoConfiguration
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class EmptyConfiguration {
 }

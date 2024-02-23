@@ -16,23 +16,14 @@
  */
 package com.alipay.sofa.common.xmap.annotation.spring;
 
-import java.util.Map;
-
+import com.alipay.sofa.common.xmap.*;
+import com.alipay.sofa.common.xmap.spring.XNodeMapSpring;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.alipay.sofa.common.xmap.Context;
-import com.alipay.sofa.common.xmap.DOMHelper;
-import com.alipay.sofa.common.xmap.Path;
-import com.alipay.sofa.common.xmap.XAnnotatedMap;
-import com.alipay.sofa.common.xmap.XAnnotatedMember;
-import com.alipay.sofa.common.xmap.XGetter;
-import com.alipay.sofa.common.xmap.XMap;
-import com.alipay.sofa.common.xmap.XSetter;
-import com.alipay.sofa.common.xmap.spring.XNodeMapSpring;
+import java.util.Map;
 
 /**
- *
  * @author xi.hux@alipay.com
  * @author ruoshan
  * @since 2.6.0
@@ -42,10 +33,10 @@ public class XAnnotatedMapSpring extends XAnnotatedMap {
     /**
      * dom visitor
      */
-    protected static final ElementValueMapVisitor   elementVisitor   = new ElementValueMapVisitor();
+    protected static final ElementValueMapVisitor elementVisitor = new ElementValueMapVisitor();
     protected static final AttributeValueMapVisitor attributeVisitor = new AttributeValueMapVisitor();
 
-    private XAnnotatedSpringObject                  xaso;
+    private XAnnotatedSpringObject xaso;
 
     public XAnnotatedMapSpring(XMap xmap, XSetter setter, XGetter getter, XNodeMapSpring anno,
                                XAnnotatedSpringObject xaso) {
@@ -61,7 +52,7 @@ public class XAnnotatedMapSpring extends XAnnotatedMap {
     @SuppressWarnings("unchecked")
     @Override
     protected Object getValue(Context ctx, Element base) throws IllegalAccessException,
-                                                        InstantiationException {
+            InstantiationException {
         Map<String, Object> values = (Map) type.newInstance();
         if (path.attribute != null) {
             // attribute list
@@ -73,12 +64,12 @@ public class XAnnotatedMapSpring extends XAnnotatedMap {
         return values;
     }
 
-    public void setXaso(XAnnotatedSpringObject xaso) {
-        this.xaso = xaso;
-    }
-
     public XAnnotatedSpringObject getXaso() {
         return xaso;
+    }
+
+    public void setXaso(XAnnotatedSpringObject xaso) {
+        this.xaso = xaso;
     }
 }
 
@@ -92,8 +83,8 @@ class ElementValueMapVisitor extends DOMHelper.NodeMapVisitor {
             if (xam.trim)
                 val = val.trim();
             Object object = XMapSpringUtil.getSpringObject(
-                ((XAnnotatedMapSpring) xam).componentType, val, ((XAnnotatedMapSpring) xam)
-                    .getXaso().getApplicationContext());
+                    ((XAnnotatedMapSpring) xam).componentType, val, ((XAnnotatedMapSpring) xam)
+                            .getXaso().getApplicationContext());
             if (object != null)
                 result.put(key, object);
         }
@@ -110,8 +101,8 @@ class AttributeValueMapVisitor extends DOMHelper.NodeMapVisitor {
             if (xam.trim)
                 val = val.trim();
             Object object = XMapSpringUtil.getSpringObject(
-                ((XAnnotatedMapSpring) xam).componentType, val, ((XAnnotatedMapSpring) xam)
-                    .getXaso().getApplicationContext());
+                    ((XAnnotatedMapSpring) xam).componentType, val, ((XAnnotatedMapSpring) xam)
+                            .getXaso().getApplicationContext());
             if (object != null)
                 result.put(key, object);
         }

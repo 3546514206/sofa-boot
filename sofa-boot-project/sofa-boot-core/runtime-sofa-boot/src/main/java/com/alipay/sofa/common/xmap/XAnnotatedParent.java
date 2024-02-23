@@ -16,14 +16,13 @@
  */
 package com.alipay.sofa.common.xmap;
 
-import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import java.util.List;
+
 /**
- *
  * @author <a href="mailto:bs@nuxeo.com">Bogdan Stefanescu</a>
  * @author xi.hux@alipay.com
  * @since 2.6.0
@@ -41,7 +40,7 @@ public class XAnnotatedParent extends XAnnotatedMember {
 
     @Override
     public void decode(Object instance, Node base, Document document, List<String> filters)
-                                                                                           throws Exception {
+            throws Exception {
         // do nothing
     }
 

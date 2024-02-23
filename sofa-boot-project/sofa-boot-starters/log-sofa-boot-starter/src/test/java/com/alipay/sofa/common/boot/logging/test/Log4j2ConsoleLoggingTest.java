@@ -33,7 +33,7 @@ public class Log4j2ConsoleLoggingTest extends LogTestBase {
     public void testLog4j2InfoToConsole() {
         SpringApplication springApplication = new SpringApplication(EmptyConfig.class);
         Map<String, Object> properties = Collections.singletonMap(
-            String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE), "true");
+                String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE), "true");
         springApplication.setDefaultProperties(properties);
         springApplication.run();
 

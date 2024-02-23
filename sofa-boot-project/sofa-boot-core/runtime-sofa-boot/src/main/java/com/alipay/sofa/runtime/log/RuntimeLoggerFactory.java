@@ -16,9 +16,8 @@
  */
 package com.alipay.sofa.runtime.log;
 
-import org.slf4j.Logger;
-
 import com.alipay.sofa.common.log.LoggerSpaceManager;
+import org.slf4j.Logger;
 
 /**
  * @author xuanbei 18/2/28
@@ -44,6 +43,7 @@ public class RuntimeLoggerFactory {
 
     /**
      * get Logger Object
+     *
      * @param clazz the returned logger will be named after clazz
      * @return Logger Object
      */

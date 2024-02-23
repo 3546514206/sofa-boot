@@ -17,24 +17,16 @@
 package com.alipay.sofa.runtime.ext.spring;
 
 import com.alipay.sofa.runtime.api.component.ComponentName;
-import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.ext.component.ExtensionComponent;
 import com.alipay.sofa.runtime.ext.component.ExtensionPointComponent;
 import com.alipay.sofa.runtime.log.SofaLogger;
-import com.alipay.sofa.runtime.model.InterfaceMode;
-import com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo;
 import com.alipay.sofa.runtime.spi.component.ComponentInfo;
 import com.alipay.sofa.runtime.spi.util.ComponentNameFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
-import static com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo.BEAN_ID;
-import static com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo.EXTENSION_POINT_NAME;
-import static com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo.SOURCE;
-
 /**
- *
  * @author xi.hux@alipay.com
  * @author yangyanzhao@alipay.com
  * @author khotyn
@@ -43,34 +35,30 @@ import static com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo.SOUR
 public class ExtensionFactoryBean extends AbstractExtFactoryBean {
 
     /* extension bean */
-    private String      bean;
+    private String bean;
 
     /* extension point name */
-    private String      point;
+    private String point;
 
     /* content need to be parsed with XMap */
-    private Element     content;
+    private Element content;
 
-    private String[]    require;
+    private String[] require;
 
     private ClassLoader classLoader;
 
-    @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
         Assert.notNull(applicationContext,
-            "required property 'applicationContext' has not been set");
+                "required property 'applicationContext' has not been set");
         Assert.notNull(getPoint(), "required property 'point' has not been set for extension");
         // checked
         if (!StringUtils.hasText(getPoint())) {
             throw new IllegalArgumentException("'point' have to be specified");
         }
 
-        if (getBeanClassLoaderWrapper() == null
-            || getBeanClassLoaderWrapper().getInnerClassLoader() == null) {
+        if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();
-        } else {
-            classLoader = getBeanClassLoaderWrapper().getInnerClassLoader();
         }
 
         try {
@@ -83,32 +71,22 @@ public class ExtensionFactoryBean extends AbstractExtFactoryBean {
 
     private void publishAsNuxeoExtension() throws Exception {
         ExtensionBuilder extensionBuilder = ExtensionBuilder.genericExtension(this.getPoint(),
-            this.getContent(), applicationContext, classLoader);
+                this.getContent(), applicationContext, classLoader);
         extensionBuilder.setExtensionPoint(getExtensionPointComponentName());
 
         ComponentInfo componentInfo = new ExtensionComponent(extensionBuilder.getExtension(),
-            sofaRuntimeContext);
-        ComponentDefinitionInfo extensionDefinitionInfo = new ComponentDefinitionInfo();
-        extensionDefinitionInfo.setInterfaceMode(InterfaceMode.spring);
-        extensionDefinitionInfo.putInfo(BEAN_ID, bean);
-        extensionDefinitionInfo.putInfo(EXTENSION_POINT_NAME, point);
-        Property property = new Property();
-        property.setName(SOURCE);
-        property.setValue(extensionDefinitionInfo);
-        componentInfo.getProperties().put(SOURCE, property);
-        componentInfo.setApplicationContext(applicationContext);
+                sofaRuntimeContext);
         sofaRuntimeContext.getComponentManager().register(componentInfo);
     }
 
     private ComponentName getExtensionPointComponentName() {
         return ComponentNameFactory.createComponentName(
-            ExtensionPointComponent.EXTENSION_POINT_COMPONENT_TYPE, this.getBean() + LINK_SYMBOL
-                                                                    + this.getPoint());
+                ExtensionPointComponent.EXTENSION_POINT_COMPONENT_TYPE, this.getBean() + LINK_SYMBOL
+                        + this.getPoint());
     }
 
-    @Deprecated
     public void setBeanClassLoader(ClassLoader classLoader) {
-        throw new UnsupportedOperationException("Not support setBeanClassLoader for security");
+        this.classLoader = classLoader;
     }
 
     public void setContribution(String[] contribution) throws Exception {
@@ -122,36 +100,36 @@ public class ExtensionFactoryBean extends AbstractExtFactoryBean {
         }
     }
 
-    public void setRequire(String[] require) {
-        this.require = require;
-    }
-
     public String[] getRequire() {
         return require;
     }
 
-    public void setBean(String bean) {
-        this.bean = bean;
+    public void setRequire(String[] require) {
+        this.require = require;
     }
 
     public String getBean() {
         return bean;
     }
 
-    public void setContent(Element content) {
-        this.content = content;
+    public void setBean(String bean) {
+        this.bean = bean;
     }
 
     public Element getContent() {
         return content;
     }
 
-    public void setPoint(String point) {
-        this.point = point;
+    public void setContent(Element content) {
+        this.content = content;
     }
 
     public String getPoint() {
         return point;
+    }
+
+    public void setPoint(String point) {
+        this.point = point;
     }
 
     @Override

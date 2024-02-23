@@ -23,10 +23,10 @@ package com.alipay.sofa.runtime.model;
  */
 public enum ComponentStatus {
     UNREGISTERED(0, "unregistered"), REGISTERED(0, "registered"), RESOLVED(0, "resolved"), ACTIVATED(
-                                                                                                     0,
-                                                                                                     "activated");
+            0,
+            "activated");
 
-    private int    code;
+    private int code;
     private String desc;
 
     ComponentStatus(int code, String desc) {

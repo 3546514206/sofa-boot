@@ -16,18 +16,11 @@
  */
 package com.alipay.sofa.healthcheck.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.alipay.sofa.healthcheck.core.HealthCheckerComparatorProvider;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.OrderComparator;
+
+import java.util.*;
 
 /**
  * @author qilong.zql
@@ -39,18 +32,13 @@ public class HealthCheckUtils {
         if (beanFactory instanceof DefaultListableBeanFactory) {
             comparatorToUse = ((DefaultListableBeanFactory) beanFactory).getDependencyComparator();
         }
-        ObjectProvider<HealthCheckerComparatorProvider> objectProvider = beanFactory.getBeanProvider(HealthCheckerComparatorProvider.class);
-        HealthCheckerComparatorProvider healthCheckerComparatorProvider = objectProvider.getIfUnique();
-        if (healthCheckerComparatorProvider != null) {
-            comparatorToUse = healthCheckerComparatorProvider.getComparator();
-        }
         if (comparatorToUse == null) {
             comparatorToUse = OrderComparator.INSTANCE;
         }
 
         final Comparator<Object> finalComparator = comparatorToUse;
         List<Map.Entry<T, U>> entryList = new ArrayList<>(origin.entrySet());
-        Collections.sort(entryList, (o1, o2)->finalComparator.compare(o1.getValue(), o2.getValue()));
+        Collections.sort(entryList, (o1, o2) -> finalComparator.compare(o1.getValue(), o2.getValue()));
 
         LinkedHashMap<T, U> result = new LinkedHashMap<>();
         for (Map.Entry<T, U> entry : entryList) {

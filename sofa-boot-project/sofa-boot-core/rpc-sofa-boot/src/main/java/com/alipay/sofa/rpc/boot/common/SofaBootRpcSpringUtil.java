@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
 public class SofaBootRpcSpringUtil {
 
     private static final Logger LOGGER = SofaBootRpcLoggerFactory
-                                           .getLogger(SofaBootRpcSpringUtil.class);
+            .getLogger(SofaBootRpcSpringUtil.class);
 
     /**
      * 根据配置的ref以及class字符串，获得真正的spring bean
@@ -70,7 +70,7 @@ public class SofaBootRpcSpringUtil {
         if (StringUtils.hasText(beanRef)) {
             if (applicationContext == null) {
                 LOGGER.error("get bean from spring failed. beanRef[" + beanRef + "];classLoader["
-                             + appClassLoader + "];appName[" + appName + "]");
+                        + appClassLoader + "];appName[" + appName + "]");
             } else {
                 object = applicationContext.getBean(beanRef);
             }
@@ -94,9 +94,9 @@ public class SofaBootRpcSpringUtil {
             return Class.forName(clazz, true, loader).newInstance();
         } catch (Exception e) {
             LOGGER.error("new instance failed. clazz[" + clazz + "];classLoader[" + loader
-                         + "];appName[" + appName + "]", e);
+                    + "];appName[" + appName + "]", e);
             throw new RuntimeException(LogCodes.getLog(
-                LogCodes.ERROR_PROXY_BINDING_CLASS_CANNOT_FOUND, clazz), e);
+                    LogCodes.ERROR_PROXY_BINDING_CLASS_CANNOT_FOUND, clazz), e);
         }
     }
 

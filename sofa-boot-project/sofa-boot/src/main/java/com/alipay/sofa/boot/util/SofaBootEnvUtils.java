@@ -16,12 +16,11 @@
  */
 package com.alipay.sofa.boot.util;
 
+import com.alipay.sofa.boot.constant.SofaBootConstants;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.util.ClassUtils;
-
-import com.alipay.sofa.boot.constant.SofaBootConstants;
 
 /**
  * SofaBootEnvUtils
@@ -35,10 +34,10 @@ public class SofaBootEnvUtils {
 
     /**
      * Determine whether the {@link org.springframework.core.env.Environment} is Spring Cloud bootstrap environment.
-     *
+     * <p>
      * Reference doc is https://cloud.spring.io/spring-cloud-static/spring-cloud.html#_application_context_hierarchies and
      * issue https://github.com/spring-cloud/spring-cloud-config/issues/1151.
-     *
+     * <p>
      * Pay attention only can be used in one implementation which implements {@link ApplicationContextInitializer} because the bootstrap
      * properties will be removed after initialized.
      *
@@ -48,14 +47,15 @@ public class SofaBootEnvUtils {
     public static boolean isSpringCloudBootstrapEnvironment(Environment environment) {
         if (environment instanceof ConfigurableEnvironment) {
             return !((ConfigurableEnvironment) environment).getPropertySources().contains(
-                SofaBootConstants.SOFA_BOOTSTRAP)
-                   && isSpringCloud();
+                    SofaBootConstants.SOFA_BOOTSTRAP)
+                    && isSpringCloud();
         }
         return false;
     }
 
     /**
      * Check whether import spring cloud BootstrapConfiguration
+     *
      * @return
      */
     public static boolean isSpringCloud() {

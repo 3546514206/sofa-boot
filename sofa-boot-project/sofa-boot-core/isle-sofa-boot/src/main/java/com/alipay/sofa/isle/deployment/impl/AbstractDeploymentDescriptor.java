@@ -16,40 +16,33 @@
  */
 package com.alipay.sofa.isle.deployment.impl;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.stream.Stream;
-
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.isle.deployment.DeploymentDescriptor;
+import com.alipay.sofa.isle.deployment.DeploymentDescriptorConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.isle.deployment.DeploymentDescriptor;
-import com.alipay.sofa.isle.deployment.DeploymentDescriptorConfiguration;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author yangyanzhao
  * @version $Id: AbstractDeploymentDescriptor.java, v 0.1 2012-2-1 15:13:00
- *          yangyanzhao Exp $
+ * yangyanzhao Exp $
  */
 public abstract class AbstractDeploymentDescriptor implements DeploymentDescriptor {
-    final Properties                        properties;
+    final Properties properties;
     final DeploymentDescriptorConfiguration deploymentDescriptorConfiguration;
-    private final ClassLoader               classLoader;
-    private final List<String>              installedSpringXml = new ArrayList<>();
-    private ApplicationContext              applicationContext;
-    private long                            startTime;
-    private long                            elapsedTime;
-    final URL                               url;
-    Map<String, Resource>                   springResources;
+    final URL url;
+    private final ClassLoader classLoader;
+    private final List<String> installedSpringXml = new ArrayList<>();
+    Map<String, Resource> springResources;
+    private ApplicationContext applicationContext;
+    private long startTime;
+    private long elapsedTime;
 
     public AbstractDeploymentDescriptor(URL url,
                                         Properties properties,
@@ -64,7 +57,7 @@ public abstract class AbstractDeploymentDescriptor implements DeploymentDescript
     @Override
     public String getModuleName() {
         List<String> moduleNameIdentities = deploymentDescriptorConfiguration
-            .getModuleNameIdentities();
+                .getModuleNameIdentities();
 
 
         return (String) Stream.of(moduleNameIdentities)
@@ -95,7 +88,7 @@ public abstract class AbstractDeploymentDescriptor implements DeploymentDescript
     public List<String> getRequiredModules() {
         List<String> requires = new ArrayList<>();
         List<String> requireModuleIdentities = deploymentDescriptorConfiguration
-            .getRequireModuleIdentities();
+                .getRequireModuleIdentities();
 
         if (requireModuleIdentities == null || requireModuleIdentities.size() == 0) {
             return requires;
@@ -138,6 +131,10 @@ public abstract class AbstractDeploymentDescriptor implements DeploymentDescript
         return applicationContext;
     }
 
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     @Override
     public Map<String, Resource> getSpringResources() {
         if (springResources == null) {
@@ -167,10 +164,6 @@ public abstract class AbstractDeploymentDescriptor implements DeploymentDescript
     @Override
     public void deployFinish() {
         elapsedTime = System.currentTimeMillis() - startTime;
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
     }
 
     @Override

@@ -16,13 +16,12 @@
  */
 package com.alipay.sofa.runtime.ext.component;
 
-import java.net.URL;
-
 import com.alipay.sofa.common.xmap.Context;
+
+import java.net.URL;
 
 /**
  * @author <a href="mailto:bs@nuxeo.com">Bogdan Stefanescu</a>
- *
  * @author xi.hux@alipay.com
  * @since 2.6.0
  */
@@ -30,10 +29,9 @@ public class XMapContext extends Context {
 
     private static final long serialVersionUID = -7194560385886298218L;
 
-    private ClassLoader       appClassLoader;
+    private ClassLoader appClassLoader;
 
     /**
-     *
      * @param appClassLoader
      */
     public XMapContext(ClassLoader appClassLoader) {
@@ -41,7 +39,6 @@ public class XMapContext extends Context {
     }
 
     /**
-     *
      * @param className
      * @return
      * @throws ClassNotFoundException
@@ -52,7 +49,6 @@ public class XMapContext extends Context {
     }
 
     /**
-     *
      * @param name
      * @return
      */

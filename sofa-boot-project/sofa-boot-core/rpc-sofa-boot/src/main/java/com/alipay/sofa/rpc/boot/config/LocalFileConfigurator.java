@@ -39,10 +39,10 @@ public class LocalFileConfigurator implements RegistryConfigureProcessor {
     public String parseConfig(String config) {
         String file = null;
         if (StringUtils.isNotEmpty(config)
-            && config.startsWith(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_LOCAL)
-            && config.length() > SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_LOCAL.length()) {
+                && config.startsWith(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_LOCAL)
+                && config.length() > SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_LOCAL.length()) {
             file = config.substring(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_LOCAL.length()
-                                    + COLON.length());
+                    + COLON.length());
         }
 
         return file;
@@ -57,7 +57,7 @@ public class LocalFileConfigurator implements RegistryConfigureProcessor {
         }
 
         return new RegistryConfig().setFile(filePath).setProtocol(
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_LOCAL);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_LOCAL);
     }
 
     @Override

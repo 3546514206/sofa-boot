@@ -18,10 +18,7 @@ package com.alipay.sofa.runtime.spring;
 
 import com.alipay.sofa.boot.annotation.PlaceHolderAnnotationInvocationHandler.AnnotationWrapperBuilder;
 import com.alipay.sofa.boot.annotation.PlaceHolderBinder;
-import com.alipay.sofa.boot.error.ErrorCode;
 import com.alipay.sofa.boot.util.BeanDefinitionUtil;
-import com.alipay.sofa.boot.util.SmartAnnotationUtils;
-import com.alipay.sofa.runtime.SofaRuntimeProperties;
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
@@ -42,8 +39,6 @@ import com.alipay.sofa.runtime.spring.parser.AbstractContractDefinitionParser;
 import com.alipay.sofa.runtime.spring.parser.ServiceDefinitionParser;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -59,6 +54,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.core.type.StandardMethodMetadata;
@@ -68,12 +64,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -82,19 +73,15 @@ import java.util.stream.Stream;
  * @author qilong.zql
  * @since 3.1.0
  */
+@Order(Ordered.HIGHEST_PRECEDENCE + 10)
 public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor,
-                                            ApplicationContextAware, EnvironmentAware,
-                                            InitializingBean, Ordered {
+        ApplicationContextAware, EnvironmentAware {
     private final PlaceHolderBinder binder = new DefaultPlaceHolderBinder();
-    private ApplicationContext      applicationContext;
-    private SofaRuntimeContext      sofaRuntimeContext;
+    private ApplicationContext applicationContext;
+    private SofaRuntimeContext sofaRuntimeContext;
     private BindingConverterFactory bindingConverterFactory;
-    private Environment             environment;
+    private Environment environment;
 
-    public ServiceBeanFactoryPostProcessor() {
-    }
-
-    @Deprecated
     public ServiceBeanFactoryPostProcessor(SofaRuntimeContext sofaRuntimeContext,
                                            BindingConverterFactory bindingConverterFactory) {
         this.sofaRuntimeContext = sofaRuntimeContext;
@@ -102,11 +89,10 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
-                                                                                   throws BeansException {
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         Arrays.stream(beanFactory.getBeanDefinitionNames())
                 .collect(Collectors.toMap(Function.identity(), beanFactory::getBeanDefinition))
-                .forEach((key, value) -> transformSofaBeanDefinition(key, value, (BeanDefinitionRegistry) beanFactory));
+                .forEach((key, value) -> transformSofaBeanDefinition(key, value, beanFactory));
     }
 
     /**
@@ -117,23 +103,23 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
      * {@link org.springframework.beans.factory.support.RootBeanDefinition}
      */
     private void transformSofaBeanDefinition(String beanId, BeanDefinition beanDefinition,
-                                             BeanDefinitionRegistry registry) {
+                                             ConfigurableListableBeanFactory beanFactory) {
         if (BeanDefinitionUtil.isFromConfigurationSource(beanDefinition)) {
             generateSofaServiceDefinitionOnMethod(beanId, (AnnotatedBeanDefinition) beanDefinition,
-                registry);
+                    beanFactory);
         } else {
             Class<?> beanClassType = BeanDefinitionUtil.resolveBeanClassType(beanDefinition);
             if (beanClassType == null) {
                 SofaLogger.warn("Bean class type cant be resolved from bean of {}", beanId);
                 return;
             }
-            generateSofaServiceDefinitionOnClass(beanId, beanClassType, beanDefinition, registry);
+            generateSofaServiceDefinitionOnClass(beanId, beanClassType, beanDefinition, beanFactory);
         }
     }
 
     private void generateSofaServiceDefinitionOnMethod(String beanId,
                                                        AnnotatedBeanDefinition beanDefinition,
-                                                       BeanDefinitionRegistry registry) {
+                                                       ConfigurableListableBeanFactory beanFactory) {
         Class<?> returnType;
         Class<?> declaringClass;
         List<Method> candidateMethods = new ArrayList<>();
@@ -144,11 +130,11 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
             declaringClass = ClassUtils.forName(methodMetadata.getDeclaringClassName(), null);
         } catch (Throwable throwable) {
             // it's impossible to catch throwable here
-            SofaLogger.error(ErrorCode.convert("01-02001", beanId), throwable);
+            SofaLogger.error("Failed to parse factoryBeanMethod of BeanDefinition( {} )", beanId, throwable);
             return;
         }
         if (methodMetadata instanceof StandardMethodMetadata) {
-           candidateMethods.add(((StandardMethodMetadata) methodMetadata).getIntrospectedMethod());
+            candidateMethods.add(((StandardMethodMetadata) methodMetadata).getIntrospectedMethod());
         } else {
             for (Method m : declaringClass.getDeclaredMethods()) {
                 // check methodName and return type
@@ -180,45 +166,42 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
         }
 
         if (candidateMethods.size() == 1) {
-            Method method = candidateMethods.get(0);
-            Collection<SofaService> sofaServiceList = SmartAnnotationUtils.getAnnotations(method, SofaService.class);
-            // use method @SofaService annotations
-            if (!sofaServiceList.isEmpty()) {
-                sofaServiceList.forEach((annotation) -> generateSofaServiceDefinition(beanId, annotation, returnType, beanDefinition,
-                                registry));
-            } else {
-                // use returnType class @SofaService annotations
-                sofaServiceList = SmartAnnotationUtils.getAnnotations(returnType, SofaService.class);
-                sofaServiceList.forEach((annotation) -> generateSofaServiceDefinition(beanId, annotation, returnType, beanDefinition,
-                                registry));
+            SofaService sofaServiceAnnotation = candidateMethods.get(0).getAnnotation(
+                    SofaService.class);
+            if (sofaServiceAnnotation == null) {
+                sofaServiceAnnotation = returnType.getAnnotation(SofaService.class);
             }
-            generateSofaReferenceDefinition(beanId, candidateMethods.get(0), registry);
+            generateSofaServiceDefinition(beanId, sofaServiceAnnotation, returnType,
+                    beanDefinition, beanFactory);
+            generateSofaReferenceDefinition(beanId, candidateMethods.get(0), beanFactory);
         } else if (candidateMethods.size() > 1) {
             for (Method m : candidateMethods) {
                 if (AnnotatedElementUtils.hasAnnotation(m, SofaService.class)
-                    || AnnotatedElementUtils.hasAnnotation(returnType, SofaService.class)) {
+                        || AnnotatedElementUtils.hasAnnotation(returnType, SofaService.class)) {
                     throw new FatalBeanException(
-                        ErrorCode.convert("01-02002", declaringClass.getCanonicalName()));
+                            "multi @Bean-method with same name try to publish SofaService in "
+                                    + declaringClass.getCanonicalName());
                 }
 
                 if (Stream.of(m.getParameterAnnotations())
                         .flatMap(Stream::of).anyMatch(annotation -> annotation instanceof SofaReference)) {
                     throw new FatalBeanException(
-                            ErrorCode.convert("01-02003", declaringClass.getCanonicalName()));
+                            "multi @Bean-method with same name try to reference SofaService in"
+                                    + declaringClass.getCanonicalName());
                 }
             }
         }
     }
 
     private void generateSofaReferenceDefinition(String beanId, Method method,
-                                                 BeanDefinitionRegistry registry) {
+                                                 ConfigurableListableBeanFactory beanFactory) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         for (int i = 0; i < parameterAnnotations.length; ++i) {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof SofaReference) {
-                    doGenerateSofaReferenceDefinition(registry.getBeanDefinition(beanId),
-                        (SofaReference) annotation, parameterTypes[i], registry);
+                    doGenerateSofaReferenceDefinition(beanFactory.getBeanDefinition(beanId),
+                            (SofaReference) annotation, parameterTypes[i], beanFactory);
                 }
             }
         }
@@ -228,12 +211,12 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
     private void doGenerateSofaReferenceDefinition(BeanDefinition beanDefinition,
                                                    SofaReference sofaReference,
                                                    Class<?> parameterType,
-                                                   BeanDefinitionRegistry registry) {
+                                                   ConfigurableListableBeanFactory beanFactory) {
         Assert.isTrue(
-            JvmBinding.JVM_BINDING_TYPE.getType().equals(sofaReference.binding().bindingType()),
-            "Only jvm type of @SofaReference on parameter is supported.");
+                JvmBinding.JVM_BINDING_TYPE.getType().equals(sofaReference.binding().bindingType()),
+                "Only jvm type of @SofaReference on parameter is supported.");
         AnnotationWrapperBuilder<SofaReference> wrapperBuilder = AnnotationWrapperBuilder.wrap(
-            sofaReference).withBinder(binder);
+                sofaReference).withBinder(binder);
         sofaReference = wrapperBuilder.build();
         Class<?> interfaceType = sofaReference.interfaceType();
         if (interfaceType.equals(void.class)) {
@@ -241,28 +224,23 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
         }
         String uniqueId = sofaReference.uniqueId();
         String referenceId = SofaBeanNameGenerator.generateSofaReferenceBeanName(interfaceType,
-            uniqueId);
+                uniqueId);
 
         // build sofa reference definition
-        if (!registry.containsBeanDefinition(referenceId)) {
+        if (!beanFactory.containsBeanDefinition(referenceId)) {
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition();
             builder.getRawBeanDefinition().setScope(beanDefinition.getScope());
             builder.getRawBeanDefinition().setLazyInit(beanDefinition.isLazyInit());
             builder.getRawBeanDefinition().setBeanClass(ReferenceFactoryBean.class);
-            builder.addAutowiredProperty(AbstractContractDefinitionParser.SOFA_RUNTIME_CONTEXT);
-            builder
-                .addAutowiredProperty(AbstractContractDefinitionParser.BINDING_CONVERTER_FACTORY);
-            builder.addAutowiredProperty(AbstractContractDefinitionParser.BINDING_ADAPTER_FACTORY);
             builder.addPropertyValue(AbstractContractDefinitionParser.UNIQUE_ID_PROPERTY, uniqueId);
             builder.addPropertyValue(AbstractContractDefinitionParser.INTERFACE_CLASS_PROPERTY,
-                interfaceType);
+                    interfaceType);
             builder.addPropertyValue(AbstractContractDefinitionParser.BINDINGS,
-                getSofaReferenceBinding(sofaReference, sofaReference.binding()));
+                    getSofaReferenceBinding(sofaReference, sofaReference.binding()));
             builder.addPropertyValue(AbstractContractDefinitionParser.DEFINITION_BUILDING_API_TYPE,
-                true);
-            builder.getBeanDefinition().setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE,
-                interfaceType);
-            registry.registerBeanDefinition(referenceId, builder.getBeanDefinition());
+                    true);
+            ((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(referenceId,
+                    builder.getBeanDefinition());
         }
 
         // add bean dependency relationship
@@ -270,29 +248,28 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
             beanDefinition.setDependsOn(referenceId);
         } else {
             String[] added = ObjectUtils.addObjectToArray(beanDefinition.getDependsOn(),
-                referenceId);
+                    referenceId);
             beanDefinition.setDependsOn(added);
         }
     }
 
     private void generateSofaServiceDefinitionOnClass(String beanId, Class<?> beanClass,
                                                       BeanDefinition beanDefinition,
-                                                      BeanDefinitionRegistry registry) {
-        // See issue: https://github.com/sofastack/sofa-boot/issues/835
-        SmartAnnotationUtils.getAnnotations(beanClass, SofaService.class)
-                .forEach((annotation) -> generateSofaServiceDefinition(beanId, annotation, beanClass, beanDefinition,
-                        registry));
+                                                      ConfigurableListableBeanFactory beanFactory) {
+        SofaService sofaServiceAnnotation = beanClass.getAnnotation(SofaService.class);
+        generateSofaServiceDefinition(beanId, sofaServiceAnnotation, beanClass, beanDefinition,
+                beanFactory);
     }
 
     @SuppressWarnings("unchecked")
     private void generateSofaServiceDefinition(String beanId, SofaService sofaServiceAnnotation,
                                                Class<?> beanClass, BeanDefinition beanDefinition,
-                                               BeanDefinitionRegistry registry) {
+                                               ConfigurableListableBeanFactory beanFactory) {
         if (sofaServiceAnnotation == null) {
             return;
         }
         AnnotationWrapperBuilder<SofaService> wrapperBuilder = AnnotationWrapperBuilder.wrap(
-            sofaServiceAnnotation).withBinder(binder);
+                sofaServiceAnnotation).withBinder(binder);
         sofaServiceAnnotation = wrapperBuilder.build();
 
         Class<?> interfaceType = sofaServiceAnnotation.interfaceType();
@@ -304,64 +281,54 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
             } else if (interfaces.length == 1) {
                 interfaceType = interfaces[0];
             } else {
-                throw new FatalBeanException(ErrorCode.convert("01-02004", beanId));
+                throw new FatalBeanException("Bean " + beanId + " has more than one interface.");
             }
         }
 
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition();
         String serviceId = SofaBeanNameGenerator.generateSofaServiceBeanName(interfaceType,
-            sofaServiceAnnotation.uniqueId(), beanId);
+                sofaServiceAnnotation.uniqueId());
 
-        if (!registry.containsBeanDefinition(serviceId)) {
+        if (!beanFactory.containsBeanDefinition(serviceId)) {
             builder.getRawBeanDefinition().setScope(beanDefinition.getScope());
             builder.setLazyInit(beanDefinition.isLazyInit());
             builder.getRawBeanDefinition().setBeanClass(ServiceFactoryBean.class);
-            builder.addAutowiredProperty(AbstractContractDefinitionParser.SOFA_RUNTIME_CONTEXT);
-            builder
-                .addAutowiredProperty(AbstractContractDefinitionParser.BINDING_CONVERTER_FACTORY);
-            builder.addAutowiredProperty(AbstractContractDefinitionParser.BINDING_ADAPTER_FACTORY);
             builder.addPropertyValue(AbstractContractDefinitionParser.INTERFACE_CLASS_PROPERTY,
-                interfaceType);
+                    interfaceType);
             builder.addPropertyValue(AbstractContractDefinitionParser.UNIQUE_ID_PROPERTY,
-                sofaServiceAnnotation.uniqueId());
-            builder.addPropertyValue(
-                AbstractContractDefinitionParser.BINDINGS,
-                getSofaServiceBinding(sofaServiceAnnotation, sofaServiceAnnotation.bindings(),
-                    interfaceType));
+                    sofaServiceAnnotation.uniqueId());
+            builder.addPropertyValue(AbstractContractDefinitionParser.BINDINGS,
+                    getSofaServiceBinding(sofaServiceAnnotation, sofaServiceAnnotation.bindings()));
             builder.addPropertyReference(ServiceDefinitionParser.REF, beanId);
             builder.addPropertyValue(ServiceDefinitionParser.BEAN_ID, beanId);
             builder.addPropertyValue(AbstractContractDefinitionParser.DEFINITION_BUILDING_API_TYPE,
-                true);
+                    true);
             builder.addDependsOn(beanId);
-            registry.registerBeanDefinition(serviceId, builder.getBeanDefinition());
+            ((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(serviceId,
+                    builder.getBeanDefinition());
         } else {
-            if (SofaRuntimeProperties.isServiceCanBeDuplicate()) {
-                SofaLogger.warn("SofaService was already registered: {}", serviceId);
-            } else {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00203", serviceId));
-            }
+            SofaLogger.error("SofaService was already registered: {}", serviceId);
         }
     }
 
     private List<Binding> getSofaServiceBinding(SofaService sofaServiceAnnotation,
-                                                SofaServiceBinding[] sofaServiceBindings,
-                                                Class<?> interfaceType) {
+                                                SofaServiceBinding[] sofaServiceBindings) {
         List<Binding> bindings = new ArrayList<>();
         for (SofaServiceBinding sofaServiceBinding : sofaServiceBindings) {
             BindingConverter bindingConverter = bindingConverterFactory
-                .getBindingConverter(new BindingType(sofaServiceBinding.bindingType()));
+                    .getBindingConverter(new BindingType(sofaServiceBinding.bindingType()));
             if (bindingConverter == null) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00200",
-                    sofaServiceBinding.bindingType()));
+                throw new ServiceRuntimeException(
+                        "Can not found binding converter for binding type "
+                                + sofaServiceBinding.bindingType());
             }
             BindingConverterContext bindingConverterContext = new BindingConverterContext();
             bindingConverterContext.setInBinding(false);
             bindingConverterContext.setApplicationContext(applicationContext);
             bindingConverterContext.setAppName(sofaRuntimeContext.getAppName());
             bindingConverterContext.setAppClassLoader(sofaRuntimeContext.getAppClassLoader());
-            bindingConverterContext.setInterfaceType(interfaceType);
             Binding binding = bindingConverter.convert(sofaServiceAnnotation, sofaServiceBinding,
-                bindingConverterContext);
+                    bindingConverterContext);
             bindings.add(binding);
         }
         return bindings;
@@ -369,6 +336,7 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
 
     /**
      * get sofa reference binding annotated on parameter. At present, only jvm sofa reference is supported .
+     *
      * @param sofaReferenceAnnotation
      * @param sofaReferenceBinding
      * @return
@@ -376,14 +344,15 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
     private List<Binding> getSofaReferenceBinding(SofaReference sofaReferenceAnnotation,
                                                   SofaReferenceBinding sofaReferenceBinding) {
         if (!JvmBinding.XmlConstants.BINDING_TYPE.equals(sofaReferenceBinding.bindingType())) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-02005"));
+            throw new ServiceRuntimeException(
+                    "Only jvm sofa reference binding is supported to annotate on parameter.");
         }
         List<Binding> bindings = new ArrayList<>();
         BindingConverter bindingConverter = bindingConverterFactory
-            .getBindingConverter(new BindingType(sofaReferenceBinding.bindingType()));
+                .getBindingConverter(new BindingType(sofaReferenceBinding.bindingType()));
         if (bindingConverter == null) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-00200",
-                sofaReferenceBinding.bindingType()));
+            throw new ServiceRuntimeException("Can not found binding converter for binding type "
+                    + sofaReferenceBinding.bindingType());
         }
         BindingConverterContext bindingConverterContext = new BindingConverterContext();
         bindingConverterContext.setInBinding(true);
@@ -391,7 +360,7 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
         bindingConverterContext.setAppName(sofaRuntimeContext.getAppName());
         bindingConverterContext.setAppClassLoader(sofaRuntimeContext.getAppClassLoader());
         Binding binding = bindingConverter.convert(sofaReferenceAnnotation, sofaReferenceBinding,
-            bindingConverterContext);
+                bindingConverterContext);
         bindings.add(binding);
         return bindings;
     }
@@ -404,19 +373,6 @@ public class ServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE + 10;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.sofaRuntimeContext = applicationContext.getBean("sofaRuntimeContext",
-            SofaRuntimeContext.class);
-        this.bindingConverterFactory = applicationContext.getBean("bindingConverterFactory",
-            BindingConverterFactory.class);
     }
 
     class DefaultPlaceHolderBinder implements PlaceHolderBinder {

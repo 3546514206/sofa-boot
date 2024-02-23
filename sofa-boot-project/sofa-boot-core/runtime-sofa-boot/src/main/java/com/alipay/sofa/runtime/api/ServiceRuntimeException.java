@@ -50,7 +50,7 @@ public class ServiceRuntimeException extends RuntimeException {
      * Override constructor from RuntimeException.
      *
      * @param message passed to RuntimeException
-     * @param cause passed to RuntimeException
+     * @param cause   passed to RuntimeException
      * @see RuntimeException
      */
     public ServiceRuntimeException(String message, Throwable cause) {

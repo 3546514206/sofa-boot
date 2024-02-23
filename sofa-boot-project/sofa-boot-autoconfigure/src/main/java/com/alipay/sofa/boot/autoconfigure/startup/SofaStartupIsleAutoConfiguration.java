@@ -18,8 +18,6 @@ package com.alipay.sofa.boot.autoconfigure.startup;
 
 import com.alipay.sofa.boot.autoconfigure.isle.SofaModuleAutoConfiguration;
 import com.alipay.sofa.isle.ApplicationRuntimeModel;
-import com.alipay.sofa.isle.profile.SofaModuleProfileChecker;
-import com.alipay.sofa.isle.spring.config.SofaModuleProperties;
 import com.alipay.sofa.isle.stage.ModelCreatingStage;
 import com.alipay.sofa.isle.stage.SpringContextInstallStage;
 import com.alipay.sofa.startup.StartupReporter;
@@ -28,7 +26,7 @@ import com.alipay.sofa.startup.stage.isle.StartupSpringContextInstallStage;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,28 +36,24 @@ import org.springframework.context.support.AbstractApplicationContext;
  * @author huzijie
  * @version SofaStartupIsleAutoConfiguration.java, v 0.1 2021年01月04日 7:07 下午 huzijie Exp $
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @AutoConfigureBefore(SofaModuleAutoConfiguration.class)
-@ConditionalOnClass({ ApplicationRuntimeModel.class, StartupReporter.class })
-@ConditionalOnProperty(value = "com.alipay.sofa.boot.enable-isle", matchIfMissing = true)
+@ConditionalOnClass({ApplicationRuntimeModel.class, StartupReporter.class})
 public class SofaStartupIsleAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(value = SpringContextInstallStage.class)
+    @ConditionalOnMissingBean(value = SpringContextInstallStage.class, search = SearchStrategy.CURRENT)
     public StartupSpringContextInstallStage startupSpringContextInstallStage(ApplicationContext applicationContext,
-                                                                             SofaModuleProperties sofaModuleProperties,
                                                                              StartupReporter startupReporter) {
         return new StartupSpringContextInstallStage(
-            (AbstractApplicationContext) applicationContext, sofaModuleProperties, startupReporter);
+                (AbstractApplicationContext) applicationContext, startupReporter);
     }
 
     @Bean
-    @ConditionalOnMissingBean(value = ModelCreatingStage.class)
+    @ConditionalOnMissingBean(value = ModelCreatingStage.class, search = SearchStrategy.CURRENT)
     public StartupModelCreatingStage startupModelCreatingStage(ApplicationContext applicationContext,
-                                                               SofaModuleProperties sofaModuleProperties,
-                                                               SofaModuleProfileChecker sofaModuleProfileChecker,
                                                                StartupReporter startupReporter) {
         return new StartupModelCreatingStage((AbstractApplicationContext) applicationContext,
-            sofaModuleProperties, sofaModuleProfileChecker, startupReporter);
+                startupReporter);
     }
 }

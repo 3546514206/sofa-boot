@@ -16,17 +16,6 @@
  */
 package com.alipay.sofa.tracer.boot.zipkin;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
-
 import com.alipay.common.tracer.core.context.span.SofaTracerSpanContext;
 import com.alipay.common.tracer.core.context.trace.SofaTraceContext;
 import com.alipay.common.tracer.core.generator.TraceIdGenerator;
@@ -39,6 +28,16 @@ import com.alipay.sofa.tracer.boot.zipkin.properties.ZipkinSofaTracerProperties;
 import com.alipay.sofa.tracer.plugins.zipkin.ZipkinSofaTracerRestTemplateCustomizer;
 import com.alipay.sofa.tracer.plugins.zipkin.ZipkinSofaTracerSpanRemoteReporter;
 import com.alipay.sofa.tracer.plugins.zipkin.adapter.ZipkinV2SpanAdapter;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * ZipkinSofaTracerSpanRemoteReporter Tester.
@@ -48,7 +47,7 @@ import com.alipay.sofa.tracer.plugins.zipkin.adapter.ZipkinV2SpanAdapter;
  */
 public class ZipkinSofaTracerSpanRemoteReporterTest {
 
-    private MockAbstractTracer  remoteTracer;
+    private MockAbstractTracer remoteTracer;
     private ZipkinV2SpanAdapter zipkinV2SpanAdapter;
 
     @Before
@@ -61,12 +60,12 @@ public class ZipkinSofaTracerSpanRemoteReporterTest {
         zipkinProperties.setEnabled(true);
         zipkinProperties.setGzipped(true);
         ZipkinSofaTracerRestTemplateCustomizer restTemplateCustomizer = new ZipkinSofaTracerRestTemplateCustomizer(
-            zipkinProperties.isGzipped());
+                zipkinProperties.isGzipped());
         restTemplateCustomizer.customize(restTemplate);
         //host http://zipkin-cloud-3.inc.host.net:9411
         String baseUrl = "http://zipkin-cloud-3.inc.host.net:9411";
         SpanReportListener spanReportListener = new ZipkinSofaTracerSpanRemoteReporter(
-            restTemplate, baseUrl);
+                restTemplate, baseUrl);
         SpanReportListenerHolder.addSpanReportListener(spanReportListener);
     }
 
@@ -145,13 +144,13 @@ public class ZipkinSofaTracerSpanRemoteReporterTest {
         }
         long cost = System.currentTimeMillis() - startTime;
         long count = (iLong * jLong * kLong * lLong) + (iLong * jLong * kLong) + (iLong * jLong)
-                     + iLong;
+                + iLong;
         //目标: 200 万数据务必在 10s 内完成
         assertTrue("Count = " + count + ",FNV64HashCode Cost = " + cost + " ms", cost < 10 * 1000);
         //重复
         Map<Long, Long> redundantMap = getRedundant(mapHash);
         assertTrue("FNV64HashCode Redundant Size = " + redundantMap.size() + " ; Redundant = "
-                   + redundantMap, redundantMap.size() <= 0);
+                + redundantMap, redundantMap.size() <= 0);
     }
 
     private void entranceHash(Map<Long, Long> map, String data) {

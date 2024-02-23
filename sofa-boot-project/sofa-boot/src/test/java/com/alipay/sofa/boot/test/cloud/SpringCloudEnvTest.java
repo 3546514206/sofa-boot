@@ -16,8 +16,8 @@
  */
 package com.alipay.sofa.boot.test.cloud;
 
-import java.io.File;
-
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.boot.util.SofaBootEnvUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,8 +31,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.FileSystemUtils;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.boot.util.SofaBootEnvUtils;
+import java.io.File;
 
 /**
  * Fix https://github.com/alipay/sofa-boot/pull/268
@@ -55,25 +54,25 @@ public class SpringCloudEnvTest {
         Assert.assertEquals(1L, SampleSpringContextInitializer.applicationContext.get());
         Assert.assertFalse(SofaBootEnvUtils.isSpringCloudBootstrapEnvironment(null));
         Assert.assertEquals("sofa-boot-test", SampleSpringContextInitializer.bootstrapEnvironment
-            .getProperty(SofaBootConstants.APP_NAME_KEY));
+                .getProperty(SofaBootConstants.APP_NAME_KEY));
         Assert.assertEquals("sofa-boot-test", SampleSpringContextInitializer.applicationEnvironment
-            .getProperty(SofaBootConstants.APP_NAME_KEY));
+                .getProperty(SofaBootConstants.APP_NAME_KEY));
         Assert.assertEquals("INFO", SampleSpringContextInitializer.bootstrapEnvironment
-            .getProperty("logging.level.com.alipay.test"));
+                .getProperty("logging.level.com.alipay.test"));
         Assert.assertEquals("INFO", SampleSpringContextInitializer.applicationEnvironment
-            .getProperty("logging.level.com.alipay.test"));
+                .getProperty("logging.level.com.alipay.test"));
         Assert.assertEquals("WARN", SampleSpringContextInitializer.bootstrapEnvironment
-            .getProperty("logging.level.com.test.demo"));
+                .getProperty("logging.level.com.test.demo"));
         Assert.assertEquals("WARN", SampleSpringContextInitializer.applicationEnvironment
-            .getProperty("logging.level.com.test.demo"));
-        //        Assert.assertEquals("./logs",
-        //            SampleSpringContextInitializer.bootstrapEnvironment.getProperty("logging.path"));
-        //        Assert.assertEquals("./logs",
-        //            SampleSpringContextInitializer.applicationEnvironment.getProperty("logging.path"));
-        Assert.assertNull(SampleSpringContextInitializer.bootstrapEnvironment
-            .getProperty("any.key"));
+                .getProperty("logging.level.com.test.demo"));
+        Assert.assertEquals("./logs",
+                SampleSpringContextInitializer.bootstrapEnvironment.getProperty("logging.path"));
+        Assert.assertEquals("./logs",
+                SampleSpringContextInitializer.applicationEnvironment.getProperty("logging.path"));
+        Assert.assertEquals(null,
+                SampleSpringContextInitializer.bootstrapEnvironment.getProperty("any.key"));
         Assert.assertEquals("any.value",
-            SampleSpringContextInitializer.applicationEnvironment.getProperty("any.key"));
+                SampleSpringContextInitializer.applicationEnvironment.getProperty("any.key"));
     }
 
     @After
@@ -81,7 +80,7 @@ public class SpringCloudEnvTest {
         FileSystemUtils.deleteRecursively(new File("./logs"));
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @EnableAutoConfiguration
     static class SpringCloudEnvTestConfiguration {
 

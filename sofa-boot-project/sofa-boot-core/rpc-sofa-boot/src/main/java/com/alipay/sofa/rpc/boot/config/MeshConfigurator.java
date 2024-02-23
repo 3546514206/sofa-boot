@@ -36,11 +36,11 @@ public class MeshConfigurator implements RegistryConfigureProcessor {
     @Override
     public RegistryConfig buildFromAddress(String address) {
         String meshAddress = RegistryParseUtil.parseAddress(address,
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
 
         meshAddress = HTTP + meshAddress;
         return new RegistryConfig().setAddress(meshAddress).setProtocol(
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
     }
 
     @Override

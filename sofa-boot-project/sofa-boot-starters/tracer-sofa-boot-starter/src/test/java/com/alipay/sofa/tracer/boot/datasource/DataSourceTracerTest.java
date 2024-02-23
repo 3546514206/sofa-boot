@@ -16,16 +16,15 @@
  */
 package com.alipay.sofa.tracer.boot.datasource;
 
-import javax.sql.DataSource;
-
+import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
+import com.alipay.sofa.tracer.plugins.datasource.SmartDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
-import com.alipay.sofa.tracer.plugins.datasource.SmartDataSource;
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 
 /**
  * @author qilong.zql
@@ -45,9 +44,9 @@ public class DataSourceTracerTest extends AbstractTestBase {
         Assert.assertTrue(simpleDataSource instanceof SmartDataSource);
         Assert.assertTrue(hikariDataSource instanceof SmartDataSource);
         Assert.assertFalse(((SmartDataSource) simpleDataSource).getDelegate().equals(
-            ((SmartDataSource) hikariDataSource).getDelegate()));
+                ((SmartDataSource) hikariDataSource).getDelegate()));
         Assert
-            .assertTrue(((SmartDataSource) hikariDataSource).getDelegate() instanceof HikariDataSource);
+                .assertTrue(((SmartDataSource) hikariDataSource).getDelegate() instanceof HikariDataSource);
     }
 
 }

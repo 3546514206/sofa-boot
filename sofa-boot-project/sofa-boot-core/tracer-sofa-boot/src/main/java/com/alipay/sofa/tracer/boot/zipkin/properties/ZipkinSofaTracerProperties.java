@@ -30,7 +30,7 @@ public class ZipkinSofaTracerProperties {
     /**
      * URL of the zipkin query server instance.
      */
-    private String  baseUrl = "http://localhost:9411/";
+    private String baseUrl = "http://localhost:9411/";
     private boolean enabled = true;
     /**
      * When enabled, spans are gzipped before sent to the zipkin server
@@ -41,12 +41,12 @@ public class ZipkinSofaTracerProperties {
         return this.baseUrl;
     }
 
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public void setEnabled(boolean enabled) {

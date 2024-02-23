@@ -16,30 +16,19 @@
  */
 package com.alipay.sofa.rpc.boot.test.bean.annotation;
 
-import org.springframework.stereotype.Component;
-
 import com.alipay.sofa.runtime.api.annotation.SofaService;
 import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
+import org.springframework.stereotype.Component;
 
 /**
  * @author qilong.zql
  * @since 3.2.0
  */
 @Component
-@SofaService(bindings = { @SofaServiceBinding(bindingType = "bolt") }, uniqueId = "bolt")
+@SofaService(bindings = {@SofaServiceBinding(bindingType = "bolt")}, uniqueId = "bolt")
 public class AnnotationServiceImpl implements AnnotationService {
     @Override
     public String hello() {
         return "Hello, Annotation";
-    }
-
-    @Override
-    public String testTimeout(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (Exception e) {
-
-        }
-        return "sleep " + millis + " ms";
     }
 }

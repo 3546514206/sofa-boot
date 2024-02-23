@@ -16,12 +16,10 @@
  */
 package com.alipay.sofa.tracer.boot.datasource.processor;
 
-import static com.alipay.common.tracer.core.configuration.SofaTracerConfiguration.TRACER_APPNAME_KEY;
-
-import java.lang.reflect.Method;
-
-import javax.sql.DataSource;
-
+import com.alipay.common.tracer.core.utils.ReflectionUtils;
+import com.alipay.common.tracer.core.utils.StringUtils;
+import com.alipay.sofa.tracer.plugins.datasource.SmartDataSource;
+import com.alipay.sofa.tracer.plugins.datasource.utils.DataSourceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -30,36 +28,36 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
-import com.alipay.common.tracer.core.utils.ReflectionUtils;
-import com.alipay.common.tracer.core.utils.StringUtils;
-import com.alipay.sofa.tracer.plugins.datasource.SmartDataSource;
-import com.alipay.sofa.tracer.plugins.datasource.utils.DataSourceUtils;
+import javax.sql.DataSource;
+import java.lang.reflect.Method;
+
+import static com.alipay.common.tracer.core.configuration.SofaTracerConfiguration.TRACER_APPNAME_KEY;
 
 /**
  * @author qilong.zql
  * @since 2.3.2
  */
 public class DataSourceBeanPostProcessor implements BeanPostProcessor, EnvironmentAware,
-                                        PriorityOrdered {
+        PriorityOrdered {
 
     private Environment environment;
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
-                                                                               throws BeansException {
+            throws BeansException {
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
+            throws BeansException {
         /**
          * filter transformed datasource {@link DataSourceBeanFactoryPostProcessor}
          * filter bean which is type of {@link SmartDataSource}
          * filter bean which is not type of {@link DataSource}
          */
         if (beanName.startsWith(DataSourceBeanFactoryPostProcessor.SOFA_TRACER_DATASOURCE)
-            || bean instanceof SmartDataSource || !(bean instanceof DataSource)) {
+                || bean instanceof SmartDataSource || !(bean instanceof DataSource)) {
             return bean;
         }
 
@@ -69,10 +67,10 @@ public class DataSourceBeanPostProcessor implements BeanPostProcessor, Environme
          * Now DataSource Tracer only support the following type: Druid, C3p0, Dbcp, tomcat datasource, hikari
          */
         if (DataSourceUtils.isDruidDataSource(bean) || DataSourceUtils.isDbcpDataSource(bean)
-            || DataSourceUtils.isTomcatDataSource(bean)) {
+                || DataSourceUtils.isTomcatDataSource(bean)) {
             getUrlMethodName = DataSourceUtils.METHOD_GET_URL;
         } else if (DataSourceUtils.isC3p0DataSource(bean)
-                   || DataSourceUtils.isHikariDataSource(bean)) {
+                || DataSourceUtils.isHikariDataSource(bean)) {
             getUrlMethodName = DataSourceUtils.METHOD_GET_JDBC_URL;
         } else {
             return bean;
@@ -84,7 +82,7 @@ public class DataSourceBeanPostProcessor implements BeanPostProcessor, Environme
             url = (String) urlMethod.invoke(bean);
         } catch (Throwable throwable) {
             throw new BeanCreationException(String.format("Can not find method: %s in class %s.",
-                getUrlMethodName, bean.getClass().getCanonicalName()), throwable);
+                    getUrlMethodName, bean.getClass().getCanonicalName()), throwable);
         }
 
         SmartDataSource proxiedDataSource = new SmartDataSource((DataSource) bean);

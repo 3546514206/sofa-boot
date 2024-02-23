@@ -16,18 +16,17 @@
  */
 package com.alipay.sofa.runtime;
 
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-
 import com.alipay.sofa.boot.util.SofaBootEnvUtils;
 import com.alipay.sofa.runtime.log.SofaLogger;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @author xuanbei 18/3/13
  */
 public class SofaRuntimeSpringContextInitializer
-                                                implements
-                                                ApplicationContextInitializer<ConfigurableApplicationContext> {
+        implements
+        ApplicationContextInitializer<ConfigurableApplicationContext> {
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         if (SofaBootEnvUtils.isSpringCloudBootstrapEnvironment(applicationContext.getEnvironment())) {

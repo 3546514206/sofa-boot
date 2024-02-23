@@ -26,7 +26,6 @@ import com.alipay.sofa.rpc.registry.Registry;
 import com.alipay.sofa.rpc.registry.RegistryFactory;
 import com.alipay.sofa.runtime.spi.binding.Contract;
 import org.slf4j.Logger;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
@@ -40,23 +39,17 @@ import java.util.concurrent.ConcurrentMap;
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
 public class ProviderConfigContainer {
-    private static final Logger                         LOGGER                = SofaBootRpcLoggerFactory
-                                                                                  .getLogger(ProviderConfigContainer.class);
-
-    /**
-     * 是否允许发布ProviderConfig
-     */
-    private boolean                                     allowPublish          = false;
-
-    private List<String>                                providerRegisterWhiteList;
-
-    private List<String>                                providerRegisterBlackList;
-
+    private static final Logger LOGGER = SofaBootRpcLoggerFactory
+            .getLogger(ProviderConfigContainer.class);
     /**
      * ProviderConfig 缓存
      */
     private final ConcurrentMap<String, ProviderConfig> RPC_SERVICE_CONTAINER = new ConcurrentHashMap<String, ProviderConfig>(
-                                                                                  256);
+            256);
+    /**
+     * 是否允许发布ProviderConfig
+     */
+    private boolean allowPublish = false;
 
     /**
      * 增加 ProviderConfig
@@ -69,29 +62,12 @@ public class ProviderConfigContainer {
             if (RPC_SERVICE_CONTAINER.containsKey(key)) {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("The same services and protocols already exist.key[" + key
-                                + "];protocol[" + providerConfig.getServer().get(0) + "]");
+                            + "];protocol[" + providerConfig.getServer().get(0) + "]");
                 }
             } else {
                 RPC_SERVICE_CONTAINER.put(key, providerConfig);
             }
         }
-    }
-
-    private boolean allowProviderRegister(ProviderConfig providerConfig) {
-        if (CollectionUtils.isEmpty(providerRegisterWhiteList)
-            && CollectionUtils.isEmpty(providerRegisterBlackList)) {
-            return true;
-        }
-        String uniqueName = createUniqueNameByProvider(providerConfig);
-        if (!CollectionUtils.isEmpty(providerRegisterBlackList)
-            && providerRegisterBlackList.contains(uniqueName)) {
-            return false;
-        }
-        if (!CollectionUtils.isEmpty(providerRegisterWhiteList)
-            && !providerRegisterWhiteList.contains(uniqueName)) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -130,12 +106,8 @@ public class ProviderConfigContainer {
 
             ServerConfig serverConfig = (ServerConfig) providerConfig.getServer().get(0);
             if (!serverConfig.getProtocol().equalsIgnoreCase(
-                SofaBootRpcConfigConstants.RPC_PROTOCOL_DUBBO)) {
-                if (allowProviderRegister(providerConfig)) {
-                    providerConfig.setRegister(true);
-                } else {
-                    LOGGER.info("Provider will not register: [{}]", providerConfig.buildKey());
-                }
+                    SofaBootRpcConfigConstants.RPC_PROTOCOL_DUBBO)) {
+                providerConfig.setRegister(true);
 
                 List<RegistryConfig> registrys = providerConfig.getRegistry();
                 for (RegistryConfig registryConfig : registrys) {
@@ -148,8 +120,8 @@ public class ProviderConfigContainer {
 
                     if (LOGGER.isInfoEnabled()) {
                         LOGGER.info("service published.  interfaceId["
-                                    + providerConfig.getInterfaceId() + "]; protocol["
-                                    + serverConfig.getProtocol() + "]");
+                                + providerConfig.getInterfaceId() + "]; protocol["
+                                + serverConfig.getProtocol() + "]");
                     }
                 }
 
@@ -165,14 +137,14 @@ public class ProviderConfigContainer {
 
             ServerConfig serverConfig = (ServerConfig) providerConfig.getServer().get(0);
             if (serverConfig.getProtocol().equalsIgnoreCase(
-                SofaBootRpcConfigConstants.RPC_PROTOCOL_DUBBO)) {
+                    SofaBootRpcConfigConstants.RPC_PROTOCOL_DUBBO)) {
                 providerConfig.setRegister(true);
                 providerConfig.export();
 
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("service published.  interfaceId["
-                                + providerConfig.getInterfaceId() + "]; protocol["
-                                + serverConfig.getProtocol() + "]");
+                            + providerConfig.getInterfaceId() + "]; protocol["
+                            + serverConfig.getProtocol() + "]");
                 }
             }
         }
@@ -228,33 +200,7 @@ public class ProviderConfigContainer {
         }
 
         return new StringBuilder(contract.getInterfaceType().getName()).append(version)
-            .append(uniqueId).append(protocol).toString();
+                .append(uniqueId).append(protocol).toString();
     }
 
-    /**
-     * Create UniqueName by interfaceId and uniqueId
-     */
-    private String createUniqueNameByProvider(ProviderConfig providerConfig) {
-        String uniqueId = "";
-        if (StringUtils.hasText(providerConfig.getUniqueId())) {
-            uniqueId = ":" + providerConfig.getUniqueId();
-        }
-        return providerConfig.getInterfaceId() + uniqueId;
-    }
-
-    public void setProviderRegisterWhiteList(List<String> providerRegisterWhiteList) {
-        this.providerRegisterWhiteList = providerRegisterWhiteList;
-    }
-
-    public void setProviderRegisterBlackList(List<String> providerRegisterBlackList) {
-        this.providerRegisterBlackList = providerRegisterBlackList;
-    }
-
-    public List<String> getProviderRegisterWhiteList() {
-        return providerRegisterWhiteList;
-    }
-
-    public List<String> getProviderRegisterBlackList() {
-        return providerRegisterBlackList;
-    }
 }

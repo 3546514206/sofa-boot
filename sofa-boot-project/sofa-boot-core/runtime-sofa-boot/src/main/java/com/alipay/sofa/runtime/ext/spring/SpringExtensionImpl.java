@@ -16,11 +16,10 @@
  */
 package com.alipay.sofa.runtime.ext.spring;
 
-import org.springframework.context.ApplicationContext;
-import org.w3c.dom.Element;
-
 import com.alipay.sofa.runtime.api.component.ComponentName;
 import com.alipay.sofa.runtime.ext.component.ExtensionImpl;
+import org.springframework.context.ApplicationContext;
+import org.w3c.dom.Element;
 
 /**
  * Extension implement in spring env
@@ -34,7 +33,7 @@ public class SpringExtensionImpl extends ExtensionImpl {
     /**
      * Comment for <code>serialVersionUID</code>
      */
-    private static final long    serialVersionUID = 1574173210970111642L;
+    private static final long serialVersionUID = 1574173210970111642L;
 
     protected ApplicationContext applicationContext;
 

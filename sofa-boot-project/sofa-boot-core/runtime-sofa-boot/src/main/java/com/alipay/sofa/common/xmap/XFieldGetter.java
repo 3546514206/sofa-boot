@@ -19,7 +19,6 @@ package com.alipay.sofa.common.xmap;
 import java.lang.reflect.Field;
 
 /**
- *
  * @author <a href="mailto:bs@nuxeo.com">Bogdan Stefanescu</a>
  * @author xi.hux@alipay.com
  * @since 2.6.0

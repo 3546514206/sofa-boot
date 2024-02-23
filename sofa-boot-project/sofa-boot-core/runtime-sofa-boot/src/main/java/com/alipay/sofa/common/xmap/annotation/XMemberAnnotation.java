@@ -33,14 +33,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface XMemberAnnotation {
 
-    int NODE             = 1;
-    int NODE_LIST        = 2;
-    int NODE_MAP         = 3;
-    int PARENT           = 4;
-    int CONTENT          = 5;
-    int NODE_SPRING      = 6;
+    int NODE = 1;
+    int NODE_LIST = 2;
+    int NODE_MAP = 3;
+    int PARENT = 4;
+    int CONTENT = 5;
+    int NODE_SPRING = 6;
     int NODE_LIST_SPRING = 7;
-    int NODE_MAP_SPRING  = 8;
+    int NODE_MAP_SPRING = 8;
 
     /**
      * The type of the annotation.

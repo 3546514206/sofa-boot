@@ -37,12 +37,12 @@ public class MulticastConfigurator implements RegistryConfigureProcessor {
     @Override
     public RegistryConfig buildFromAddress(String address) {
         String multicastAddress = RegistryParseUtil.parseAddress(address,
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MULTICAST);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MULTICAST);
         Map<String, String> map = RegistryParseUtil.parseParam(address,
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MULTICAST);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MULTICAST);
 
         return new RegistryConfig().setAddress(multicastAddress)
-            .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MULTICAST).setParameters(map);
+                .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MULTICAST).setParameters(map);
     }
 
     @Override

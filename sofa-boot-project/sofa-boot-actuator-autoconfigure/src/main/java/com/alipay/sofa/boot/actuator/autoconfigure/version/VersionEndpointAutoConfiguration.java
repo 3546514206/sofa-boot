@@ -16,22 +16,21 @@
  */
 package com.alipay.sofa.boot.actuator.autoconfigure.version;
 
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import com.alipay.sofa.boot.actuator.version.SofaBootVersionEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.alipay.sofa.boot.actuator.version.SofaBootVersionEndpoint;
 
 /**
  * @author qilong.zql
  * @since 3.0.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class VersionEndpointAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnAvailableEndpoint(endpoint = SofaBootVersionEndpoint.class)
+    @ConditionalOnEnabledEndpoint(endpoint = SofaBootVersionEndpoint.class)
     public SofaBootVersionEndpoint sofaBootVersionEndpoint() {
         return new SofaBootVersionEndpoint();
     }

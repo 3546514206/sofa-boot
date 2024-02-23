@@ -16,17 +16,17 @@
  */
 package com.alipay.sofa.rpc.boot.config;
 
-import java.util.Map;
-
 import com.alipay.sofa.rpc.boot.common.RegistryParseUtil;
 import com.alipay.sofa.rpc.config.RegistryConfig;
+
+import java.util.Map;
 
 /**
  * Nacos 配置
  * <p>
- *     配置格式: com.alipay.sofa.rpc.registry.address=nacos://xxx:8848?k1=v1
+ * 配置格式: com.alipay.sofa.rpc.registry.address=nacos://xxx:8848?k1=v1
  * </p>
- * 
+ *
  * @author jervyshi
  * @version $Id: NacosConfigurator.java, v 0.1 2018-12-03 15:43 jervyshi Exp $$
  */
@@ -38,12 +38,12 @@ public class NacosConfigurator implements RegistryConfigureProcessor {
     @Override
     public RegistryConfig buildFromAddress(String address) {
         String nacosAddress = RegistryParseUtil.parseAddress(address,
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_NACOS);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_NACOS);
         Map<String, String> map = RegistryParseUtil.parseParam(address,
-            SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_NACOS);
+                SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_NACOS);
 
         return new RegistryConfig().setAddress(nacosAddress).setParameters(map)
-            .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_NACOS);
+                .setProtocol(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_NACOS);
     }
 
     @Override

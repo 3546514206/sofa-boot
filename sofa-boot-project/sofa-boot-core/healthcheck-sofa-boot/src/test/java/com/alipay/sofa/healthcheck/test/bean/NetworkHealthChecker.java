@@ -16,10 +16,9 @@
  */
 package com.alipay.sofa.healthcheck.test.bean;
 
+import com.alipay.sofa.healthcheck.core.HealthChecker;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.core.Ordered;
-
-import com.alipay.sofa.healthcheck.core.HealthChecker;
 
 /**
  * @author liangen
@@ -30,7 +29,7 @@ public class NetworkHealthChecker implements HealthChecker, Ordered {
 
     private boolean isStrict;
 
-    private int     retryCount;
+    private int retryCount;
 
     public NetworkHealthChecker(boolean isStrict, int retryCount) {
         this.isStrict = isStrict;

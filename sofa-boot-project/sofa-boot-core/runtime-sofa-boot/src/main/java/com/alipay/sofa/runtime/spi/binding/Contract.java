@@ -16,11 +16,11 @@
  */
 package com.alipay.sofa.runtime.spi.binding;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.alipay.sofa.runtime.api.binding.BindingType;
 import com.alipay.sofa.runtime.model.InterfaceMode;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Contract Description Interface
@@ -99,12 +99,4 @@ public interface Contract {
      * @param bindings binding objects
      */
     <T extends Binding> void addBinding(Set<T> bindings);
-
-    /**
-     * get interface type class canonical name
-     * @return get interface type class canonical name
-     */
-    default String getInterfaceTypeCanonicalName() {
-        return getInterfaceType().getCanonicalName();
-    }
 }

@@ -16,10 +16,9 @@
  */
 package com.alipay.sofa.healthcheck.test.bean;
 
+import com.alipay.sofa.healthcheck.core.HealthChecker;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.core.PriorityOrdered;
-
-import com.alipay.sofa.healthcheck.core.HealthChecker;
 
 /**
  * @author liangen
@@ -27,11 +26,11 @@ import com.alipay.sofa.healthcheck.core.HealthChecker;
  */
 public class MemoryHealthChecker implements HealthChecker, PriorityOrdered {
 
-    private int     count;
+    private int count;
 
     private boolean isStrict;
 
-    private int     retryCount;
+    private int retryCount;
 
     public MemoryHealthChecker(int count, boolean isStrict, int retryCount) {
         this.count = count;

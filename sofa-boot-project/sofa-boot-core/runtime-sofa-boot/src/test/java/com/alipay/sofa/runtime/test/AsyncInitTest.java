@@ -16,7 +16,6 @@
  */
 package com.alipay.sofa.runtime.test;
 
-import com.alipay.sofa.runtime.api.annotation.SofaAsyncInit;
 import com.alipay.sofa.runtime.test.beans.TimeWasteBean;
 import com.alipay.sofa.runtime.test.configuration.SofaRuntimeTestConfiguration;
 import org.junit.Assert;
@@ -24,11 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -36,9 +33,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 2.6.0
  */
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = { "async.config=false",
-                                  "com.alipay.sofa.boot.asyncInitBeanCoreSize=20",
-                                  "com.alipay.sofa.boot.asyncInitBeanMaxSize=20" })
 public class AsyncInitTest {
 
     @Autowired
@@ -49,8 +43,8 @@ public class AsyncInitTest {
         long min = Long.MAX_VALUE;
         long max = Long.MIN_VALUE;
 
-        Assert.assertEquals(15, TimeWasteBean.getCount());
-        for (int i = 1; i <= 12; i++) {
+        Assert.assertEquals(12, TimeWasteBean.getCount());
+        for (int i = 1; i <= 10; i++) {
             TimeWasteBean bean = ctx.getBean("testBean" + i, TimeWasteBean.class);
             if (bean.getPrintTime() < min) {
                 min = bean.getPrintTime();
@@ -58,39 +52,14 @@ public class AsyncInitTest {
             if (bean.getPrintTime() > max) {
                 max = bean.getPrintTime();
             }
-            String threadName = bean.getThreadName();
-            Assert.assertTrue(threadName, threadName.contains("async-init-bean"));
         }
-        for (int i = 13; i <= 15; i++) {
-            TimeWasteBean bean = ctx.getBean("testBean" + i, TimeWasteBean.class);
-            String threadName = bean.getThreadName();
-            Assert.assertFalse(threadName, threadName.contains("async-init-bean"));
-        }
-        Assert.assertTrue("max:" + max + ", min:" + min, max - min < 5000);
+        Assert.assertTrue("max:" + max + ", min:" + min, max - min < 3500);
         TimeWasteBean.resetCount();
     }
 
-    @Configuration(proxyBeanMethods = false)
-    @ImportResource({ "classpath*:META-INF/async/*.xml" })
+    @Configuration
+    @ImportResource({"classpath*:META-INF/async/*.xml"})
     @Import(SofaRuntimeTestConfiguration.class)
     static class AsyncInitTestConfiguration {
-
-        @Bean(initMethod = "init")
-        @SofaAsyncInit
-        public TimeWasteBean testBean12() {
-            return new TimeWasteBean();
-        }
-
-        @Bean(initMethod = "init")
-        @SofaAsyncInit(false)
-        public TimeWasteBean testBean13() {
-            return new TimeWasteBean();
-        }
-
-    }
-
-    @SofaAsyncInit
-    static class TimeWasteBeanChild extends TimeWasteBean {
-
     }
 }

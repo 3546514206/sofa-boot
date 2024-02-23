@@ -24,16 +24,12 @@ import com.alipay.sofa.rpc.boot.runtime.binding.RpcBinding;
 import com.alipay.sofa.rpc.boot.runtime.binding.RpcBindingMethodInfo;
 import com.alipay.sofa.rpc.boot.runtime.param.RpcBindingParam;
 import com.alipay.sofa.rpc.client.ProviderInfoAttrs;
-import com.alipay.sofa.rpc.config.ApplicationConfig;
-import com.alipay.sofa.rpc.config.ConfigUniqueNameGenerator;
-import com.alipay.sofa.rpc.config.MethodConfig;
-import com.alipay.sofa.rpc.config.ProviderConfig;
-import com.alipay.sofa.rpc.config.RegistryConfig;
-import com.alipay.sofa.rpc.config.ServerConfig;
-import com.alipay.sofa.rpc.config.UserThreadPoolManager;
+import com.alipay.sofa.rpc.config.*;
 import com.alipay.sofa.rpc.filter.Filter;
 import com.alipay.sofa.rpc.server.UserThreadPool;
 import com.alipay.sofa.runtime.spi.binding.Contract;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -46,17 +42,12 @@ import java.util.List;
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
 public class ProviderConfigHelper {
-
-    private final ServerConfigContainer   serverConfigContainer;
-    private final RegistryConfigContainer registryConfigContainer;
-    private final String                  appName;
-
-    public ProviderConfigHelper(ServerConfigContainer serverConfigContainer,
-                                RegistryConfigContainer registryConfigContainer, String appName) {
-        this.serverConfigContainer = serverConfigContainer;
-        this.registryConfigContainer = registryConfigContainer;
-        this.appName = appName;
-    }
+    @Autowired
+    private ServerConfigContainer serverConfigContainer;
+    @Autowired
+    private RegistryConfigContainer registryConfigContainer;
+    @Value("${" + SofaBootRpcConfigConstants.APP_NAME + "}")
+    private String appName;
 
     /**
      * 获取 ProviderConfig
@@ -68,7 +59,7 @@ public class ProviderConfigHelper {
      * @throws SofaBootRpcRuntimeException
      */
     public ProviderConfig getProviderConfig(Contract contract, RpcBinding binding, Object target)
-                                                                                                 throws SofaBootRpcRuntimeException {
+            throws SofaBootRpcRuntimeException {
         RpcBindingParam param = binding.getRpcBindingParam();
 
         String id = binding.getBeanId();
@@ -85,7 +76,7 @@ public class ProviderConfigHelper {
         List<MethodConfig> methodConfigs = convertToMethodConfig(param.getMethodInfos());
 
         ServerConfig serverConfig = serverConfigContainer.getServerConfig(binding.getBindingType()
-            .getType());
+                .getType());
 
         ProviderConfig providerConfig = new ProviderConfig();
         if (StringUtils.hasText(appName)) {
@@ -114,11 +105,11 @@ public class ProviderConfigHelper {
         }
         if (warmupTime != null) {
             providerConfig.setParameter(ProviderInfoAttrs.ATTR_WARMUP_TIME,
-                String.valueOf(warmupTime));
+                    String.valueOf(warmupTime));
         }
         if (warmupWeight != null) {
             providerConfig.setParameter(ProviderInfoAttrs.ATTR_WARMUP_WEIGHT,
-                String.valueOf(warmupWeight));
+                    String.valueOf(warmupWeight));
         }
         if (!CollectionUtils.isEmpty(filters)) {
             providerConfig.setFilterRef(filters);
@@ -128,7 +119,7 @@ public class ProviderConfigHelper {
         }
         if (threadPool != null) {
             UserThreadPoolManager.registerUserThread(
-                ConfigUniqueNameGenerator.getUniqueName(providerConfig), threadPool);
+                    ConfigUniqueNameGenerator.getUniqueName(providerConfig), threadPool);
         }
 
         providerConfig.setServer(serverConfig);
@@ -151,12 +142,12 @@ public class ProviderConfigHelper {
             List<String> registrys = param.getRegistrys();
             for (String registryAlias : registrys) {
                 RegistryConfig registryConfig = registryConfigContainer
-                    .getRegistryConfig(registryAlias);
+                        .getRegistryConfig(registryAlias);
                 providerConfig.setRegistry(registryConfig);
             }
         } else if (registryConfigContainer.isMeshEnabled(protocol)) {
             RegistryConfig registryConfig = registryConfigContainer
-                .getRegistryConfig(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
+                    .getRegistryConfig(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MESH);
             providerConfig.setRegistry(registryConfig);
         } else {
             RegistryConfig registryConfig = registryConfigContainer.getRegistryConfig();

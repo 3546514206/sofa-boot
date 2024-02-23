@@ -24,7 +24,7 @@ import org.junit.Test;
 
 /**
  * @author zhaowang
- * @version : BindingAdapterFactoryTest.java, v 0.1 2020年02月05日 2:46 下午 zhaowang Exp $
+ * @version : BindingAdatperFactoryTest.java, v 0.1 2020年02月05日 2:46 下午 zhaowang Exp $
  */
 public class BindingAdapterFactoryTest {
 
@@ -32,7 +32,7 @@ public class BindingAdapterFactoryTest {
     public void testOrder() {
         BindingAdapterFactoryImpl bindingAdapterFactory = new BindingAdapterFactoryImpl();
         bindingAdapterFactory.addBindingAdapters(RuntimeTestConfiguration
-            .getClassesByServiceLoader(BindingAdapter.class));
+                .getClassesByServiceLoader(BindingAdapter.class));
         BindingAdapter bindingAdapter = bindingAdapterFactory.getBindingAdapter(XBindingAdapter.X);
         Assert.assertTrue(bindingAdapter instanceof XBindingAdapter2);
     }

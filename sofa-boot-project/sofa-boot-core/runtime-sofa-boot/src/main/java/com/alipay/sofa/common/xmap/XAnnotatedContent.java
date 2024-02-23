@@ -16,9 +16,8 @@
  */
 package com.alipay.sofa.common.xmap;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.alipay.sofa.common.xmap.annotation.XContent;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
@@ -26,8 +25,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.ranges.DocumentRange;
 import org.w3c.dom.ranges.Range;
 
-import com.alipay.sofa.common.xmap.annotation.XContent;
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author <a href="mailto:bs@nuxeo.com">Bogdan Stefanescu</a>
@@ -74,7 +73,7 @@ public class XAnnotatedContent extends XAnnotatedMember {
 
     @Override
     public void decode(Object instance, Node base, Document document, List<String> filters)
-                                                                                           throws Exception {
+            throws Exception {
         // do nothing
     }
 

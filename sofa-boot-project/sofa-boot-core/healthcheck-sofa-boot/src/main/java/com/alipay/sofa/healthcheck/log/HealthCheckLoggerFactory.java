@@ -27,9 +27,6 @@ public class HealthCheckLoggerFactory {
 
     private static final String HEALTH_CHECK_LOG_SPACE = "com.alipay.sofa.healthcheck";
 
-    public static final Logger  DEFAULT_LOG            = HealthCheckLoggerFactory
-                                                           .getLogger("com.alipay.sofa");
-
     /***
      * Get the log object
      *

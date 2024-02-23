@@ -16,15 +16,13 @@
  */
 package com.alipay.sofa.runtime.spring.aware;
 
+import com.alipay.sofa.runtime.spi.spring.RuntimeShutdownAware;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import com.alipay.sofa.runtime.spi.spring.RuntimeShutdownAware;
-
 /**
- * @deprecated will be deleted in 3.9.0
  * @author qilong.zql
  * @since 2.5.0
  */
@@ -37,7 +35,7 @@ public class DefaultRuntimeShutdownAware implements RuntimeShutdownAware, Applic
             ((AbstractApplicationContext) ctx).close();
         } else {
             throw new RuntimeException(String.format("%s is not instanceof %s, can not be closed.",
-                ctx.getClass(), AbstractApplicationContext.class));
+                    ctx.getClass(), AbstractApplicationContext.class));
         }
     }
 

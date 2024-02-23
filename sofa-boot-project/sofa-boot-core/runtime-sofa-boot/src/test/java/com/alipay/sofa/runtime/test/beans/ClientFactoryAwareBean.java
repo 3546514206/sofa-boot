@@ -16,14 +16,13 @@
  */
 package com.alipay.sofa.runtime.test.beans;
 
-import org.springframework.beans.factory.InitializingBean;
-
 import com.alipay.sofa.runtime.api.aware.ClientFactoryAware;
 import com.alipay.sofa.runtime.api.client.ClientFactory;
 import com.alipay.sofa.runtime.api.client.ServiceClient;
 import com.alipay.sofa.runtime.api.client.param.ServiceParam;
 import com.alipay.sofa.runtime.test.beans.facade.SampleService;
 import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author qilong.zql
@@ -33,13 +32,13 @@ public class ClientFactoryAwareBean implements ClientFactoryAware, InitializingB
 
     private ClientFactory clientFactory;
 
+    public ClientFactory getClientFactory() {
+        return clientFactory;
+    }
+
     @Override
     public void setClientFactory(ClientFactory clientFactory) {
         this.clientFactory = clientFactory;
-    }
-
-    public ClientFactory getClientFactory() {
-        return clientFactory;
     }
 
     @Override

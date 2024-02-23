@@ -33,7 +33,7 @@ import java.util.Map;
  * Created on 2020/6/3
  */
 public class TestComponent implements ComponentInfo {
-    private String  componentName;
+    private String componentName;
     private boolean health;
 
     public TestComponent(String componentName, boolean health) {

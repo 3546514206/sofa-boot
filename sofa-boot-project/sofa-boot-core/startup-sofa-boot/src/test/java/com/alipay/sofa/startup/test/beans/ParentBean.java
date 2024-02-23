@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ParentBean implements InitializingBean {
     public static final int PARENT_INIT_TIM = 30;
     @Autowired
-    ChildBean               childBean;
+    ChildBean childBean;
 
     @Override
     public void afterPropertiesSet() throws Exception {

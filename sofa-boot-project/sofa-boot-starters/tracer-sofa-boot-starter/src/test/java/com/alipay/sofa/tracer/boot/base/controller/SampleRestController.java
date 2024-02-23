@@ -37,17 +37,16 @@ import java.util.concurrent.atomic.AtomicLong;
 @RestController
 public class SampleRestController {
 
-    public static String        ASYNC_RESP = "Hello World!";
-
-    private static final String template   = "Hello, %s!";
-
-    private final AtomicLong    counter    = new AtomicLong();
+    private static final String template = "Hello, %s!";
+    public static String ASYNC_RESP = "Hello World!";
+    private final AtomicLong counter = new AtomicLong();
 
     @Autowired
-    TestService                 testService;
+    TestService testService;
 
     /**
      * work
+     *
      * @param name
      * @return
      */
@@ -79,7 +78,7 @@ public class SampleRestController {
 
     @RequestMapping("/asyncServlet")
     public void asyncServlet(HttpServletRequest request, HttpServletResponse response)
-                                                                                      throws IOException {
+            throws IOException {
         AsyncContext asyncContext = request.startAsync();
         asyncContext.getResponse().getWriter().write(ASYNC_RESP);
         asyncContext.complete();
@@ -109,8 +108,8 @@ public class SampleRestController {
     public static class Greeting {
 
         private boolean success = false;
-        private long    id;
-        private String  content;
+        private long id;
+        private String content;
 
         public boolean isSuccess() {
             return success;

@@ -16,13 +16,12 @@
  */
 package com.alipay.sofa.rpc.boot.common;
 
+import com.alipay.sofa.rpc.common.utils.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alipay.sofa.rpc.common.utils.StringUtils;
-
 /**
- *
  * @author JervyShi
  * @version $Id: RegistryParseUtil.java, v 0.1 2018-12-03 17:18 JervyShi Exp $$
  */
@@ -31,8 +30,8 @@ public class RegistryParseUtil {
     /**
      * Parse address string.
      *
-     * @param config the config 
-     * @param protocol the protocol 
+     * @param config   the config
+     * @param protocol the protocol
      * @return the string
      */
     public static String parseAddress(String config, String protocol) {
@@ -55,8 +54,8 @@ public class RegistryParseUtil {
     /**
      * Parse param map.
      *
-     * @param address the address 
-     * @param protocol the protocol 
+     * @param address  the address
+     * @param protocol the protocol
      * @return the map
      */
     public static Map<String, String> parseParam(String address, String protocol) {
@@ -88,7 +87,7 @@ public class RegistryParseUtil {
     /**
      * Parse key value map.
      *
-     * @param kv the kv 
+     * @param kv the kv
      * @return the map
      */
     public static Map<String, String> parseKeyValue(String kv) {

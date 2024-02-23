@@ -22,11 +22,12 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 3:17 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 3:17 PM
+ * @since:
  **/
 public class TracerAnnotationClassAdvisor extends AbstractPointcutAdvisor {
 
-    private Advice   advice;
+    private Advice advice;
 
     private Pointcut pointcut;
 

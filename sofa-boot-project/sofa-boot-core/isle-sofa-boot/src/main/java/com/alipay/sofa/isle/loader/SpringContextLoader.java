@@ -20,16 +20,14 @@ import com.alipay.sofa.isle.ApplicationRuntimeModel;
 import com.alipay.sofa.isle.deployment.DeploymentDescriptor;
 
 /**
- *
  * @author linfengqi  2011-7-26
  */
 public interface SpringContextLoader {
     /**
-     *
-     * @param deployment deployment descriptor
+     * @param deployment  deployment descriptor
      * @param application application runtime model
      * @throws Exception throws when exception occur
      */
     void loadSpringContext(DeploymentDescriptor deployment, ApplicationRuntimeModel application)
-                                                                                                throws Exception;
+            throws Exception;
 }

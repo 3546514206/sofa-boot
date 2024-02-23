@@ -19,7 +19,6 @@ package com.alipay.sofa.common.xmap;
 import java.lang.reflect.Field;
 
 /**
- *
  * @author xi.hux@alipay.com
  * @since 2.6.0
  */

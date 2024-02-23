@@ -16,22 +16,17 @@
  */
 package com.alipay.sofa.isle.deployment;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
- *
  * @author yangyanzhao
  * @version $Id: DeployRegistry.java, v 0.1 2012-1-12 上午12:34:44 yangyanzhao Exp
- *          $
+ * $
  */
 public class DeployRegistry extends DependencyTree<String, DeploymentDescriptor> {
     // this is needed to handle requiredBy dependencies
     private final Map<String, DeploymentDescriptor> deployments = Collections
-                                                                    .synchronizedSortedMap(new TreeMap<String, DeploymentDescriptor>());
+            .synchronizedSortedMap(new TreeMap<String, DeploymentDescriptor>());
 
     public void add(DeploymentDescriptor deployment) {
         deployments.put(deployment.getName(), deployment);

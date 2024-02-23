@@ -26,9 +26,9 @@ import java.util.List;
  */
 public class ServiceParam {
 
-    private String             uniqueId;
-    private Class<?>           interfaceType;
-    private Object             instance;
+    private String uniqueId;
+    private Class<?> interfaceType;
+    private Object instance;
     private List<BindingParam> bindingParams = new ArrayList<>();
 
     /**

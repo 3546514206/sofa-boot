@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.alipay.sofa</groupId>
         <artifactId>sofa-boot-build</artifactId>
-        <version>${revision}</version>
+        <groupId>com.alipay.sofa</groupId>
+        <version>3.6.0</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sofa-boot-project</artifactId>
     <packaging>pom</packaging>
@@ -18,14 +18,13 @@
         <module>sofa-boot-actuator</module>
         <module>sofa-boot-actuator-autoconfigure</module>
         <module>sofa-boot-starters</module>
-        <module>sofa-boot-tools</module>
+        <!--        <module>sofa-boot-tools</module>-->
         <module>sofa-boot-plugins</module>
         <module>sofa-boot-core</module>
         <!--imported or configured as parent by users-->
         <module>sofaboot-dependencies</module>
         <!--imported or configured as parent by sofa boot module self-->
         <module>sofa-boot-parent</module>
-        <module>sofa-boot-jacoco-report</module>
     </modules>
 
     <properties>

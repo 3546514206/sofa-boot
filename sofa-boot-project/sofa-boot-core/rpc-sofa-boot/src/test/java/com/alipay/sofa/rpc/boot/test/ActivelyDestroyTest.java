@@ -16,13 +16,12 @@
  */
 package com.alipay.sofa.rpc.boot.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
 import com.alipay.sofa.rpc.context.RpcInternalContext;
 import com.alipay.sofa.rpc.context.RpcInvokeContext;
 import com.alipay.sofa.rpc.context.RpcRunningState;
 import com.alipay.sofa.rpc.context.RpcRuntimeContext;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 /**
  * Test extend this will destroy actively.

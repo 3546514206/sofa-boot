@@ -25,6 +25,7 @@ import com.alipay.sofa.rpc.boot.container.ServerConfigContainer;
 import com.alipay.sofa.rpc.boot.context.event.SofaBootRpcStartEvent;
 import com.alipay.sofa.rpc.config.ProviderConfig;
 import com.alipay.sofa.rpc.event.LookoutSubscriber;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.CollectionUtils;
 
@@ -39,26 +40,18 @@ import java.util.Collection;
  */
 public class SofaBootRpcStartListener implements ApplicationListener<SofaBootRpcStartEvent> {
 
-    private final SofaBootRpcProperties        sofaBootRpcProperties;
+    @Autowired
+    protected ProviderConfigContainer providerConfigContainer;
+    @Autowired
+    protected FaultToleranceConfigurator faultToleranceConfigurator;
+    @Autowired
+    protected ServerConfigContainer serverConfigContainer;
+    @Autowired
+    protected RegistryConfigContainer registryConfigContainer;
+    @Autowired
+    private SofaBootRpcProperties sofaBootRpcProperties;
 
-    protected final ProviderConfigContainer    providerConfigContainer;
-
-    protected final FaultToleranceConfigurator faultToleranceConfigurator;
-
-    protected final ServerConfigContainer      serverConfigContainer;
-
-    protected final RegistryConfigContainer    registryConfigContainer;
-
-    public SofaBootRpcStartListener(SofaBootRpcProperties sofaBootRpcProperties,
-                                    ProviderConfigContainer providerConfigContainer,
-                                    FaultToleranceConfigurator faultToleranceConfigurator,
-                                    ServerConfigContainer serverConfigContainer,
-                                    RegistryConfigContainer registryConfigContainer) {
-        this.sofaBootRpcProperties = sofaBootRpcProperties;
-        this.providerConfigContainer = providerConfigContainer;
-        this.faultToleranceConfigurator = faultToleranceConfigurator;
-        this.serverConfigContainer = serverConfigContainer;
-        this.registryConfigContainer = registryConfigContainer;
+    public SofaBootRpcStartListener() {
     }
 
     @Override
@@ -73,7 +66,7 @@ public class SofaBootRpcStartListener implements ApplicationListener<SofaBootRpc
         faultToleranceConfigurator.startFaultTolerance();
 
         Collection<ProviderConfig> allProviderConfig = providerConfigContainer
-            .getAllProviderConfig();
+                .getAllProviderConfig();
         if (!CollectionUtils.isEmpty(allProviderConfig)) {
             //start server
             serverConfigContainer.startServers();
@@ -95,7 +88,7 @@ public class SofaBootRpcStartListener implements ApplicationListener<SofaBootRpc
 
     protected void disableLookout() {
         Boolean disable = SofaBootRpcParserUtil.parseBoolean(sofaBootRpcProperties
-            .getLookoutCollectDisable());
+                .getLookoutCollectDisable());
 
         if (disable != null) {
             LookoutSubscriber.setLookoutCollectDisable(disable);

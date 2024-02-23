@@ -35,15 +35,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = {
-                                  "com.alipay.sofa.boot.disableJvmFirst=true",
-                                  "com.alipay.sofa.boot.skipJvmReferenceHealthCheck=true",
-                                  "com.alipay.sofa.boot.skipJvmSerialize=true",
-                                  "com.alipay.sofa.boot.skipExtensionHealthCheck=true",
-                                  "com.alipay.sofa.boot.extensionFailureInsulating=true",
-                                  "com.alipay.sofa.boot.serviceInterfaceTypeCheck=true",
-                                  "com.alipay.sofa.boot.referenceHealthCheckMoreDetailEnable=true",
-                                  "com.alipay.sofa.boot.skipJvmReferenceHealthCheckList=com.alipay.sofa.isle.sample.facade.SampleJvmService:annotationImpl,com.alipay.sofa.isle.sample.facade.SampleJvmService" })
+@TestPropertySource(properties = {"com.alipay.sofa.boot.disableJvmFirst=true",
+        "com.alipay.sofa.boot.skipJvmReferenceHealthCheck=true",
+        "com.alipay.sofa.boot.skipJvmSerialize=true",
+        "com.alipay.sofa.boot.skipExtensionHealthCheck=true",
+        "com.alipay.sofa.boot.extensionFailureInsulating=true"})
 public class SofaRuntimePropertiesTest {
 
     @Autowired
@@ -52,7 +48,7 @@ public class SofaRuntimePropertiesTest {
     @Test
     public void testDisableJvmFirstProperty() {
         SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
+                .getBean(SofaRuntimeConfigurationProperties.class);
 
         Assert.assertTrue(SofaRuntimeProperties.isDisableJvmFirst(ctx.getClassLoader()));
         Assert.assertTrue(configurationProperties.isDisableJvmFirst());
@@ -61,17 +57,17 @@ public class SofaRuntimePropertiesTest {
     @Test
     public void testSkipJvmReferenceHealthCheckProperty() {
         SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
+                .getBean(SofaRuntimeConfigurationProperties.class);
 
         Assert
-            .assertTrue(SofaRuntimeProperties.isSkipJvmReferenceHealthCheck(ctx.getClassLoader()));
+                .assertTrue(SofaRuntimeProperties.isSkipJvmReferenceHealthCheck(ctx.getClassLoader()));
         Assert.assertTrue(configurationProperties.isSkipJvmReferenceHealthCheck());
     }
 
     @Test
     public void testSkipJvmSerializeProperty() {
         SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
+                .getBean(SofaRuntimeConfigurationProperties.class);
 
         Assert.assertTrue(SofaRuntimeProperties.isSkipJvmSerialize(ctx.getClassLoader()));
         Assert.assertTrue(configurationProperties.isSkipJvmSerialize());
@@ -80,7 +76,7 @@ public class SofaRuntimePropertiesTest {
     @Test
     public void testSkipExtensionHealthCheckProperty() {
         SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
+                .getBean(SofaRuntimeConfigurationProperties.class);
 
         Assert.assertTrue(SofaRuntimeProperties.isSkipExtensionHealthCheck(ctx.getClassLoader()));
         Assert.assertTrue(configurationProperties.isSkipExtensionHealthCheck());
@@ -89,39 +85,13 @@ public class SofaRuntimePropertiesTest {
     @Test
     public void testExtensionFailureInsulating() {
         SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
+                .getBean(SofaRuntimeConfigurationProperties.class);
 
         Assert.assertTrue(SofaRuntimeProperties.isSkipExtensionHealthCheck(ctx.getClassLoader()));
         Assert.assertTrue(configurationProperties.isExtensionFailureInsulating());
     }
 
-    @Test
-    public void testServiceInterfaceTypeCheck() {
-        SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
-        Assert.assertTrue(SofaRuntimeProperties.isServiceInterfaceTypeCheck());
-        Assert.assertTrue(configurationProperties.isServiceInterfaceTypeCheck());
-    }
-
-    @Test
-    public void testSkipJvmReferenceHealthCheckList() {
-        SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
-        Assert.assertArrayEquals("", new String[] {
-                "com.alipay.sofa.isle.sample.facade.SampleJvmService:annotationImpl",
-                "com.alipay.sofa.isle.sample.facade.SampleJvmService" }, configurationProperties
-            .getSkipJvmReferenceHealthCheckList().toArray(new String[] {}));
-    }
-
-    @Test
-    public void testReferenceHealthCheckMoreDetailEnable() {
-        SofaRuntimeConfigurationProperties configurationProperties = ctx
-            .getBean(SofaRuntimeConfigurationProperties.class);
-        Assert.assertTrue(configurationProperties.isReferenceHealthCheckMoreDetailEnable());
-
-    }
-
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @EnableAutoConfiguration
     static class SofaRuntimePropertiesTestConfiguration {
 

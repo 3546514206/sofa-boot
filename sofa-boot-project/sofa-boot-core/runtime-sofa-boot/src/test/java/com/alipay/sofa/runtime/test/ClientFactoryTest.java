@@ -16,13 +16,18 @@
  */
 package com.alipay.sofa.runtime.test;
 
-import com.alipay.sofa.boot.util.StringUtils;
-import com.alipay.sofa.runtime.SofaRuntimeProperties;
+import com.alipay.sofa.runtime.api.annotation.SofaClientFactory;
+import com.alipay.sofa.runtime.api.annotation.SofaReference;
+import com.alipay.sofa.runtime.api.client.ClientFactory;
+import com.alipay.sofa.runtime.api.client.ReferenceClient;
+import com.alipay.sofa.runtime.api.client.ServiceClient;
+import com.alipay.sofa.runtime.api.client.param.ReferenceParam;
 import com.alipay.sofa.runtime.api.client.param.ServiceParam;
 import com.alipay.sofa.runtime.service.binding.JvmBindingParam;
+import com.alipay.sofa.runtime.test.beans.ClientFactoryAwareBean;
+import com.alipay.sofa.runtime.test.beans.facade.SampleService;
 import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
-import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
+import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,19 +39,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.runtime.api.annotation.SofaClientFactory;
-import com.alipay.sofa.runtime.api.annotation.SofaReference;
-import com.alipay.sofa.runtime.api.client.ClientFactory;
-import com.alipay.sofa.runtime.api.client.ReferenceClient;
-import com.alipay.sofa.runtime.api.client.ServiceClient;
-import com.alipay.sofa.runtime.api.client.param.ReferenceParam;
-import com.alipay.sofa.runtime.test.beans.ClientFactoryAwareBean;
-import com.alipay.sofa.runtime.test.beans.facade.SampleService;
-import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
-
-import java.io.File;
-import java.io.IOException;
-
 /**
  * @author qilong.zql
  * @since 3.2.0
@@ -57,26 +49,19 @@ import java.io.IOException;
 public class ClientFactoryTest {
 
     @SofaClientFactory
-    private ServiceClient          serviceClient;
+    private ServiceClient serviceClient;
 
     @SofaClientFactory
-    private ReferenceClient        referenceClient;
+    private ReferenceClient referenceClient;
 
     @SofaClientFactory
-    private ClientFactory          clientFactory;
+    private ClientFactory clientFactory;
 
     @Autowired
     private ClientFactoryAwareBean clientFactoryAwareBean;
 
     @SofaReference(uniqueId = "clientFactory")
-    private SampleService          sampleService;
-
-    @AfterClass
-    public static void afterClearLogFiles() throws IOException {
-        final String logRootPath = StringUtils.hasText(System.getProperty("logging.path")) ? System
-            .getProperty("logging.path") : "./logs";
-        FileUtils.deleteDirectory(new File(logRootPath));
-    }
+    private SampleService sampleService;
 
     @Test
     public void testClientFactoryAware() {
@@ -105,44 +90,6 @@ public class ClientFactoryTest {
         referenceParam.setInterfaceType(SampleService.class);
         referenceParam.setUniqueId("clientFactory");
         Assert.assertEquals(sampleService, referenceClient.reference(referenceParam));
-    }
-
-    @Configuration(proxyBeanMethods = false)
-    @Import(RuntimeConfiguration.class)
-    static class ClientFactoryTestConfiguration {
-        @Bean
-        public ClientFactoryAwareBean clientFactoryAwareBean() {
-            return new ClientFactoryAwareBean();
-        }
-    }
-
-    @Test
-    public void testBindingInstanceIsNotAssignableFromInterfaceType() throws IOException {
-
-        String logRootPath = StringUtils.hasText(System.getProperty("logging.path")) ? System
-            .getProperty("logging.path") : "./logs";
-        File sofaLog = new File(logRootPath + File.separator + "sofa-runtime" + File.separator
-                                + "sofa-default.log");
-        FileUtils.write(sofaLog, "", System.getProperty("file.encoding"));
-
-        SofaRuntimeProperties.setServiceInterfaceTypeCheck(true);
-
-        JvmBindingParam jvmBindingParam = new JvmBindingParam();
-        jvmBindingParam.setSerialize(true);
-
-        ServiceParam serviceParam = new ServiceParam();
-        serviceParam.setInstance(new Object());
-        serviceParam.setInterfaceType(SampleService.class);
-        serviceParam.addBindingParam(jvmBindingParam);
-        serviceClient.service(serviceParam);
-
-        String content = FileUtils.readFileToString(sofaLog, System.getProperty("file.encoding"));
-        Assert
-            .assertTrue(content
-                .contains("SOFA-BOOT-01-00104: Bean "
-                          + "[com.alipay.sofa.runtime.test.beans.facade.SampleService] "
-                          + "type is [class java.lang.Object] not isAssignableFrom "
-                          + "[interface com.alipay.sofa.runtime.test.beans.facade.SampleService] , please check it"));
     }
 
     /**
@@ -175,19 +122,8 @@ public class ClientFactoryTest {
         Assert.assertEquals("WithBindingParam", service.service());
     }
 
-    private class PrivateServiceImpl implements PrivateService {
-        @Override
-        public String service() {
-            return this.getClass().getName();
-        }
-    }
-
-    public interface PrivateService {
-        String service();
-    }
-
     /**
-     * test removeService and removeReference methods in ReferenceClientImpl and ServiceClientImpl
+     * test removeService and removeReference methods in in ReferenceClientImpl and ServiceClientImpl
      */
     @Test
     public void testRemoveServiceOrRemoveReference() {
@@ -210,11 +146,11 @@ public class ClientFactoryTest {
         ReferenceParam<PrivateService> referenceParam = new ReferenceParam<>();
         referenceParam.setInterfaceType(PrivateService.class);
         Assert.assertEquals(PrivateServiceImpl.class.getName(),
-            referenceClient.reference(referenceParam).service());
+                referenceClient.reference(referenceParam).service());
         //reference with unique id
         referenceParam.setUniqueId("uniqueId");
         Assert.assertEquals(PrivateServiceImpl.class.getName(),
-            referenceClient.reference(referenceParam).service());
+                referenceClient.reference(referenceParam).service());
 
         //remove Reference
         referenceClient.removeReference(PrivateService.class);
@@ -224,10 +160,30 @@ public class ClientFactoryTest {
         try {
             serviceClient.removeService(PrivateService.class, -1);
         } catch (IllegalArgumentException ex) {
-            Assert.assertTrue(ex.getMessage().contains(
-                "Argument delay must be a positive integer or zero"));
+            Assert.assertEquals("Argument delay must be a positive integer or zero.",
+                    ex.getMessage());
         }
         serviceClient.removeService(PrivateService.class, "uniqueId", 0);
+    }
+
+    public interface PrivateService {
+        String service();
+    }
+
+    @Configuration
+    @Import(RuntimeConfiguration.class)
+    static class ClientFactoryTestConfiguration {
+        @Bean
+        public ClientFactoryAwareBean clientFactoryAwareBean() {
+            return new ClientFactoryAwareBean();
+        }
+    }
+
+    private class PrivateServiceImpl implements PrivateService {
+        @Override
+        public String service() {
+            return this.getClass().getName();
+        }
     }
 
 }

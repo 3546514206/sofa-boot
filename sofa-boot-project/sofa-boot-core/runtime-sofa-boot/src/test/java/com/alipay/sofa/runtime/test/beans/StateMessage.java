@@ -23,11 +23,11 @@ package com.alipay.sofa.runtime.test.beans;
 public class StateMessage {
     private static String factoryMessage = "UNDO";
 
-    public static void setFactoryMessage(String factoryMessage) {
-        StateMessage.factoryMessage = factoryMessage;
-    }
-
     public static String getFactoryMessage() {
         return StateMessage.factoryMessage;
+    }
+
+    public static void setFactoryMessage(String factoryMessage) {
+        StateMessage.factoryMessage = factoryMessage;
     }
 }

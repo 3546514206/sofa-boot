@@ -29,7 +29,7 @@ public class TestGlobalFilter extends Filter {
     @Override
     public SofaResponse invoke(FilterInvoker invoker, SofaRequest request) throws SofaRpcException {
         if (request.getInterfaceName() != null
-            && request.getInterfaceName().equals(
+                && request.getInterfaceName().equals(
                 "com.alipay.sofa.rpc.boot.test.bean.globalfilter.GlobalFilterService")) {
             if (request.getMethodArgs()[0].equals("globalFilter")) {
                 request.getMethodArgs()[0] = "globalFilter_change";

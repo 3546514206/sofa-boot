@@ -28,11 +28,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/3/13 6:04 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/3/13 6:04 PM
+ * @since:
  **/
-@Configuration(proxyBeanMethods = false)
-@ConditionalOnClass({ Client.class, SofaTracerFeignContextBeanPostProcessor.class,
-                     SofaTracerFeignContext.class })
+@Configuration
+@ConditionalOnClass({Client.class, SofaTracerFeignContextBeanPostProcessor.class,
+        SofaTracerFeignContext.class})
 @AutoConfigureBefore(FeignAutoConfiguration.class)
 @ConditionalOnProperty(name = "com.alipay.sofa.tracer.feign.enabled", havingValue = "true", matchIfMissing = true)
 public class SofaTracerFeignClientAutoConfiguration {

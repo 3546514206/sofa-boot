@@ -16,34 +16,33 @@
  */
 package com.alipay.sofa.runtime.test.spi.component;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
 import com.alipay.sofa.runtime.api.component.ComponentName;
-import com.alipay.sofa.runtime.spi.health.HealthResult;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.model.ComponentStatus;
 import com.alipay.sofa.runtime.model.ComponentType;
 import com.alipay.sofa.runtime.spi.component.AbstractComponent;
+import com.alipay.sofa.runtime.spi.health.HealthResult;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.util.Map;
 
 /**
  * @author xuanbei
  */
 public class AbstractComponentTest {
     private AbstractComponent abstractComponent = new AbstractComponent() {
-                                                    @Override
-                                                    public ComponentType getType() {
-                                                        return null;
-                                                    }
+        @Override
+        public ComponentType getType() {
+            return null;
+        }
 
-                                                    @Override
-                                                    public Map<String, Property> getProperties() {
-                                                        return null;
-                                                    }
-                                                };
+        @Override
+        public Map<String, Property> getProperties() {
+            return null;
+        }
+    };
 
     @Test
     public void testActivate() throws Exception {

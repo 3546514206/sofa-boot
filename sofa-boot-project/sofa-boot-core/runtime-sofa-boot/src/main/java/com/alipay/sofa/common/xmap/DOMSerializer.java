@@ -16,18 +16,16 @@
  */
 package com.alipay.sofa.common.xmap;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:bs@nuxeo.com">Bogdan Stefanescu</a>
@@ -38,10 +36,10 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 public final class DOMSerializer {
 
     private static final DocumentBuilderFactory BUILDER_FACTORY = DocumentBuilderFactory
-                                                                    .newInstance();
+            .newInstance();
 
     // Default output format which is : no xml declaration, no document type, indent.
-    private static final OutputFormat           DEFAULT_FORMAT  = new OutputFormat();
+    private static final OutputFormat DEFAULT_FORMAT = new OutputFormat();
 
     static {
         DEFAULT_FORMAT.setOmitXMLDeclaration(false);
@@ -72,7 +70,7 @@ public final class DOMSerializer {
     }
 
     public static String toString(DocumentFragment fragment, OutputFormat format)
-                                                                                 throws IOException {
+            throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         write(fragment, format, baos);
         return baos.toString();
@@ -93,7 +91,7 @@ public final class DOMSerializer {
     }
 
     public static void write(Element element, OutputFormat format, OutputStream out)
-                                                                                    throws IOException {
+            throws IOException {
         XMLSerializer serializer = new XMLSerializer(out, format);
         serializer.asDOMSerializer().serialize(element);
     }
@@ -103,7 +101,7 @@ public final class DOMSerializer {
     }
 
     public static void write(DocumentFragment fragment, OutputFormat format, OutputStream out)
-                                                                                              throws IOException {
+            throws IOException {
         XMLSerializer serializer = new XMLSerializer(out, format);
         serializer.asDOMSerializer().serialize(fragment);
     }
@@ -113,7 +111,7 @@ public final class DOMSerializer {
     }
 
     public static void write(Document doc, OutputFormat format, OutputStream out)
-                                                                                 throws IOException {
+            throws IOException {
         XMLSerializer serializer = new XMLSerializer(out, format);
         serializer.asDOMSerializer().serialize(doc);
     }

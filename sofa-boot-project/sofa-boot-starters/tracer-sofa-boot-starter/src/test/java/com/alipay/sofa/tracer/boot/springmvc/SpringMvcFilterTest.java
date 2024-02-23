@@ -16,11 +16,10 @@
  */
 package com.alipay.sofa.tracer.boot.springmvc;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import com.alipay.sofa.tracer.boot.TestUtil;
+import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
+import com.alipay.sofa.tracer.boot.base.controller.SampleRestController;
+import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,10 +27,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.alipay.sofa.tracer.boot.TestUtil;
-import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
-import com.alipay.sofa.tracer.boot.base.controller.SampleRestController;
-import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * SpringMvcFilterTest
@@ -51,7 +50,7 @@ public class SpringMvcFilterTest extends AbstractTestBase {
         String restUrl = urlHttpPrefix + "/greeting";
 
         ResponseEntity<SampleRestController.Greeting> response = testRestTemplate.getForEntity(
-            restUrl, SampleRestController.Greeting.class);
+                restUrl, SampleRestController.Greeting.class);
         SampleRestController.Greeting greetingResponse = response.getBody();
         assertTrue(greetingResponse.isSuccess());
         // http://docs.spring.io/spring-boot/docs/1.4.2.RELEASE/reference/htmlsingle/#boot-features-testing
@@ -61,7 +60,7 @@ public class SpringMvcFilterTest extends AbstractTestBase {
 
         //wait for async output
         List<String> contents = FileUtils
-            .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
+                .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
         assertTrue(contents.size() == 1);
 
         String logAppName = contents.get(0).split(",")[1];

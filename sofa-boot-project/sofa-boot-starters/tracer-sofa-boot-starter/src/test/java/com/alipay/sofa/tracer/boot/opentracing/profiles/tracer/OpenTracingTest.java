@@ -16,22 +16,21 @@
  */
 package com.alipay.sofa.tracer.boot.opentracing.profiles.tracer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Map;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-
 import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
 import com.alipay.common.tracer.core.utils.TracerUtils;
 import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
 import com.alipay.sofa.tracer.boot.base.controller.SampleRestController;
 import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
 import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * OpenTracingTest
@@ -55,17 +54,17 @@ public class OpenTracingTest extends AbstractTestBase {
         assertEquals("true", logTypeDisable);
         //tracer
         String disableAllConf = SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.DISABLE_MIDDLEWARE_DIGEST_LOG_KEY);
+                .getProperty(SofaTracerConfiguration.DISABLE_MIDDLEWARE_DIGEST_LOG_KEY);
         assertTrue(Boolean.FALSE.toString().equalsIgnoreCase(disableAllConf));
         Map<String, String> disableConfigurationConf = SofaTracerConfiguration
-            .getMapEmptyIfNull(SofaTracerConfiguration.DISABLE_DIGEST_LOG_KEY);
+                .getMapEmptyIfNull(SofaTracerConfiguration.DISABLE_DIGEST_LOG_KEY);
         assertTrue(Boolean.TRUE.toString()
-            .equalsIgnoreCase(disableConfigurationConf.get("logType")));
+                .equalsIgnoreCase(disableConfigurationConf.get("logType")));
         //
         String tracerGlobalRollingPolicy = sofaTracerProperties.getTracerGlobalRollingPolicy();
         assertEquals(".yyyy-MM-dd", tracerGlobalRollingPolicy);
         assertEquals(".yyyy-MM-dd",
-            SofaTracerConfiguration.getRollingPolicy("spring_mvc_digest_rolling"));
+                SofaTracerConfiguration.getRollingPolicy("spring_mvc_digest_rolling"));
 
         String tracerGlobalLogReserveDay = sofaTracerProperties.getTracerGlobalLogReserveDay();
         assertEquals("8", tracerGlobalLogReserveDay);
@@ -74,7 +73,7 @@ public class OpenTracingTest extends AbstractTestBase {
         String statLogInterval = sofaTracerProperties.getStatLogInterval();
         assertEquals("70", statLogInterval);
         assertEquals("70",
-            SofaTracerConfiguration.getProperty(SofaTracerConfiguration.STAT_LOG_INTERVAL));
+                SofaTracerConfiguration.getProperty(SofaTracerConfiguration.STAT_LOG_INTERVAL));
 
         String baggageMaxLength = sofaTracerProperties.getBaggageMaxLength();
         assertEquals("2048", baggageMaxLength);
@@ -86,7 +85,7 @@ public class OpenTracingTest extends AbstractTestBase {
     public void testNoDigestLog() {
         String restUrl = urlHttpPrefix + "/noDigestLog";
         ResponseEntity<SampleRestController.Greeting> response = testRestTemplate.getForEntity(
-            restUrl, SampleRestController.Greeting.class);
+                restUrl, SampleRestController.Greeting.class);
         SampleRestController.Greeting greetingResponse = response.getBody();
         assertTrue(greetingResponse.isSuccess());
         // http://docs.spring.io/spring-boot/docs/1.4.2.RELEASE/reference/htmlsingle/#boot-features-testing

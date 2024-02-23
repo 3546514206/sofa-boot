@@ -16,13 +16,9 @@
  */
 package com.alipay.sofa.tracer.boot.base;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.alipay.common.tracer.core.appender.TracerLogRootDaemon;
+import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
+import com.alipay.sofa.boot.listener.SofaBootstrapRunListener;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -31,12 +27,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.alipay.common.tracer.core.appender.TracerLogRootDaemon;
-import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
-import com.alipay.sofa.boot.listener.SofaBootstrapRunListener;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/3/28 2:40 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/3/28 2:40 PM
+ * @since:
  **/
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = SpringBootWebApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -46,7 +46,7 @@ public class AbstractTestCloudBase {
 
     @BeforeClass
     public static void beforeClass() throws IOException, NoSuchFieldException,
-                                    IllegalAccessException {
+            IllegalAccessException {
         cleanLogDirectory();
         clearSpringCloudMark();
     }

@@ -16,20 +16,19 @@
  */
 package com.alipay.sofa.rpc.boot.context;
 
-import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.core.env.Environment;
-
 import com.alipay.sofa.rpc.boot.config.SofaBootRpcProperties;
 import com.alipay.sofa.rpc.common.RpcConfigs;
 import com.alipay.sofa.rpc.common.RpcOptions;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.Environment;
 
 /**
  * @author khotyn
  */
 public class ApplicationEnvironmentPreparedListener
-                                                   implements
-                                                   ApplicationListener<ApplicationEnvironmentPreparedEvent> {
+        implements
+        ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {

@@ -16,15 +16,15 @@
  */
 package com.alipay.sofa.runtime.service.component;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.alipay.sofa.runtime.api.binding.BindingType;
 import com.alipay.sofa.runtime.model.InterfaceMode;
 import com.alipay.sofa.runtime.spi.binding.Binding;
 import com.alipay.sofa.runtime.spi.binding.Contract;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * abstract contract implementation
@@ -32,18 +32,26 @@ import com.alipay.sofa.runtime.spi.binding.Contract;
  * @author xuanbei 18/3/1
  */
 public abstract class AbstractContract implements Contract {
-    /** associated binding */
-    protected Set<Binding>        bindings      = new HashSet<>(2);
-    /** unique id */
-    protected String              uniqueId      = "";
-    /** interface class type */
-    protected Class<?>            interfaceType;
-    /** interface class type name*/
-    protected String              interfaceTypeCanonicalName;
-    /** interface mode */
-    protected InterfaceMode       interfaceMode = InterfaceMode.spring;
-    /** properties of contract */
-    protected Map<String, String> property      = new HashMap<>();
+    /**
+     * associated binding
+     */
+    protected Set<Binding> bindings = new HashSet<>(2);
+    /**
+     * unique id
+     */
+    protected String uniqueId = "";
+    /**
+     * interface class type
+     */
+    protected Class<?> interfaceType;
+    /**
+     * interface mode
+     */
+    protected InterfaceMode interfaceMode = InterfaceMode.spring;
+    /**
+     * properties of contract
+     */
+    protected Map<String, String> property = new HashMap<>();
 
     protected AbstractContract(String uniqueId, Class<?> interfaceType) {
         if (uniqueId == null) {
@@ -52,7 +60,6 @@ public abstract class AbstractContract implements Contract {
             this.uniqueId = uniqueId;
         }
         this.interfaceType = interfaceType;
-        this.interfaceTypeCanonicalName = interfaceType.getCanonicalName();
     }
 
     protected AbstractContract(String uniqueId, Class<?> interfaceType, InterfaceMode interfaceMode) {
@@ -116,10 +123,5 @@ public abstract class AbstractContract implements Contract {
     @Override
     public Map<String, String> getProperty() {
         return property;
-    }
-
-    @Override
-    public String getInterfaceTypeCanonicalName() {
-        return interfaceTypeCanonicalName;
     }
 }

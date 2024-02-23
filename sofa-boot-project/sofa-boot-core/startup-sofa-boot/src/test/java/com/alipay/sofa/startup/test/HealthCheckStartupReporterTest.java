@@ -16,10 +16,8 @@
  */
 package com.alipay.sofa.startup.test;
 
-import com.alipay.sofa.boot.startup.BaseStat;
 import com.alipay.sofa.boot.startup.BootStageConstants;
-import com.alipay.sofa.healthcheck.HealthCheckProperties;
-import com.alipay.sofa.runtime.configure.SofaRuntimeConfigurationProperties;
+import com.alipay.sofa.boot.startup.StageStat;
 import com.alipay.sofa.startup.StartupReporter;
 import com.alipay.sofa.startup.test.configuration.SofaStartupAutoConfiguration;
 import com.alipay.sofa.startup.test.configuration.SofaStartupHealthCheckAutoConfiguration;
@@ -28,7 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,9 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @SpringBootTest(classes = StartupApplication.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RunWith(SpringRunner.class)
-@Import(value = { SofaStartupAutoConfiguration.class, SofaStartupHealthCheckAutoConfiguration.class })
-@EnableConfigurationProperties({ HealthCheckProperties.class,
-                                SofaRuntimeConfigurationProperties.class })
+@Import(value = {SofaStartupAutoConfiguration.class, SofaStartupHealthCheckAutoConfiguration.class})
 public class HealthCheckStartupReporterTest {
     @Autowired
     private StartupReporter startupReporter;
@@ -53,10 +48,10 @@ public class HealthCheckStartupReporterTest {
         Assert.assertNotNull(startupStaticsModel);
         Assert.assertEquals(6, startupStaticsModel.getStageStats().size());
 
-        BaseStat healthCheckStage = startupReporter
-            .getStageNyName(BootStageConstants.HEALTH_CHECK_STAGE);
+        StageStat healthCheckStage = startupReporter
+                .getStageNyName(BootStageConstants.HEALTH_CHECK_STAGE);
         Assert.assertNotNull(healthCheckStage);
-        Assert.assertTrue(healthCheckStage.getCost() > 0);
+        Assert.assertTrue(healthCheckStage.getElapsedTime() > 0);
 
     }
 }

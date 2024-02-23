@@ -40,13 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SofaStartupIsleAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-                                                             .withBean(StartupReporter.class)
-                                                             .withConfiguration(
-                                                                 AutoConfigurations
-                                                                     .of(SofaStartupAutoConfiguration.class,
-                                                                         SofaStartupIsleAutoConfiguration.class,
-                                                                         SofaModuleAutoConfiguration.class,
-                                                                         SofaRuntimeAutoConfiguration.class));
+            .withConfiguration(AutoConfigurations
+                    .of(SofaStartupAutoConfiguration.class,
+                            SofaStartupIsleAutoConfiguration.class,
+                            SofaModuleAutoConfiguration.class,
+                            SofaRuntimeAutoConfiguration.class));
 
     @Test
     public void startupReporterAndApplicationRuntimeModelExist() {
@@ -60,19 +58,19 @@ public class SofaStartupIsleAutoConfigurationTest {
     public void applicationRuntimeModelNotExist() {
         contextRunner.withClassLoader(new FilteredClassLoader(ApplicationRuntimeModel.class))
                 .run((context -> {
-            assertThat(context).doesNotHaveBean(SpringContextInstallStage.class);
-            assertThat(context).doesNotHaveBean(ModelCreatingStage.class);
-        }));
+                    assertThat(context).doesNotHaveBean(SpringContextInstallStage.class);
+                    assertThat(context).doesNotHaveBean(ModelCreatingStage.class);
+                }));
     }
 
     @Test
     public void startupReporterNotExist() {
         contextRunner.withClassLoader(new FilteredClassLoader(StartupReporter.class))
                 .run((context -> {
-            assertThat(context).hasSingleBean(SpringContextInstallStage.class);
-            assertThat(context).hasSingleBean(ModelCreatingStage.class);
-            assertThat(context).doesNotHaveBean(StartupSpringContextInstallStage.class);
-            assertThat(context).doesNotHaveBean(StartupModelCreatingStage.class);
-        }));
+                    assertThat(context).hasSingleBean(SpringContextInstallStage.class);
+                    assertThat(context).hasSingleBean(ModelCreatingStage.class);
+                    assertThat(context).doesNotHaveBean(StartupSpringContextInstallStage.class);
+                    assertThat(context).doesNotHaveBean(StartupModelCreatingStage.class);
+                }));
     }
 }

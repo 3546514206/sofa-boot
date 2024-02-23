@@ -24,22 +24,28 @@ import org.springframework.context.ApplicationContext;
  * @author xuanbei 18/2/28
  */
 public class BindingConverterContext {
-    /** is inBinding  */
-    private boolean            inBinding;
-    /** spring context */
+    /**
+     * is inBinding
+     */
+    private boolean inBinding;
+    /**
+     * spring context
+     */
     private ApplicationContext applicationContext;
-    /** app name */
-    private String             appName;
-    /** service ref beanId */
-    private String             beanId;
+    /**
+     * app name
+     */
+    private String appName;
+    /**
+     * service ref beanId
+     */
+    private String beanId;
 
-    private ClassLoader        appClassLoader;
+    private ClassLoader appClassLoader;
 
-    private String             loadBalance;
+    private String loadBalance;
 
-    private String             repeatReferLimit;
-
-    private Class              interfaceType;
+    private String repeatReferLimit;
 
     public ClassLoader getAppClassLoader() {
         return appClassLoader;
@@ -95,13 +101,5 @@ public class BindingConverterContext {
 
     public void setRepeatReferLimit(String repeatReferLimit) {
         this.repeatReferLimit = repeatReferLimit;
-    }
-
-    public Class getInterfaceType() {
-        return interfaceType;
-    }
-
-    public void setInterfaceType(Class interfaceType) {
-        this.interfaceType = interfaceType;
     }
 }

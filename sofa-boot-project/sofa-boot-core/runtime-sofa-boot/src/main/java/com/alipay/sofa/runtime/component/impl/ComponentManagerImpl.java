@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.runtime.component.impl;
 
-import com.alipay.sofa.boot.error.ErrorCode;
-import com.alipay.sofa.runtime.SofaRuntimeProperties;
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 import com.alipay.sofa.runtime.api.component.ComponentName;
 import com.alipay.sofa.runtime.log.SofaLogger;
@@ -26,33 +24,33 @@ import com.alipay.sofa.runtime.model.ComponentType;
 import com.alipay.sofa.runtime.spi.client.ClientFactoryInternal;
 import com.alipay.sofa.runtime.spi.component.ComponentInfo;
 import com.alipay.sofa.runtime.spi.component.ComponentManager;
-import com.alipay.sofa.runtime.spring.SpringContextComponent;
-import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 
 /**
  * @author xuanbei 18/3/9
  */
 @SuppressWarnings("unchecked")
 public class ComponentManagerImpl implements ComponentManager {
-    /** container for all components */
-    protected ConcurrentMap<ComponentName, ComponentInfo>                     registry;
-    /** container for resolved components */
+    /**
+     * container for all components
+     */
+    protected ConcurrentMap<ComponentName, ComponentInfo> registry;
+    /**
+     * container for resolved components
+     */
     protected ConcurrentMap<ComponentType, Map<ComponentName, ComponentInfo>> resolvedRegistry;
-    /** client factory */
-    private ClientFactoryInternal                                             clientFactoryInternal;
-    private final ClassLoader                                                 appClassLoader;
+    /**
+     * client factory
+     */
+    private ClientFactoryInternal clientFactoryInternal;
 
-    public ComponentManagerImpl(ClientFactoryInternal clientFactoryInternal,
-                                ClassLoader appClassLoader) {
+    public ComponentManagerImpl(ClientFactoryInternal clientFactoryInternal) {
         this.registry = new ConcurrentHashMap(16);
         this.resolvedRegistry = new ConcurrentHashMap(16);
         this.clientFactoryInternal = clientFactoryInternal;
-        this.appClassLoader = appClassLoader;
     }
 
     public Collection<ComponentInfo> getComponentInfos() {
@@ -89,48 +87,24 @@ public class ComponentManagerImpl implements ComponentManager {
 
     @Override
     public void shutdown() {
-        if (SofaRuntimeProperties.isSkipAllComponentShutdown(appClassLoader)) {
-            return;
-        }
         List<ComponentInfo> elems = new ArrayList<>(registry.values());
-        // shutdown spring contexts first
-        List<ComponentInfo> springContextComponents = elems.stream()
-                .filter(componentInfo -> componentInfo instanceof SpringContextComponent).collect(Collectors.toList());
 
-        for (ComponentInfo ri : springContextComponents) {
-            try {
-                unregister(ri);
-            } catch (Throwable t) {
-                SofaLogger.error(ErrorCode.convert("01-03001", ri.getName()), t);
-            }
-        }
-
-        if (!springContextComponents.isEmpty()) {
-            elems.removeAll(springContextComponents);
-        }
-
-        if (SofaRuntimeProperties.isSkipCommonComponentShutdown(appClassLoader)) {
-            return;
-        }
-        // shutdown remaining components
         for (ComponentInfo ri : elems) {
             try {
                 unregister(ri);
             } catch (Throwable t) {
-                SofaLogger.error(ErrorCode.convert("01-03001", ri.getName()), t);
+                SofaLogger.error("failed to shutdown component manager", t);
             }
         }
 
         try {
-            if (registry != null) {
-                registry.clear();
-            }
-            if (resolvedRegistry != null) {
-                resolvedRegistry.clear();
-            }
+            registry.clear();
+            registry = null;
+            resolvedRegistry.clear();
+            resolvedRegistry = null;
             clientFactoryInternal = null;
         } catch (Throwable t) {
-            SofaLogger.error(ErrorCode.convert("01-03000"), t);
+            SofaLogger.error("Failed to shutdown registry manager", t);
         }
     }
 
@@ -156,17 +130,17 @@ public class ComponentManagerImpl implements ComponentManager {
     private ComponentInfo doRegister(ComponentInfo ci) {
         ComponentName name = ci.getName();
         if (isRegistered(name)) {
-            SofaLogger.warn("Component was already registered: {}", name);
+            SofaLogger.error("Component was already registered: {}", name);
             if (ci.canBeDuplicate()) {
                 return getComponentInfo(name);
             }
-            throw new ServiceRuntimeException(ErrorCode.convert("01-03002", name));
+            throw new ServiceRuntimeException("Component can not be registered duplicated: " + name);
         }
 
         try {
             ci.register();
         } catch (Throwable t) {
-            SofaLogger.error(ErrorCode.convert("01-03003", ci.getName()), t);
+            SofaLogger.error("Failed to register component: {}", ci.getName(), t);
             return null;
         }
 
@@ -175,11 +149,12 @@ public class ComponentManagerImpl implements ComponentManager {
         try {
             ComponentInfo old = registry.putIfAbsent(ci.getName(), ci);
             if (old != null) {
-                SofaLogger.warn("Component was already registered: {}", name);
+                SofaLogger.error("Component was already registered: {}", name);
                 if (ci.canBeDuplicate()) {
                     return old;
                 }
-                throw new ServiceRuntimeException(ErrorCode.convert("01-03002", name));
+                throw new ServiceRuntimeException("Component can not be registered duplicated: "
+                        + name);
 
             }
             if (ci.resolve()) {
@@ -188,7 +163,7 @@ public class ComponentManagerImpl implements ComponentManager {
             }
         } catch (Throwable t) {
             ci.exception(new Exception(t));
-            SofaLogger.error(ErrorCode.convert("01-03004", ci.getName()), t);
+            SofaLogger.error("Failed to create the component {}", ci.getName(), t);
         }
 
         return ci;
@@ -202,9 +177,7 @@ public class ComponentManagerImpl implements ComponentManager {
             ComponentType componentType = componentName.getType();
 
             Map<ComponentName, ComponentInfo> typesRi = resolvedRegistry.get(componentType);
-            if (typesRi != null) {
-                typesRi.remove(componentName);
-            }
+            typesRi.remove(componentName);
         }
 
         componentInfo.unregister();
@@ -236,22 +209,9 @@ public class ComponentManagerImpl implements ComponentManager {
                 componentInfo.activate();
             } catch (Throwable t) {
                 componentInfo.exception(new Exception(t));
-                SofaLogger.error(ErrorCode.convert("01-03005", componentInfo.getName()), t);
+                SofaLogger.error("Failed to create the component {}.", componentInfo.getName(), t);
             }
         }
-    }
-
-    @Override
-    public Collection<ComponentInfo> getComponentInfosByApplicationContext(ApplicationContext application) {
-        List<ComponentInfo> componentInfos = new ArrayList<>();
-
-        for (ComponentInfo componentInfo : registry.values()) {
-            if (Objects.equals(application, componentInfo.getApplicationContext())) {
-                componentInfos.add(componentInfo);
-            }
-        }
-
-        return componentInfos;
     }
 
     private void typeRegistry(ComponentInfo componentInfo) {

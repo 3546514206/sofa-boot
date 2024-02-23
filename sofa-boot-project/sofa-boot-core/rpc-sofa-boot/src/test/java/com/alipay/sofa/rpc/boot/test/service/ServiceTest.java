@@ -16,6 +16,12 @@
  */
 package com.alipay.sofa.rpc.boot.test.service;
 
+import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
+import com.alipay.sofa.rpc.boot.container.ServerConfigContainer;
+import com.alipay.sofa.rpc.boot.test.bean.SampleService;
+import com.alipay.sofa.rpc.config.ServerConfig;
+import com.alipay.sofa.runtime.api.annotation.SofaService;
+import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,13 +34,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
-import com.alipay.sofa.rpc.boot.container.ServerConfigContainer;
-import com.alipay.sofa.rpc.boot.test.bean.SampleService;
-import com.alipay.sofa.rpc.config.ServerConfig;
-import com.alipay.sofa.runtime.api.annotation.SofaService;
-import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
-
 /**
  * @author qilong.zql
  * @since 6.0.4
@@ -43,31 +42,31 @@ import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
 @RunWith(SpringRunner.class)
 public class ServiceTest {
 
+    private static ServerConfig serverConfig;
     @Autowired
     private ServerConfigContainer serverConfigContainer;
-    private static ServerConfig   serverConfig;
-
-    @Test
-    @DirtiesContext
-    public void testService() {
-        Assert.assertNotNull(serverConfigContainer);
-        serverConfig = serverConfigContainer
-            .getServerConfig(SofaBootRpcConfigConstants.RPC_PROTOCOL_BOLT);
-        Assert.assertNotNull(serverConfig);
-        Assert.assertNotNull(serverConfig.getServer());
-        Assert.assertFalse(serverConfig.getServer().hasNoEntry());
-    }
 
     @AfterClass
     public static void afterClass() {
         Assert.assertNull(serverConfig.getServer());
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Test
+    @DirtiesContext
+    public void testService() {
+        Assert.assertNotNull(serverConfigContainer);
+        serverConfig = serverConfigContainer
+                .getServerConfig(SofaBootRpcConfigConstants.RPC_PROTOCOL_BOLT);
+        Assert.assertNotNull(serverConfig);
+        Assert.assertNotNull(serverConfig.getServer());
+        Assert.assertFalse(serverConfig.getServer().hasNoEntry());
+    }
+
+    @Configuration
     @EnableAutoConfiguration
     static class ServiceTestConfiguration {
         @Bean
-        @SofaService(bindings = { @SofaServiceBinding(bindingType = "bolt") })
+        @SofaService(bindings = {@SofaServiceBinding(bindingType = "bolt")})
         public SampleService sampleService() {
             return new SampleService() {
                 @Override

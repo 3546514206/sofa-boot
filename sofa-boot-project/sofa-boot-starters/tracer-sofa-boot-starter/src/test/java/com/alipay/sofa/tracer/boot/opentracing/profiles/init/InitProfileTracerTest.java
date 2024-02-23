@@ -16,14 +16,13 @@
  */
 package com.alipay.sofa.tracer.boot.opentracing.profiles.init;
 
-import static org.junit.Assert.assertEquals;
-
+import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
+import static org.junit.Assert.assertEquals;
 
 /**
  * InitProfileTracerTest

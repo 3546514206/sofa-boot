@@ -16,10 +16,9 @@
  */
 package com.alipay.sofa.isle.stage;
 
-import org.springframework.context.support.AbstractApplicationContext;
-
 import com.alipay.sofa.boot.constant.SofaBootConstants;
 import com.alipay.sofa.runtime.log.SofaLogger;
+import org.springframework.context.support.AbstractApplicationContext;
 
 /**
  * {@link AbstractPipelineStage} is a common base class for {@link PipelineStage} implementations.
@@ -27,10 +26,10 @@ import com.alipay.sofa.runtime.log.SofaLogger;
  * @author xuanbei 18/3/1
  */
 public abstract class AbstractPipelineStage implements PipelineStage {
-    protected final ClassLoader                appClassLoader = Thread.currentThread()
-                                                                  .getContextClassLoader();
+    protected final ClassLoader appClassLoader = Thread.currentThread()
+            .getContextClassLoader();
     protected final AbstractApplicationContext applicationContext;
-    protected final String                     appName;
+    protected final String appName;
 
     public AbstractPipelineStage(AbstractApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -40,10 +39,10 @@ public abstract class AbstractPipelineStage implements PipelineStage {
     @Override
     public void process() throws Exception {
         SofaLogger.info("++++++++++++++++++ {} of {} Start +++++++++++++++++", this.getClass()
-            .getSimpleName(), appName);
+                .getSimpleName(), appName);
         doProcess();
         SofaLogger.info("++++++++++++++++++ {} of {} End +++++++++++++++++", this.getClass()
-            .getSimpleName(), appName);
+                .getSimpleName(), appName);
     }
 
     /**

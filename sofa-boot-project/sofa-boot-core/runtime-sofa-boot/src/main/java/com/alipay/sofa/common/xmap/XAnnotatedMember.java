@@ -16,16 +16,11 @@
  */
 package com.alipay.sofa.common.xmap;
 
+import com.alipay.sofa.common.xmap.annotation.XNode;
+import org.w3c.dom.*;
+
 import java.util.List;
 import java.util.Map;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.alipay.sofa.common.xmap.annotation.XNode;
 
 /**
  * @author <a href="mailto:bs@nuxeo.com">Bogdan Stefanescu</a>
@@ -34,22 +29,22 @@ import com.alipay.sofa.common.xmap.annotation.XNode;
  */
 public class XAnnotatedMember {
 
-    public final XMap       xmap;
-    public final XSetter    setter;
-    public final XGetter    getter;
-    public Path             path;
-    public boolean          trim;
-    public boolean          cdata;
+    public final XMap xmap;
+    public final XSetter setter;
+    public final XGetter getter;
+    public Path path;
+    public boolean trim;
+    public boolean cdata;
 
     // the java type of the described element
-    public Class            type;
+    public Class type;
     // not null if the described object is an xannotated object
     public XAnnotatedObject xao;
     // the value factory used to transform strings in objects compatible
     // with this member type
     // In the case of collection types this factory is
     // used for collection components
-    public XValueFactory    valueFactory;
+    public XValueFactory valueFactory;
 
     protected XAnnotatedMember(XMap xmap, XSetter setter, XGetter getter) {
         this.xmap = xmap;
@@ -88,7 +83,7 @@ public class XAnnotatedMember {
     }
 
     public void decode(Object instance, Node base, Document document, List<String> filters)
-                                                                                           throws Exception {
+            throws Exception {
         if (!isFilter(filters)) {
             return;
         }
@@ -154,7 +149,7 @@ public class XAnnotatedMember {
     }
 
     protected Object getValue(Context ctx, Map<String, Object> map, String keyPrefix)
-                                                                                     throws Exception {
+            throws Exception {
         String key = keyPrefix == null ? path.path : keyPrefix + path.path;
         Object val = map.get(key);
         Object result = null;

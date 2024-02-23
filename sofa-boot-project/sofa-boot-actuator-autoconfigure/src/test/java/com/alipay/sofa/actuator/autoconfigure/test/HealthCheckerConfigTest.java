@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.actuator.autoconfigure.test;
 
+import com.alipay.sofa.healthcheck.impl.ComponentHealthChecker;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,20 +26,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.healthcheck.impl.ComponentHealthChecker;
-
 /**
  * @author qilong.zql
  * @since 3.2.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = EmptyConfiguration.class)
-@TestPropertySource(properties = { "com.alipay.sofa.healthcheck.component.check.retry.count=10",
-                                  "com.alipay.sofa.healthcheck.component.check.retry.interval=30" })
+@TestPropertySource(properties = {"com.alipay.sofa.healthcheck.component.check.retry.count=10",
+        "com.alipay.sofa.healthcheck.component.check.retry.interval=30"})
 public class HealthCheckerConfigTest {
 
-    private static int         customRetryCount    = 10;
-    private static int         customRetryInterval = 30;
+    private static int customRetryCount = 10;
+    private static int customRetryInterval = 30;
 
     @Autowired
     private ApplicationContext ctx;

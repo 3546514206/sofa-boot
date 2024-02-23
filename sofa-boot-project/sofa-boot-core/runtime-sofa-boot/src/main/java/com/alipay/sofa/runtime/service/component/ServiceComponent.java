@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.runtime.service.component;
 
-import com.alipay.sofa.boot.error.ErrorCode;
-import com.alipay.sofa.runtime.SofaRuntimeProperties;
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.log.SofaLogger;
@@ -34,6 +32,7 @@ import com.alipay.sofa.runtime.spi.util.ComponentNameFactory;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,17 +42,18 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("unchecked")
 public class ServiceComponent extends AbstractComponent {
-    public static final String        UNREGISTER_DELAY_MILLISECONDS = "UNREGISTER_DELAY_MILLISECONDS";
-    public static final ComponentType SERVICE_COMPONENT_TYPE        = new ComponentType("service");
+    public static final String UNREGISTER_DELAY_MILLISECONDS = "UNREGISTER_DELAY_MILLISECONDS";
+    public static final ComponentType SERVICE_COMPONENT_TYPE = new ComponentType("service");
 
-    private Service                   service;
-    private BindingAdapterFactory     bindingAdapterFactory;
+    private Service service;
+    private BindingAdapterFactory bindingAdapterFactory;
+    private Map<String, Property> properties = new ConcurrentHashMap<>();
 
     public ServiceComponent(Implementation implementation, Service service,
                             BindingAdapterFactory bindingAdapterFactory,
                             SofaRuntimeContext sofaRuntimeContext) {
         this.componentName = ComponentNameFactory.createComponentName(SERVICE_COMPONENT_TYPE,
-            service.getInterfaceType(), service.getUniqueId());
+                service.getInterfaceType(), service.getUniqueId());
         this.implementation = implementation;
         this.service = service;
         this.bindingAdapterFactory = bindingAdapterFactory;
@@ -76,26 +76,13 @@ public class ServiceComponent extends AbstractComponent {
         return super.resolve();
     }
 
-    @Override
-    public void register() {
-        Object target = service.getTarget();
-        if (SofaRuntimeProperties.isServiceInterfaceTypeCheck()) {
-            Class<?> interfaceType = service.getInterfaceType();
-            if (!interfaceType.isAssignableFrom(target.getClass())) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00104", service,
-                    target.getClass(), interfaceType));
-            }
-        }
-
-        super.register();
-    }
-
     private void resolveBinding() {
 
         Object target = service.getTarget();
 
         if (target == null) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-00000"));
+            throw new ServiceRuntimeException(
+                    "Must contains the target object whiling registering Service.");
         }
 
         if (service.hasBinding()) {
@@ -103,29 +90,32 @@ public class ServiceComponent extends AbstractComponent {
             boolean allPassed = true;
             for (Binding binding : bindings) {
                 BindingAdapter<Binding> bindingAdapter = this.bindingAdapterFactory
-                    .getBindingAdapter(binding.getBindingType());
+                        .getBindingAdapter(binding.getBindingType());
 
                 if (bindingAdapter == null) {
-                    throw new ServiceRuntimeException(ErrorCode.convert("01-00001",
-                        binding.getBindingType(), service));
+                    throw new ServiceRuntimeException("Can't find BindingAdapter of type "
+                            + binding.getBindingType()
+                            + " while registering service " + service
+                            + ".");
                 }
 
                 SofaLogger.info(" <<PreOut Binding [{}] Begins - {}.", binding.getBindingType(),
-                    service);
+                        service);
                 try {
                     bindingAdapter.preOutBinding(service, binding, target, getContext());
                 } catch (Throwable t) {
                     allPassed = false;
-                    SofaLogger.error(
-                        ErrorCode.convert("01-00002", binding.getBindingType(), service), t);
+                    SofaLogger.error(" <<PreOut Binding [{}] for [{}] occur exception.",
+                            binding.getBindingType(), service, t);
                     continue;
                 }
                 SofaLogger.info(" <<PreOut Binding [{}] Ends - {}.", binding.getBindingType(),
-                    service);
+                        service);
             }
 
             if (!allPassed) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00003", service));
+                throw new ServiceRuntimeException(" <<PreOut Binding [" + service
+                        + "] occur exception.");
             }
         }
     }
@@ -142,7 +132,8 @@ public class ServiceComponent extends AbstractComponent {
         Object target = service.getTarget();
 
         if (target == null) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-00000"));
+            throw new ServiceRuntimeException(
+                    "Must contains the target object whiling registering Service.");
         }
 
         if (service.hasBinding()) {
@@ -150,38 +141,41 @@ public class ServiceComponent extends AbstractComponent {
             Set<Binding> bindings = service.getBindings();
             for (Binding binding : bindings) {
                 BindingAdapter<Binding> bindingAdapter = this.bindingAdapterFactory
-                    .getBindingAdapter(binding.getBindingType());
+                        .getBindingAdapter(binding.getBindingType());
 
                 if (bindingAdapter == null) {
-                    throw new ServiceRuntimeException(ErrorCode.convert("01-00001",
-                        binding.getBindingType(), service));
+                    throw new ServiceRuntimeException("Can't find BindingAdapter of type "
+                            + binding.getBindingType()
+                            + " while registering service " + service
+                            + ".");
                 }
 
                 Object outBindingResult;
                 SofaLogger.info(" <<Out Binding [{}] Begins - {}.", binding.getBindingType(),
-                    service);
+                        service);
                 try {
                     outBindingResult = bindingAdapter.outBinding(service, binding, target,
-                        getContext());
+                            getContext());
                 } catch (Throwable t) {
                     allPassed = false;
                     binding.setHealthy(false);
-                    SofaLogger.error(
-                        ErrorCode.convert("01-00004", binding.getBindingType(), service), t);
+                    SofaLogger.error(" <<Out binding [{}] for [{}] occur exception.",
+                            binding.getBindingType(), service, t);
                     continue;
                 }
                 if (!Boolean.FALSE.equals(outBindingResult)) {
                     SofaLogger.info(" <<Out Binding [{}] Ends - {}.", binding.getBindingType(),
-                        service);
+                            service);
                 } else {
                     binding.setHealthy(false);
                     SofaLogger.info(" <<Out Binding [{}] Fails, Don't publish service - {}.",
-                        binding.getBindingType(), service);
+                            binding.getBindingType(), service);
                 }
             }
 
             if (!allPassed) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00005", service));
+                throw new ServiceRuntimeException(" <<Out Binding [" + service
+                        + "] occur exception.");
             }
         }
 
@@ -193,7 +187,8 @@ public class ServiceComponent extends AbstractComponent {
         Object target = service.getTarget();
 
         if (target == null) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-00000"));
+            throw new ServiceRuntimeException(
+                    "Must contains the target object whiling registering Service.");
         }
 
         if (service.hasBinding()) {
@@ -201,29 +196,32 @@ public class ServiceComponent extends AbstractComponent {
             Set<Binding> bindings = service.getBindings();
             for (Binding binding : bindings) {
                 BindingAdapter<Binding> bindingAdapter = this.bindingAdapterFactory
-                    .getBindingAdapter(binding.getBindingType());
+                        .getBindingAdapter(binding.getBindingType());
 
                 if (bindingAdapter == null) {
-                    throw new ServiceRuntimeException(ErrorCode.convert("01-00001",
-                        binding.getBindingType(), service));
+                    throw new ServiceRuntimeException("Can't find BindingAdapter of type "
+                            + binding.getBindingType()
+                            + " while deactivate service " + service
+                            + ".");
                 }
 
                 SofaLogger.info(" <<Pre un-out Binding [{}] Begins - {}.",
-                    binding.getBindingType(), service);
+                        binding.getBindingType(), service);
                 try {
                     bindingAdapter.preUnoutBinding(service, binding, target, getContext());
                 } catch (Throwable t) {
                     allPassed = false;
-                    SofaLogger.error(
-                        ErrorCode.convert("01-00006", binding.getBindingType(), service), t);
+                    SofaLogger.error(" <<Pre un-out Binding [{}] for [{}] occur exception.",
+                            binding.getBindingType(), service, t);
                     continue;
                 }
                 SofaLogger.info(" <<Pre un-out Binding [{}] Ends - {}.", binding.getBindingType(),
-                    service);
+                        service);
             }
 
             if (!allPassed) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00007", service));
+                throw new ServiceRuntimeException(" <<Pre un-out Binding [" + service
+                        + "] occur exception.");
             }
         }
 
@@ -235,7 +233,7 @@ public class ServiceComponent extends AbstractComponent {
         super.unregister();
 
         Property unregisterDelayMillisecondsProperty = properties
-            .get(UNREGISTER_DELAY_MILLISECONDS);
+                .get(UNREGISTER_DELAY_MILLISECONDS);
 
         if (unregisterDelayMillisecondsProperty != null) {
             int unregisterDelayMilliseconds = unregisterDelayMillisecondsProperty.getInteger();
@@ -243,14 +241,16 @@ public class ServiceComponent extends AbstractComponent {
             try {
                 TimeUnit.MILLISECONDS.sleep(unregisterDelayMilliseconds);
             } catch (InterruptedException e) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00010", service), e);
+                throw new ServiceRuntimeException("Unregiter component " + toString()
+                        + " got an error", e);
             }
         }
 
         Object target = service.getTarget();
 
         if (target == null) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-00000"));
+            throw new ServiceRuntimeException(
+                    "Must contains the target object whiling registering Service.");
         }
 
         if (service.hasBinding()) {
@@ -258,29 +258,32 @@ public class ServiceComponent extends AbstractComponent {
             Set<Binding> bindings = service.getBindings();
             for (Binding binding : bindings) {
                 BindingAdapter<Binding> bindingAdapter = this.bindingAdapterFactory
-                    .getBindingAdapter(binding.getBindingType());
+                        .getBindingAdapter(binding.getBindingType());
 
                 if (bindingAdapter == null) {
-                    throw new ServiceRuntimeException(ErrorCode.convert("01-00001",
-                        binding.getBindingType(), service));
+                    throw new ServiceRuntimeException("Can't find BindingAdapter of type "
+                            + binding.getBindingType()
+                            + " while unregister service " + service
+                            + ".");
                 }
 
                 SofaLogger.info(" <<Post un-out Binding [{}] Begins - {}.",
-                    binding.getBindingType(), service);
+                        binding.getBindingType(), service);
                 try {
                     bindingAdapter.postUnoutBinding(service, binding, target, getContext());
                 } catch (Throwable t) {
                     allPassed = false;
-                    SofaLogger.error(
-                        ErrorCode.convert("01-00008", binding.getBindingType(), service), t);
+                    SofaLogger.error(" <<Post un-out Binding [{}] for [{}] occur exception.",
+                            binding.getBindingType(), service, t);
                     continue;
                 }
                 SofaLogger.info(" <<Post un-out Binding [{}] Ends - {}.", binding.getBindingType(),
-                    service);
+                        service);
             }
 
             if (!allPassed) {
-                throw new ServiceRuntimeException(ErrorCode.convert("01-00009", service));
+                throw new ServiceRuntimeException(" <<Post un-out Binding [" + service
+                        + "] occur exception.");
             }
         }
     }
@@ -314,10 +317,5 @@ public class ServiceComponent extends AbstractComponent {
 
         healthResult.setHealthReport(report);
         return healthResult;
-    }
-
-    @Override
-    public boolean canBeDuplicate() {
-        return SofaRuntimeProperties.isServiceCanBeDuplicate();
     }
 }

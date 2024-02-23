@@ -16,17 +16,14 @@
  */
 package com.alipay.sofa.boot.test.log;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.alipay.sofa.boot.log.InfraLoggerFactory;
 import com.alipay.sofa.boot.test.log.base.BaseLogTest;
 import com.alipay.sofa.common.log.Constants;
 import com.alipay.sofa.common.log.env.LogEnvUtils;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Log4jRestLoggerFactory Tester.

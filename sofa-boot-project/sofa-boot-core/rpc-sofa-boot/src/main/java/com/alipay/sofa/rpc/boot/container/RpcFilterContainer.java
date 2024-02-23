@@ -16,14 +16,13 @@
  */
 package com.alipay.sofa.rpc.boot.container;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import com.alipay.sofa.rpc.boot.common.SofaBootRpcRuntimeException;
+import com.alipay.sofa.rpc.filter.Filter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
-import com.alipay.sofa.rpc.boot.common.SofaBootRpcRuntimeException;
-import com.alipay.sofa.rpc.filter.Filter;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 持有从 XML 解析的 Filter 实例或者 id。
@@ -32,16 +31,12 @@ import com.alipay.sofa.rpc.filter.Filter;
  */
 public class RpcFilterContainer {
 
-    private List<String>                    filterIds     = new CopyOnWriteArrayList<String>();
-
-    private List<String>                    filterClasses = new CopyOnWriteArrayList<String>();
-
-    private boolean                         alreadyLoad   = false;
-    private final Object                    LOAD_LOCK     = new Object();
-
-    private List<Filter>                    filters       = new CopyOnWriteArrayList<Filter>();
-
-    private static final RpcFilterContainer INSTANCE      = new RpcFilterContainer();
+    private static final RpcFilterContainer INSTANCE = new RpcFilterContainer();
+    private final Object LOAD_LOCK = new Object();
+    private List<String> filterIds = new CopyOnWriteArrayList<String>();
+    private List<String> filterClasses = new CopyOnWriteArrayList<String>();
+    private boolean alreadyLoad = false;
+    private List<Filter> filters = new CopyOnWriteArrayList<Filter>();
 
     public static RpcFilterContainer getInstance() {
         return INSTANCE;
@@ -114,11 +109,11 @@ public class RpcFilterContainer {
                     filters.add((Filter) filterClass.newInstance());
                 } catch (Exception e) {
                     throw new SofaBootRpcRuntimeException("Error happen when create instance of "
-                                                          + filterClass + " ", e);
+                            + filterClass + " ", e);
                 }
             } else {
                 throw new SofaBootRpcRuntimeException("The class of " + clazz
-                                                      + " should be a subclass of Filter");
+                        + " should be a subclass of Filter");
             }
         }
     }

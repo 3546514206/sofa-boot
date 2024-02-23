@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * @author xuanbei 18/3/2
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 public @interface SofaReference {
 
     /**
@@ -66,10 +66,4 @@ public @interface SofaReference {
      * @return binding of reference
      */
     SofaReferenceBinding binding() default @SofaReferenceBinding;
-
-    /**
-     * Declares whether the annotated dependency is required.
-     * <p>Defaults to {@code true}.
-     */
-    boolean required() default true;
 }

@@ -24,7 +24,8 @@
     </Properties>
 
     <appenders>
-        <RollingFile name="ERROR-APPENDER" fileName="${RUNTIME_LOG_PATH}/test-space/log4j2-common-error.log" append="true"
+        <RollingFile name="ERROR-APPENDER" fileName="${RUNTIME_LOG_PATH}/test-space/log4j2-common-error.log"
+                     append="true"
                      filePattern="${RUNTIME_LOG_PATH}/test-space/log4j2-common-error.log.%d{yyyy-MM-dd}">
             <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout charset="${RUNTIME_FILE_ENCODING}">
@@ -35,7 +36,8 @@
             </Policies>
         </RollingFile>
 
-        <RollingFile name="SOFA-APPENDER" fileName="${RUNTIME_LOG_PATH}/test-space/logback-sofa-default.log" append="true"
+        <RollingFile name="SOFA-APPENDER" fileName="${RUNTIME_LOG_PATH}/test-space/logback-sofa-default.log"
+                     append="true"
                      filePattern="${RUNTIME_LOG_PATH}/test-space/sofa-default.log.%d{yyyy-MM-dd}">
             <ThresholdFilter level="${RUNTIME_LOG_LEVEL}" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout charset="${RUNTIME_FILE_ENCODING}">

@@ -16,13 +16,12 @@
  */
 package com.alipay.sofa.runtime.ext.spring;
 
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.context.ApplicationContext;
-
 import com.alipay.sofa.common.xmap.annotation.spring.XMapSpring;
 import com.alipay.sofa.runtime.ext.component.ExtensionInternal;
 import com.alipay.sofa.runtime.ext.component.ExtensionPointImpl;
 import com.alipay.sofa.runtime.ext.component.XMapContext;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Extension point implement in spring env
@@ -54,11 +53,11 @@ public class SpringExtensionPointImpl extends ExtensionPointImpl {
             }
 
             Object[] contributions = xmapSpring.loadAll(
-                new XMapContext(extension.getAppClassLoader()), extension.getElement());
+                    new XMapContext(extension.getAppClassLoader()), extension.getElement());
             for (Object o : contributions) {
                 if (applicationContext != null && o instanceof BeanFactoryAware) {
                     ((BeanFactoryAware) o).setBeanFactory(applicationContext
-                        .getAutowireCapableBeanFactory());
+                            .getAutowireCapableBeanFactory());
                 }
             }
             extension.setContributions(contributions);

@@ -18,6 +18,9 @@ package com.alipay.sofa.boot.health;
 
 /**
  * Mark a Health Indicator which would be not invoked during readiness check.
+ * <p>
+ * SOFABoot 默认会将所有 HealthIndicator 和 HealthChecker 纳入 Readiness Check 中，
+ * 可以实现该接口将指标项标记为不参与 Readiness Check
  *
  * @author qilong.zql
  * @since 3.2.0

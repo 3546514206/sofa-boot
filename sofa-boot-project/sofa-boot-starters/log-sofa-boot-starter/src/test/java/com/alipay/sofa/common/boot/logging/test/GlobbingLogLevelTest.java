@@ -19,7 +19,6 @@ package com.alipay.sofa.common.boot.logging.test;
 import com.alipay.sofa.common.log.Constants;
 import com.alipay.sofa.common.utils.StringUtil;
 import org.apache.commons.io.FileUtils;
-//import org.junit.Assert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
@@ -29,7 +28,6 @@ import org.springframework.core.env.Environment;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-//import java.util.List;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +45,6 @@ public class GlobbingLogLevelTest extends LogTestBase {
     public void test() throws IOException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(Constants.LOG_LEVEL_PREFIX + "test.*", "debug");
-        properties.put("logging.level.test.space", "debug");
         SpringApplication springApplication = new SpringApplication(EmptyConfig.class);
         springApplication.setDefaultProperties(properties);
         ConfigurableApplicationContext applicationContext = springApplication.run();
@@ -55,11 +52,11 @@ public class GlobbingLogLevelTest extends LogTestBase {
         logger = getLogger();
         File logFile = getLogbackDefaultFile(environment);
         FileUtils.write(logFile, StringUtil.EMPTY_STRING,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         logger.info("info level");
         logger.debug("debug level");
         List<String> contents = FileUtils.readLines(logFile,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         Assert.assertEquals(2, contents.size());
         Assert.assertTrue(contents.get(0).contains("info level"));
         Assert.assertTrue(contents.get(1).contains("debug level"));

@@ -32,9 +32,9 @@ public class MulticastConfiguratorTest {
     public void test() {
         MulticastConfigurator multicastConfigurator = new MulticastConfigurator();
         RegistryConfig registryConfig = multicastConfigurator
-            .buildFromAddress("multicast://192.168.1.33:1234?a=b");
+                .buildFromAddress("multicast://192.168.1.33:1234?a=b");
         Assert.assertEquals(SofaBootRpcConfigConstants.REGISTRY_PROTOCOL_MULTICAST,
-            registryConfig.getProtocol());
+                registryConfig.getProtocol());
         Assert.assertEquals("192.168.1.33:1234", registryConfig.getAddress());
         Assert.assertEquals("b", registryConfig.getParameter("a"));
     }

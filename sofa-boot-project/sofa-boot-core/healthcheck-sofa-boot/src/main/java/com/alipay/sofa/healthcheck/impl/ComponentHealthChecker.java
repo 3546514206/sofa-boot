@@ -22,10 +22,12 @@ import com.alipay.sofa.healthcheck.core.HealthChecker;
 import com.alipay.sofa.runtime.spi.component.ComponentInfo;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
 import com.alipay.sofa.runtime.spi.health.HealthResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ComponentInfo Health Checker
@@ -33,13 +35,20 @@ import org.springframework.core.env.Environment;
  *
  * @author xuanbei 18/5/15
  */
-public class ComponentHealthChecker implements HealthChecker, EnvironmentAware {
+public class ComponentHealthChecker implements HealthChecker {
+    @Value("${" + SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_COUNT + ":"
+            + SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_COUNT + "}")
+    private int retryCount;
 
-    private int                      retryCount;
-    private int                      retryInterval;
-    private boolean                  strictCheck;
-    private int                      timeout;
-    private final SofaRuntimeContext sofaRuntimeContext;
+    @Value("${" + SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_INTERVAL + ":"
+            + SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_INTERVAL + "}")
+    private int retryInterval;
+
+    @Value("${" + SofaBootConstants.SOFABOOT_COMPONENT_CHECK_STRICT_ENABLED + ":"
+            + SofaBootConstants.SOFABOOT_COMPONENT_CHECK_STRICT_DEFAULT_ENABLED + "}")
+    private boolean strictCheck;
+
+    private SofaRuntimeContext sofaRuntimeContext;
 
     public ComponentHealthChecker(SofaRuntimeContext sofaRuntimeContext) {
         this.sofaRuntimeContext = sofaRuntimeContext;
@@ -49,15 +58,23 @@ public class ComponentHealthChecker implements HealthChecker, EnvironmentAware {
     public Health isHealthy() {
         boolean allPassed = true;
         Health.Builder builder = new Health.Builder();
+        List<Pair> passedComponent = new ArrayList<>();
 
         for (ComponentInfo componentInfo : sofaRuntimeContext.getComponentManager().getComponents()) {
             HealthResult healthy = componentInfo.isHealthy();
             String healthReport = healthy.getHealthReport();
-            if (!healthy.isHealthy()) {
+            if (healthy.isHealthy()) {
+                passedComponent.add(new Pair(healthy.getHealthName(), StringUtils
+                        .hasText(healthReport) ? healthReport : "passed"));
+            } else {
                 allPassed = false;
                 builder.withDetail(healthy.getHealthName(),
-                    StringUtils.hasText(healthReport) ? healthReport : "failed");
+                        StringUtils.hasText(healthReport) ? healthReport : "failed");
             }
+        }
+
+        for (Pair pair : passedComponent) {
+            builder.withDetail(pair.key, pair.value);
         }
 
         if (allPassed) {
@@ -85,27 +102,6 @@ public class ComponentHealthChecker implements HealthChecker, EnvironmentAware {
     @Override
     public boolean isStrictCheck() {
         return strictCheck;
-    }
-
-    @Override
-    public int getTimeout() {
-        return timeout;
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.retryCount = Integer.parseInt(environment.getProperty(
-            SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_COUNT,
-            String.valueOf(SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_COUNT)));
-        this.retryInterval = Integer.parseInt(environment.getProperty(
-            SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_INTERVAL,
-            String.valueOf(SofaBootConstants.SOFABOOT_COMPONENT_CHECK_RETRY_DEFAULT_INTERVAL)));
-        this.strictCheck = Boolean.parseBoolean(environment.getProperty(
-            SofaBootConstants.SOFABOOT_COMPONENT_CHECK_STRICT_ENABLED,
-            String.valueOf(SofaBootConstants.SOFABOOT_COMPONENT_CHECK_STRICT_DEFAULT_ENABLED)));
-        this.timeout = Integer.parseInt(environment.getProperty(
-            SofaBootConstants.SOFABOOT_COMPONENT_HEALTH_CHECK_TIMEOUT,
-            String.valueOf(SofaBootConstants.SOFABOOT_COMPONENT_HEALTH_CHECK_DEFAULT_TIMEOUT)));
     }
 
     private static class Pair {

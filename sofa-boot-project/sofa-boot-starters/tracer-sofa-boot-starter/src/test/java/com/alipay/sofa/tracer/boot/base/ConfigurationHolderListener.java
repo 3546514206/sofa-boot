@@ -16,21 +16,20 @@
  */
 package com.alipay.sofa.tracer.boot.base;
 
-import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.core.env.ConfigurableEnvironment;
-
 import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
 import com.alipay.common.tracer.core.utils.StringUtils;
 import com.alipay.sofa.boot.util.SofaBootEnvUtils;
 import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * @author qilong.zql
  * @since 2.2.2
  */
 public class ConfigurationHolderListener implements
-                                        ApplicationListener<ApplicationEnvironmentPreparedEvent> {
+        ApplicationListener<ApplicationEnvironmentPreparedEvent> {
     @Override
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
         ConfigurableEnvironment environment = event.getEnvironment();
@@ -39,25 +38,25 @@ public class ConfigurationHolderListener implements
         }
         SofaTracerProperties sofaTracerProperties = new SofaTracerProperties();
         sofaTracerProperties.setDisableDigestLog(SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.DISABLE_MIDDLEWARE_DIGEST_LOG_KEY));
+                .getProperty(SofaTracerConfiguration.DISABLE_MIDDLEWARE_DIGEST_LOG_KEY));
         sofaTracerProperties.setDisableConfiguration(SofaTracerConfiguration
-            .getMapEmptyIfNull(SofaTracerConfiguration.DISABLE_DIGEST_LOG_KEY));
+                .getMapEmptyIfNull(SofaTracerConfiguration.DISABLE_DIGEST_LOG_KEY));
         sofaTracerProperties.setTracerGlobalRollingPolicy(SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.TRACER_GLOBAL_ROLLING_KEY));
+                .getProperty(SofaTracerConfiguration.TRACER_GLOBAL_ROLLING_KEY));
         sofaTracerProperties.setTracerGlobalLogReserveDay(SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.TRACER_GLOBAL_LOG_RESERVE_DAY));
+                .getProperty(SofaTracerConfiguration.TRACER_GLOBAL_LOG_RESERVE_DAY));
         sofaTracerProperties.setStatLogInterval(SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.STAT_LOG_INTERVAL));
+                .getProperty(SofaTracerConfiguration.STAT_LOG_INTERVAL));
         sofaTracerProperties.setBaggageMaxLength(SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.TRACER_PENETRATE_ATTRIBUTE_MAX_LENGTH));
+                .getProperty(SofaTracerConfiguration.TRACER_PENETRATE_ATTRIBUTE_MAX_LENGTH));
         sofaTracerProperties.setSamplerName(SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.SAMPLER_STRATEGY_NAME_KEY));
+                .getProperty(SofaTracerConfiguration.SAMPLER_STRATEGY_NAME_KEY));
         sofaTracerProperties.setSamplerCustomRuleClassName(SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.SAMPLER_STRATEGY_CUSTOM_RULE_CLASS_NAME));
+                .getProperty(SofaTracerConfiguration.SAMPLER_STRATEGY_CUSTOM_RULE_CLASS_NAME));
         String property = SofaTracerConfiguration
-            .getProperty(SofaTracerConfiguration.SAMPLER_STRATEGY_PERCENTAGE_KEY);
+                .getProperty(SofaTracerConfiguration.SAMPLER_STRATEGY_PERCENTAGE_KEY);
         sofaTracerProperties
-            .setSamplerPercentage(Float.valueOf(StringUtils.isBlank(property) ? "100" : property));
+                .setSamplerPercentage(Float.valueOf(StringUtils.isBlank(property) ? "100" : property));
         ConfigurationHolder.setSofaTracerProperties(sofaTracerProperties);
     }
 }

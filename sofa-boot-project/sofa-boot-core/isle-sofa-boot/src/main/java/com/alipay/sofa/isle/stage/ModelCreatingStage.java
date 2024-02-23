@@ -17,17 +17,14 @@
 package com.alipay.sofa.isle.stage;
 
 import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.boot.error.ErrorCode;
 import com.alipay.sofa.isle.ApplicationRuntimeModel;
 import com.alipay.sofa.isle.deployment.DeploymentBuilder;
 import com.alipay.sofa.isle.deployment.DeploymentDescriptor;
 import com.alipay.sofa.isle.deployment.DeploymentDescriptorConfiguration;
-import com.alipay.sofa.isle.deployment.DeploymentException;
 import com.alipay.sofa.isle.deployment.impl.DefaultModuleDeploymentValidator;
 import com.alipay.sofa.isle.profile.SofaModuleProfileChecker;
-import com.alipay.sofa.isle.spring.config.SofaModuleProperties;
-import com.alipay.sofa.runtime.log.SofaLogger;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.UrlResource;
 
@@ -38,41 +35,34 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- *
  * @author fengqi.lin
  * @author yangyanzhao
  * @version $Id: ModelCreatingStage.java, v 0.1 2012-3-16 14:17:48 fengqi.lin Exp $
  */
 public class ModelCreatingStage extends AbstractPipelineStage {
-    private final boolean                    allowModuleOverriding;
 
-    protected final SofaModuleProfileChecker sofaModuleProfileChecker;
+    @Autowired
+    protected SofaModuleProfileChecker sofaModuleProfileChecker;
 
-    public ModelCreatingStage(AbstractApplicationContext applicationContext,
-                              SofaModuleProperties sofaModuleProperties,
-                              SofaModuleProfileChecker sofaModuleProfileChecker) {
+    public ModelCreatingStage(AbstractApplicationContext applicationContext) {
         super(applicationContext);
-        this.allowModuleOverriding = sofaModuleProperties.isAllowModuleOverriding();
-        this.sofaModuleProfileChecker = sofaModuleProfileChecker;
     }
 
-    @Override
     protected void doProcess() throws Exception {
         ApplicationRuntimeModel application = new ApplicationRuntimeModel();
         application.setAppName(appName);
 
         SofaRuntimeManager sofaRuntimeManager = applicationContext
-            .getBean(SofaRuntimeManager.class);
+                .getBean(SofaRuntimeManager.class);
         application.setSofaRuntimeContext(sofaRuntimeManager.getSofaRuntimeContext());
 
         application.setModuleDeploymentValidator(new DefaultModuleDeploymentValidator());
         getAllDeployments(application);
         applicationContext.getBeanFactory().registerSingleton(SofaBootConstants.APPLICATION,
-            application);
+                application);
     }
 
-    protected void getAllDeployments(ApplicationRuntimeModel application) throws IOException,
-                                                                         DeploymentException {
+    protected void getAllDeployments(ApplicationRuntimeModel application) throws IOException {
         Enumeration<URL> urls = appClassLoader.getResources(SofaBootConstants.SOFA_MODULE_FILE);
         if (urls == null || !urls.hasMoreElements()) {
             return;
@@ -84,37 +74,19 @@ public class ModelCreatingStage extends AbstractPipelineStage {
             Properties props = new Properties();
             props.load(urlResource.getInputStream());
             DeploymentDescriptorConfiguration deploymentDescriptorConfiguration = new DeploymentDescriptorConfiguration(
-                Collections.singletonList(SofaBootConstants.MODULE_NAME),
-                Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
+                    Collections.singletonList(SofaBootConstants.MODULE_NAME),
+                    Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
             DeploymentDescriptor dd = DeploymentBuilder.build(url, props,
-                deploymentDescriptorConfiguration, appClassLoader);
+                    deploymentDescriptorConfiguration, appClassLoader);
 
             if (application.isModuleDeployment(dd)) {
                 if (sofaModuleProfileChecker.acceptModule(dd)) {
-                    validateDuplicateModule(application.addDeployment(dd), dd);
+                    application.addDeployment(dd);
                 } else {
                     application.addInactiveDeployment(dd);
                 }
             }
         }
-    }
-
-    protected void validateDuplicateModule(DeploymentDescriptor exist, DeploymentDescriptor dd)
-                                                                                               throws DeploymentException {
-        if (exist != null) {
-            if (isAllowModuleOverriding()) {
-                SofaLogger.warn("Overriding module deployment for module name '"
-                                + dd.getModuleName() + "': replacing '" + exist.getName()
-                                + "' with '" + dd.getName() + "'");
-            } else {
-                throw new DeploymentException(ErrorCode.convert("01-11006", dd.getModuleName(),
-                    exist.getName(), dd.getName()));
-            }
-        }
-    }
-
-    protected boolean isAllowModuleOverriding() {
-        return this.allowModuleOverriding;
     }
 
     @Override

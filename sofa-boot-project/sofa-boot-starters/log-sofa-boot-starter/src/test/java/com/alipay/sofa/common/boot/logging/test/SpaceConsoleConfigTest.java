@@ -36,8 +36,7 @@ public class SpaceConsoleConfigTest extends LogTestBase {
     public void testSpaceConsoleConfig() {
         Map<String, Object> properties = new HashMap<>();
         properties.put(
-            String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE), "true");
-        properties.put("logging.level.test.space", "info");
+                String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE), "true");
         SpringApplication springApplication = new SpringApplication(EmptyConfig.class);
         springApplication.setDefaultProperties(properties);
         springApplication.run();

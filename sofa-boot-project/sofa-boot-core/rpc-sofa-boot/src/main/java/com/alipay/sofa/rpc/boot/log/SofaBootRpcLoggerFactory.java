@@ -19,8 +19,8 @@ package com.alipay.sofa.rpc.boot.log;
 import com.alipay.sofa.common.log.LoggerSpaceManager;
 
 /**
- *
  * SOFABoot RPC日志工程
+ *
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
 public class SofaBootRpcLoggerFactory {
@@ -32,6 +32,7 @@ public class SofaBootRpcLoggerFactory {
 
     /**
      * 获取Logger
+     *
      * @param clazz the clazz
      * @return ths Logger
      */
@@ -44,6 +45,7 @@ public class SofaBootRpcLoggerFactory {
 
     /**
      * 获取Logger
+     *
      * @param name the name
      * @return the Logger
      */

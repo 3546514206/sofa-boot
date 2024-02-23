@@ -16,11 +16,10 @@
  */
 package com.alipay.sofa.healthcheck.test.bean;
 
+import com.alipay.sofa.healthcheck.core.HealthChecker;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-
-import com.alipay.sofa.healthcheck.core.HealthChecker;
 
 /**
  * @author qilong.zql
@@ -28,25 +27,9 @@ import com.alipay.sofa.healthcheck.core.HealthChecker;
  */
 @Order(Ordered.LOWEST_PRECEDENCE - 9)
 public class DiskHealthChecker implements HealthChecker {
-
-    private final boolean health;
-
-    public DiskHealthChecker() {
-        this.health = true;
-    }
-
-    public DiskHealthChecker(boolean health) {
-        this.health = health;
-    }
-
     @Override
     public Health isHealthy() {
-        if (health) {
-            return Health.up().withDetail("disk", "disk is ok").build();
-        } else {
-            return Health.down().withDetail("disk", "disk is bad").build();
-        }
-
+        return Health.up().withDetail("disk", "disk is ok").build();
     }
 
     @Override

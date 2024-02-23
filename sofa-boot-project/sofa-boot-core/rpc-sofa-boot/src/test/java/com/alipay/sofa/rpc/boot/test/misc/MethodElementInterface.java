@@ -17,7 +17,6 @@
 package com.alipay.sofa.rpc.boot.test.misc;
 
 /**
- *
  * @author elseifer
  * @version $Id: MethodElementInterface.java, v 0.1 2020年09月09日 下午3:29 elseifer Exp $
  */

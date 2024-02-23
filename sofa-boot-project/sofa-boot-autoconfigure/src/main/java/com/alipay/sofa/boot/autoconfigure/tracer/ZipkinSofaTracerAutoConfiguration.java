@@ -19,6 +19,7 @@ package com.alipay.sofa.boot.autoconfigure.tracer;
 import com.alipay.sofa.tracer.boot.zipkin.properties.ZipkinSofaTracerProperties;
 import com.alipay.sofa.tracer.plugins.zipkin.ZipkinSofaTracerRestTemplateCustomizer;
 import com.alipay.sofa.tracer.plugins.zipkin.ZipkinSofaTracerSpanRemoteReporter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,18 +34,15 @@ import org.springframework.web.client.RestTemplate;
  * @author yangguanchao
  * @since 2018/05/01
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @EnableConfigurationProperties(ZipkinSofaTracerProperties.class)
 @ConditionalOnProperty(value = "com.alipay.sofa.tracer.zipkin.enabled", matchIfMissing = true)
-@ConditionalOnClass({ zipkin2.Span.class, zipkin2.reporter.AsyncReporter.class, RestTemplate.class,
-                     ZipkinSofaTracerProperties.class })
+@ConditionalOnClass({zipkin2.Span.class, zipkin2.reporter.AsyncReporter.class, RestTemplate.class,
+        ZipkinSofaTracerProperties.class})
 public class ZipkinSofaTracerAutoConfiguration {
 
-    private final ZipkinSofaTracerProperties zipkinProperties;
-
-    public ZipkinSofaTracerAutoConfiguration(ZipkinSofaTracerProperties zipkinProperties) {
-        this.zipkinProperties = zipkinProperties;
-    }
+    @Autowired
+    private ZipkinSofaTracerProperties zipkinProperties;
 
     @Bean
     @ConditionalOnMissingBean

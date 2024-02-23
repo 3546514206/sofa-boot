@@ -16,9 +16,12 @@
  */
 package com.alipay.sofa.rpc.boot.test.config;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
+import com.alipay.sofa.rpc.boot.config.SofaBootRpcProperties;
+import com.alipay.sofa.rpc.boot.container.ConsumerConfigContainer;
+import com.alipay.sofa.rpc.boot.test.bean.SampleFacade;
+import com.alipay.sofa.rpc.config.ConsumerConfig;
+import com.alipay.sofa.runtime.api.annotation.SofaReference;
+import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -29,33 +32,29 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcProperties;
-import com.alipay.sofa.rpc.boot.container.ConsumerConfigContainer;
-import com.alipay.sofa.rpc.boot.test.bean.SampleFacade;
-import com.alipay.sofa.rpc.config.ConsumerConfig;
-import com.alipay.sofa.runtime.api.annotation.SofaReference;
-import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
+import java.lang.reflect.Field;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootApplication
 @SpringBootTest(properties = {
-                              SofaBootRpcProperties.PREFIX + ".bolt.port=5000",
-                              "com_alipay_sofa_rpc_bolt_thread_pool_max_size=600",
-                              SofaBootRpcProperties.PREFIX + ".registries.zk1=zookeeper://xxxx",
-                              SofaBootRpcProperties.PREFIX
-                                      + ".consumer.repeated.reference.limit=10",
-                              SofaBootRpcProperties.PREFIX + ".rest.allowed.origins=a.com" })
+        SofaBootRpcProperties.PREFIX + ".bolt.port=5000",
+        "com_alipay_sofa_rpc_bolt_thread_pool_max_size=600",
+        SofaBootRpcProperties.PREFIX + ".registries.zk1=zookeeper://xxxx",
+        SofaBootRpcProperties.PREFIX
+                + ".consumer.repeated.reference.limit=10",
+        SofaBootRpcProperties.PREFIX + ".rest.allowed.origins=a.com"})
 public class SofaBootRpcPropertiesTest {
     @Autowired
-    private SofaBootRpcProperties   sofaBootRpcProperties;
+    private SofaBootRpcProperties sofaBootRpcProperties;
 
     @SofaReference(jvmFirst = false, binding = @SofaReferenceBinding(bindingType = "bolt"))
-    private SampleFacade            sampleFacade;
+    private SampleFacade sampleFacade;
 
     @Autowired
     private ConsumerConfigContainer consumerConfigContainer;
 
-    private Field                   consumerConfigMap;
+    private Field consumerConfigMap;
 
     @Before
     public void setUp() throws Throwable {

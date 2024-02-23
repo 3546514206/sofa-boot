@@ -16,10 +16,8 @@
  */
 package com.alipay.sofa.tracer.boot.springcloud;
 
-import java.io.IOException;
-
+import com.alipay.sofa.tracer.boot.base.AbstractTestCloudBase;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
@@ -30,20 +28,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.alipay.sofa.tracer.boot.base.AbstractTestCloudBase;
+import java.io.IOException;
 
 @ActiveProfiles("feign")
-@Import({ FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class })
+@Import({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 @EnableFeignClients
-@Ignore
-// todo 待升级 tracer 客户端
 public class FeignClientTest extends AbstractTestCloudBase {
-
-    @FeignClient(value = "feign-client", url = "http://localhost:8085")
-    public interface TestFeignClient {
-        @RequestMapping("feign")
-        String feign();
-    }
 
     @Autowired
     private TestFeignClient testFeignClient;
@@ -52,5 +42,11 @@ public class FeignClientTest extends AbstractTestCloudBase {
     public void getUser() throws IOException, InterruptedException {
         String feign = testFeignClient.feign();
         Assert.assertTrue(feign.equals("feign"));
+    }
+
+    @FeignClient(value = "feign-client", url = "http://localhost:8085")
+    public interface TestFeignClient {
+        @RequestMapping("feign")
+        String feign();
     }
 }

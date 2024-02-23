@@ -33,13 +33,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class SofaConfigSourceSupportListenerTest {
     private final ConfigKey<String> key1 = ConfigKey.build("sofa.test.key1", "defaultValue1",
-                                             false, "test key1", new String[] { "sofa_test_key1" });
+            false, "test key1", new String[]{"sofa_test_key1"});
     private final ConfigKey<String> key2 = ConfigKey.build("sofa.test.key2", "defaultValue2",
-                                             false, "test key2", new String[] { "sofa_test_key2" });
+            false, "test key2", new String[]{"sofa_test_key2"});
     private final ConfigKey<String> key3 = ConfigKey.build("sofa.test.key3", "defaultValue3",
-                                             false, "test key3", new String[] { "sofa_test_key3" });
+            false, "test key3", new String[]{"sofa_test_key3"});
     private final ConfigKey<String> key4 = ConfigKey.build("sofa.test.key4", "defaultValue4",
-                                             false, "test key4", new String[] { "sofa_test_key4" });
+            false, "test key4", new String[]{"sofa_test_key4"});
 
     @Test
     public void test() {
@@ -50,7 +50,7 @@ public class SofaConfigSourceSupportListenerTest {
         Assert.assertEquals("systemValue", SofaConfigs.getOrDefault(key4));
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class SofaBootTestConfiguration {
 
     }

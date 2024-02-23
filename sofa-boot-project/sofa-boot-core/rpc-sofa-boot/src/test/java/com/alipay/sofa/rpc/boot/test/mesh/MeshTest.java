@@ -16,10 +16,10 @@
  */
 package com.alipay.sofa.rpc.boot.test.mesh;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.annotation.Resource;
-
+import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
+import com.alipay.sofa.rpc.boot.test.bean.SampleService;
+import com.alipay.sofa.rpc.boot.test.bean.invoke.HelloSyncService;
+import com.alipay.sofa.rpc.core.exception.SofaRpcException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,10 +29,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
-import com.alipay.sofa.rpc.boot.test.bean.SampleService;
-import com.alipay.sofa.rpc.boot.test.bean.invoke.HelloSyncService;
-import com.alipay.sofa.rpc.core.exception.SofaRpcException;
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author zhiyuan.lzy
@@ -40,8 +39,8 @@ import com.alipay.sofa.rpc.core.exception.SofaRpcException;
  * you should change mesh address to test
  */
 @SpringBootApplication
-@SpringBootTest(properties = { "com.alipay.sofa.rpc.registries.mesh=mesh://127.0.0.1:13330",
-                              "com.alipay.sofa.rpc.enable.mesh=bolt" }, classes = MeshTest.class)
+@SpringBootTest(properties = {"com.alipay.sofa.rpc.registries.mesh=mesh://127.0.0.1:13330",
+        "com.alipay.sofa.rpc.enable.mesh=bolt"}, classes = MeshTest.class)
 @RunWith(SpringRunner.class)
 @ImportResource("/spring/test_only_mesh.xml")
 @Ignore
@@ -51,7 +50,7 @@ public class MeshTest extends ActivelyDestroyTest {
     private HelloSyncService helloSyncConsumerMesh;
 
     @Autowired
-    private SampleService    sampleService;
+    private SampleService sampleService;
 
     @Test
     @Ignore("需要有 mesh 环境")

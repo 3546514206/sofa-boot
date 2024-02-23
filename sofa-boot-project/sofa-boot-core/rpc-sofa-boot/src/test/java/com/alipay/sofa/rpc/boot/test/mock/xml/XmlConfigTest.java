@@ -41,15 +41,14 @@ public class XmlConfigTest {
 
     @Resource(name = "xmlLocalMock")
     private HelloSyncService xmlLocalMock;
+    @Resource(name = "xmlRemoteMock")
+    private HelloSyncService xmlRemoteMock;
 
     @Test
     public void testXmlLocalMock() {
         String xml = xmlLocalMock.saySync("xml");
         Assert.assertEquals("xml", xml);
     }
-
-    @Resource(name = "xmlRemoteMock")
-    private HelloSyncService xmlRemoteMock;
 
     @Test
     public void testXmlRemote() {

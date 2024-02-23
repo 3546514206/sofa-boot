@@ -16,29 +16,26 @@
  */
 package com.alipay.sofa.rpc.boot.common;
 
+import com.alipay.sofa.rpc.boot.log.SofaBootRpcLoggerFactory;
+import com.alipay.sofa.rpc.common.annotation.VisibleForTesting;
+import org.slf4j.Logger;
+
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.alipay.sofa.rpc.common.annotation.VisibleForTesting;
-import com.alipay.sofa.rpc.common.utils.StringUtils;
-import org.slf4j.Logger;
-
-import com.alipay.sofa.rpc.boot.log.SofaBootRpcLoggerFactory;
-
 /**
- *
  * 线程池监测器
  *
  * @author <a href="mailto:caojie.cj@antfin.com">CaoJie</a>
  */
 public class RpcThreadPoolMonitor {
 
-    private static final long  DEFAULT_SLEEP_TIME = 30000;
+    private static final long DEFAULT_SLEEP_TIME = 30000;
 
-    private final Logger       logger;
+    private final Logger logger;
 
-    private long               sleepTimeMS;
+    private long sleepTimeMS;
 
     /**
      * 线程池
@@ -48,13 +45,11 @@ public class RpcThreadPoolMonitor {
     /**
      * 开启标志
      */
-    private AtomicInteger      startTimes         = new AtomicInteger(0);
+    private AtomicInteger startTimes = new AtomicInteger(0);
 
-    private volatile boolean   active             = true;
+    private volatile boolean active = true;
 
-    private Thread             monitor;
-
-    private String             poolName           = "";
+    private Thread monitor;
 
     public RpcThreadPoolMonitor(String loggerName) {
         this(null, loggerName, DEFAULT_SLEEP_TIME);
@@ -83,8 +78,8 @@ public class RpcThreadPoolMonitor {
                         sb.append("coreSize:" + threadPoolExecutor.getCorePoolSize() + ",");
                         sb.append("maxPoolSize:" + threadPoolExecutor.getMaximumPoolSize() + ",");
                         sb.append("keepAliveTime:"
-                                  + threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS)
-                                  + "\n");
+                                + threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS)
+                                + "\n");
                         if (logger.isInfoEnabled()) {
                             logger.info(sb.toString());
                         }
@@ -95,16 +90,13 @@ public class RpcThreadPoolMonitor {
                                         if (logger.isInfoEnabled()) {
                                             StringBuilder sb = new StringBuilder();
                                             int blockQueueSize = threadPoolExecutor.getQueue()
-                                                .size();
+                                                    .size();
                                             int activeSize = threadPoolExecutor.getActiveCount();
                                             int poolSize = threadPoolExecutor.getPoolSize();
                                             sb.append("blockQueue:" + blockQueueSize + ", ");
                                             sb.append("active:" + activeSize + ", ");
                                             sb.append("idle:" + (poolSize - activeSize) + ", ");
                                             sb.append("poolSize:" + poolSize);
-                                            if (StringUtils.isNotBlank(poolName)) {
-                                                sb.append(", poolName: " + poolName);
-                                            }
                                             logger.info(sb.toString());
                                         }
                                     } catch (Throwable throwable) {
@@ -115,7 +107,7 @@ public class RpcThreadPoolMonitor {
                                         sleep(sleepTimeMS);
                                     } catch (InterruptedException e) {
                                         logger
-                                            .error("Error happened when the thread pool monitor is sleeping");
+                                                .error("Error happened when the thread pool monitor is sleeping");
                                     }
                                 }
                             }
@@ -137,14 +129,6 @@ public class RpcThreadPoolMonitor {
 
     public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
         this.threadPoolExecutor = threadPoolExecutor;
-    }
-
-    public void setPoolName(String poolName) {
-        this.poolName = poolName;
-    }
-
-    public String getPoolName() {
-        return poolName;
     }
 
     public void stop() {

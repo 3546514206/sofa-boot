@@ -24,7 +24,8 @@ import com.alipay.sofa.tracer.plugin.flexible.annotations.Tracer;
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 2:51 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 2:51 PM
+ * @since:
  **/
 public class SofaTracerMethodInvocationProcessor implements MethodInvocationProcessor {
 
@@ -48,7 +49,7 @@ public class SofaTracerMethodInvocationProcessor implements MethodInvocationProc
                     operationName = invocation.getMethod().getName();
                 }
                 SofaTracerSpan sofaTracerSpan = ((FlexibleTracer) tracer)
-                    .beforeInvoke(operationName);
+                        .beforeInvoke(operationName);
                 sofaTracerSpan.setTag(CommonSpanTags.METHOD, invocation.getMethod().getName());
                 if (invocation.getArguments() != null && invocation.getArguments().length != 0) {
                     StringBuilder stringBuilder = new StringBuilder();
@@ -56,7 +57,7 @@ public class SofaTracerMethodInvocationProcessor implements MethodInvocationProc
                         stringBuilder.append(obj.getClass().getName()).append(";");
                     }
                     sofaTracerSpan.setTag("param.types",
-                        stringBuilder.toString().substring(0, stringBuilder.length() - 1));
+                            stringBuilder.toString().substring(0, stringBuilder.length() - 1));
                 }
                 Object result = invocation.proceed();
                 ((FlexibleTracer) tracer).afterInvoke();

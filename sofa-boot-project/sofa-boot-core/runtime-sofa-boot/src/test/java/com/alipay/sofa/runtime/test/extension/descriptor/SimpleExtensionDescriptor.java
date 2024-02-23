@@ -16,13 +16,13 @@
  */
 package com.alipay.sofa.runtime.test.extension.descriptor;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Date;
-
 import com.alipay.sofa.common.xmap.Resource;
 import com.alipay.sofa.common.xmap.annotation.XNode;
 import com.alipay.sofa.common.xmap.annotation.XObject;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Date;
 
 /**
  * @author khotyn
@@ -33,37 +33,37 @@ import com.alipay.sofa.common.xmap.annotation.XObject;
 public class SimpleExtensionDescriptor {
 
     @XNode("value")
-    private String   stringValue;
+    private String stringValue;
 
     @XNode("path/value")
-    private String   stringValueWithPath;
+    private String stringValueWithPath;
 
     @XNode("intValue")
-    private Integer  intValue;
+    private Integer intValue;
 
     @XNode("longValue")
-    private Long     longValue;
+    private Long longValue;
 
     @XNode("floatValue")
-    private Float    floatValue;
+    private Float floatValue;
 
     @XNode("doubleValue")
-    private Double   doubleValue;
+    private Double doubleValue;
 
     @XNode("booleanValue")
-    private Boolean  booleanValue;
+    private Boolean booleanValue;
 
     @XNode("dateValue")
-    private Date     dateValue;
+    private Date dateValue;
 
     @XNode("fileValue")
-    private File     fileValue;
+    private File fileValue;
 
     @XNode("urlValue")
-    private URL      urlValue;
+    private URL urlValue;
 
     @XNode("classValue")
-    private Class    classValue;
+    private Class classValue;
 
     @XNode("resourceValue")
     private Resource resourceValue;

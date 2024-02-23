@@ -19,7 +19,6 @@ package com.alipay.sofa.runtime.test.extension.bean;
 import com.alipay.sofa.common.xmap.annotation.XObject;
 
 /**
- *
  * @author ruoshan
  * @since 2.6.0
  */

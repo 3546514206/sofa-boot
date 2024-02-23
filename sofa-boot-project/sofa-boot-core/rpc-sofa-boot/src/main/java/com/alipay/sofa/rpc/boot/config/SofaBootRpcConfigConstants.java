@@ -25,62 +25,64 @@ import com.alipay.sofa.rpc.common.SystemInfo;
  */
 public class SofaBootRpcConfigConstants {
     /* application name */
-    public static final String  APP_NAME                           = "spring.application.name";
+    public static final String APP_NAME = "spring.application.name";
 
     /* default config value start ********************************************************/
-    public static final int     BOLT_PORT_DEFAULT                  = 12200;
-    public static final int     H2C_PORT_DEFAULT                   = 12300;
-    public static final int     HTTP_PORT_DEFAULT                  = 12400;
-    public static final int     GRPC_PORT_DEFAULT                  = 50051;
+    public static final int BOLT_PORT_DEFAULT = 12200;
+    public static final int H2C_PORT_DEFAULT = 12300;
+    public static final int HTTP_PORT_DEFAULT = 12400;
+    public static final int GRPC_PORT_DEFAULT = 50051;
 
     /* rest default configuration */
-    public static final int     REST_PORT_DEFAULT                  = 8341;
-    public static final int     REST_IO_THREAD_COUNT_DEFAULT       = SystemInfo.getCpuCores() * 2;
-    public static final int     REST_EXECUTOR_THREAD_COUNT_DEFAULT = 200;
-    public static final int     REST_MAX_REQUEST_SIZE_DEFAULT      = 1024 * 1024 * 10;
-    public static final boolean REST_TELNET_DEFAULT                = true;
-    public static final boolean REST_DAEMON_DEFAULT                = true;
+    public static final int REST_PORT_DEFAULT = 8341;
+    public static final int REST_IO_THREAD_COUNT_DEFAULT = SystemInfo.getCpuCores() * 2;
+    public static final int REST_EXECUTOR_THREAD_COUNT_DEFAULT = 200;
+    public static final int REST_MAX_REQUEST_SIZE_DEFAULT = 1024 * 1024 * 10;
+    public static final boolean REST_TELNET_DEFAULT = true;
+    public static final boolean REST_DAEMON_DEFAULT = true;
 
     /* dubbo default configuration */
-    public static final int     DUBBO_PORT_DEFAULT                 = 20880;
+    public static final int DUBBO_PORT_DEFAULT = 20880;
 
     /* registry default configuration */
-    public static final String  REGISTRY_FILE_PATH_DEFAULT         = System
-                                                                       .getProperty("user.home")
-                                                                     + System
-                                                                         .getProperty("file.separator")
-                                                                     + "localFileRegistry"
-                                                                     + System
-                                                                         .getProperty("file.separator")
-                                                                     + "localRegistry.reg";
+    public static final String REGISTRY_FILE_PATH_DEFAULT = System
+            .getProperty("user.home")
+            + System
+            .getProperty("file.separator")
+            + "localFileRegistry"
+            + System
+            .getProperty("file.separator")
+            + "localRegistry.reg";
 
     /* possible config value start ********************************************************/
 
     /* registry */
-    public static final String  REGISTRY_PROTOCOL_LOCAL            = "local";
-    public static final String  REGISTRY_PROTOCOL_ZOOKEEPER        = "zookeeper";
-    public static final String  REGISTRY_PROTOCOL_MESH             = "mesh";
-    public static final String  REGISTRY_PROTOCOL_MULTICAST        = "multicast";
+    public static final String REGISTRY_PROTOCOL_LOCAL = "local";
+    public static final String REGISTRY_PROTOCOL_ZOOKEEPER = "zookeeper";
+    public static final String REGISTRY_PROTOCOL_MESH = "mesh";
+    public static final String REGISTRY_PROTOCOL_MULTICAST = "multicast";
 
     //@since 5.5.0
-    public static final String  REGISTRY_PROTOCOL_CONSUL           = "consul";
+    public static final String REGISTRY_PROTOCOL_CONSUL = "consul";
 
-    public static final String  REGISTRY_PROTOCOL_NACOS            = "nacos";
+    public static final String REGISTRY_PROTOCOL_NACOS = "nacos";
     //@since 5.5.2
-    public static final String  REGISTRY_PROTOCOL_SOFA             = "sofa";
+    public static final String REGISTRY_PROTOCOL_SOFA = "sofa";
 
     /* server */
-    public static final String  RPC_PROTOCOL_BOLT                  = "bolt";
-    public static final String  RPC_PROTOCOL_REST                  = "rest";
-    public static final String  RPC_PROTOCOL_DUBBO                 = "dubbo";
-    public static final String  RPC_PROTOCOL_H2C                   = "h2c";
-    public static final String  RPC_PROTOCOL_HTTP                  = "http";
-    public static final String  RPC_PROTOCOL_TRIPLE                = "tri";
+    public static final String RPC_PROTOCOL_BOLT = "bolt";
+    public static final String RPC_PROTOCOL_REST = "rest";
+    public static final String RPC_PROTOCOL_DUBBO = "dubbo";
+    public static final String RPC_PROTOCOL_H2C = "h2c";
+    public static final String RPC_PROTOCOL_HTTP = "http";
+    public static final String RPC_PROTOCOL_TRIPLE = "tri";
 
-    /** mesh **/
-    public static final String  ENABLE_MESH_ALL                    = "all";
+    /**
+     * mesh
+     **/
+    public static final String ENABLE_MESH_ALL = "all";
 
-    public static final String  DEFAULT_REGISTRY                   = "default.registry";
+    public static final String DEFAULT_REGISTRY = "default.registry";
 
     /* possible config value end ********************************************************/
 

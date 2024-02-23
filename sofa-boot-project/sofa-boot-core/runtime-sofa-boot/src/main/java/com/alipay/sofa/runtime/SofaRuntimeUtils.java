@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class SofaRuntimeUtils {
     private static final String ARK_BIZ_CLASSLOADER_NAME = "com.alipay.sofa.ark.container.service.classloader.BizClassLoader";
-    private static Object       masterBiz;
+    private static Object masterBiz;
 
     public static boolean isArkEnvironment() {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
@@ -40,6 +40,7 @@ public class SofaRuntimeUtils {
 
     /**
      * Invoke this method only in Ark environment!
+     *
      * @return true if on master biz in Ark environment, otherwise false
      */
     public static boolean onMasterBiz() {
@@ -56,9 +57,9 @@ public class SofaRuntimeUtils {
         } catch (Throwable e) {
             // For catching ClassNotFound exception
             SofaLogger
-                .info(
-                    "Assume normal SOFABoot environment because Loading of master biz fails with error:",
-                    e);
+                    .info(
+                            "Assume normal SOFABoot environment because Loading of master biz fails with error:",
+                            e);
             throw e;
         }
     }

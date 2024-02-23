@@ -16,9 +16,10 @@
  */
 package com.alipay.sofa.tracer.boot.config;
 
-import java.io.File;
-import java.util.Map;
-
+import com.alipay.common.tracer.core.appender.file.TimedRollingFileAppender;
+import com.alipay.sofa.tracer.boot.base.ConfigurationHolder;
+import com.alipay.sofa.tracer.boot.base.SpringBootWebApplication;
+import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -28,10 +29,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.alipay.common.tracer.core.appender.file.TimedRollingFileAppender;
-import com.alipay.sofa.tracer.boot.base.ConfigurationHolder;
-import com.alipay.sofa.tracer.boot.base.SpringBootWebApplication;
-import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
+import java.io.File;
+import java.util.Map;
 
 /**
  * @author qilong.zql
@@ -45,9 +44,9 @@ public class ConfigurationTest {
     @BeforeClass
     public static void before() {
         File defaultDir = new File(System.getProperty("user.home") + File.separator + "logs"
-                                   + File.separator + "tracelog");
+                + File.separator + "tracelog");
         File configDir = new File(System.getProperty("user.dir") + File.separator + "logs"
-                                  + File.separator + "tracelog");
+                + File.separator + "tracelog");
         System.clearProperty("logging.path");
         if (defaultDir.exists()) {
             FileUtils.deleteQuietly(defaultDir);
@@ -68,7 +67,7 @@ public class ConfigurationTest {
         Assert.assertEquals(2, disableConfiguration.size());
 
         Assert.assertEquals(TimedRollingFileAppender.HOURLY_ROLLING_PATTERN,
-            sofaTracerProperties.getTracerGlobalRollingPolicy());
+                sofaTracerProperties.getTracerGlobalRollingPolicy());
         Assert.assertEquals("1", sofaTracerProperties.getTracerGlobalLogReserveDay());
         Assert.assertEquals("1", sofaTracerProperties.getStatLogInterval());
         Assert.assertEquals("1", sofaTracerProperties.getBaggageMaxLength());

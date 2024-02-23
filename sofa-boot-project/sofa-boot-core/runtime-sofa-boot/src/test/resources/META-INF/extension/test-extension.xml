@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:sofa="http://sofastack.io/schema/sofaboot"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://sofastack.io/schema/sofaboot   http://sofastack.io/schema/sofaboot.xsd
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+            http://sofastack.io/schema/sofaboot   http://sofastack.io/schema/sofaboot.xsd"
        default-autowire="byName">
 
 
@@ -115,8 +112,8 @@
         <sofa:object class="com.alipay.sofa.runtime.test.extension.descriptor.SpringListExtensionDescriptor"/>
     </sofa:extension-point>
 
-    <bean id="simpleSpringListBean1" class="com.alipay.sofa.runtime.test.extension.bean.SimpleSpringListBean" />
-    <bean id="simpleSpringListBean2" class="com.alipay.sofa.runtime.test.extension.bean.SimpleSpringListBean" />
+    <bean id="simpleSpringListBean1" class="com.alipay.sofa.runtime.test.extension.bean.SimpleSpringListBean"/>
+    <bean id="simpleSpringListBean2" class="com.alipay.sofa.runtime.test.extension.bean.SimpleSpringListBean"/>
 
     <sofa:extension bean="iExtension" point="testSpringList">
         <sofa:content>
@@ -187,11 +184,5 @@
         </sofa:content>
     </sofa:extension>
 
-
-    <sofa:extension bean="iExtension" point="noExist">
-        <sofa:content>
-            <bad>noExist</bad>
-        </sofa:content>
-    </sofa:extension>
 
 </beans>

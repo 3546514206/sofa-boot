@@ -34,7 +34,7 @@ public class ConfigurationMetaTest {
     @Test
     public void testConfigurationMetaFileExists() throws IOException, URISyntaxException {
         Enumeration<URL> springConfigurationMetadataFiles = Thread.currentThread()
-            .getContextClassLoader().getResources("META-INF/spring-configuration-metadata.json");
+                .getContextClassLoader().getResources("META-INF/spring-configuration-metadata.json");
         boolean found = false;
         while (springConfigurationMetadataFiles.hasMoreElements()) {
             URL fileUrl = springConfigurationMetadataFiles.nextElement();

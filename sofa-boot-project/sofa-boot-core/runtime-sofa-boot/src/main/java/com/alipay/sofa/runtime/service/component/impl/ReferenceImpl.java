@@ -29,9 +29,10 @@ import java.util.Map;
  * @author xuanbei 18/3/1
  */
 public class ReferenceImpl extends AbstractContract implements Reference {
-    /** jvm first or not */
+    /**
+     * jvm first or not
+     */
     private boolean jvmFirst = true;
-    private boolean required = true;
 
     public ReferenceImpl(String uniqueId, Class<?> interfaceType, InterfaceMode interfaceMode,
                          boolean jvmFirst) {
@@ -53,16 +54,6 @@ public class ReferenceImpl extends AbstractContract implements Reference {
     @Override
     public String toString() {
         return this.getInterfaceType().getName()
-               + (StringUtils.hasText(uniqueId) ? ":" + uniqueId : "");
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
-
-    @Override
-    public void setRequired(boolean required) {
-        this.required = required;
+                + (StringUtils.hasText(uniqueId) ? ":" + uniqueId : "");
     }
 }

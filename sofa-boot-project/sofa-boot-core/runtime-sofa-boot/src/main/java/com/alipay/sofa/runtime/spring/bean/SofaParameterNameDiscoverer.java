@@ -16,26 +16,25 @@
  */
 package com.alipay.sofa.runtime.spring.bean;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-
+import com.alipay.sofa.boot.annotation.PlaceHolderAnnotationInvocationHandler.AnnotationWrapperBuilder;
+import com.alipay.sofa.boot.annotation.PlaceHolderBinder;
+import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.env.Environment;
 
-import com.alipay.sofa.boot.annotation.PlaceHolderAnnotationInvocationHandler.AnnotationWrapperBuilder;
-import com.alipay.sofa.boot.annotation.PlaceHolderBinder;
-import com.alipay.sofa.runtime.api.annotation.SofaReference;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * @author qilong.zql
  * @since 3.1.0
  */
 public class SofaParameterNameDiscoverer implements ParameterNameDiscoverer {
-    private final PlaceHolderBinder                   binder                                    = new DefaultPlaceHolderBinder();
+    private final PlaceHolderBinder binder = new DefaultPlaceHolderBinder();
     private LocalVariableTableParameterNameDiscoverer localVariableTableParameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
-    private Environment                               environment;
+    private Environment environment;
 
     public SofaParameterNameDiscoverer(Environment environment) {
         this.environment = environment;
@@ -44,7 +43,7 @@ public class SofaParameterNameDiscoverer implements ParameterNameDiscoverer {
     @Override
     public String[] getParameterNames(Method method) {
         String[] parameterNames = localVariableTableParameterNameDiscoverer
-            .getParameterNames(method);
+                .getParameterNames(method);
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
         return transformParameterNames(parameterNames, parameterTypes, annotations);
@@ -65,7 +64,7 @@ public class SofaParameterNameDiscoverer implements ParameterNameDiscoverer {
             for (Annotation annotation : annotations[i]) {
                 if (annotation instanceof SofaReference) {
                     AnnotationWrapperBuilder<SofaReference> wrapperBuilder = AnnotationWrapperBuilder
-                        .wrap(annotation).withBinder(binder);
+                            .wrap(annotation).withBinder(binder);
                     SofaReference delegate = wrapperBuilder.build();
                     Class interfaceType = delegate.interfaceType();
                     if (interfaceType.equals(void.class)) {
@@ -73,7 +72,7 @@ public class SofaParameterNameDiscoverer implements ParameterNameDiscoverer {
                     }
                     String uniqueId = delegate.uniqueId();
                     parameterNames[i] = SofaBeanNameGenerator.generateSofaReferenceBeanName(
-                        interfaceType, uniqueId);
+                            interfaceType, uniqueId);
                 }
             }
         }

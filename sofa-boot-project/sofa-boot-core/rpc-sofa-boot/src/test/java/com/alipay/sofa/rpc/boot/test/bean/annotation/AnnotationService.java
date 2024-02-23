@@ -22,6 +22,4 @@ package com.alipay.sofa.rpc.boot.test.bean.annotation;
  */
 public interface AnnotationService {
     String hello();
-
-    String testTimeout(long millis);
 }

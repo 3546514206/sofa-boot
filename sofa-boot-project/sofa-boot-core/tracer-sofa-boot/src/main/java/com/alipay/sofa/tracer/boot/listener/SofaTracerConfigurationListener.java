@@ -16,7 +16,9 @@
  */
 package com.alipay.sofa.tracer.boot.listener;
 
-import com.alipay.sofa.boot.util.ApplicationListenerOrderConstants;
+import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
+import com.alipay.common.tracer.core.utils.StringUtils;
+import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -27,10 +29,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
-
-import com.alipay.common.tracer.core.configuration.SofaTracerConfiguration;
-import com.alipay.common.tracer.core.utils.StringUtils;
-import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -40,9 +38,9 @@ import org.springframework.util.ClassUtils;
  * @since 2.2.2
  */
 public class SofaTracerConfigurationListener
-                                            implements
-                                            ApplicationListener<ApplicationEnvironmentPreparedEvent>,
-                                            Ordered {
+        implements
+        ApplicationListener<ApplicationEnvironmentPreparedEvent>,
+        Ordered {
 
     @Override
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
@@ -54,63 +52,63 @@ public class SofaTracerConfigurationListener
 
         // check spring.application.name
         String applicationName = environment
-            .getProperty(SofaTracerConfiguration.TRACER_APPNAME_KEY);
+                .getProperty(SofaTracerConfiguration.TRACER_APPNAME_KEY);
         Assert.isTrue(!StringUtils.isBlank(applicationName),
-            SofaTracerConfiguration.TRACER_APPNAME_KEY + " must be configured!");
+                SofaTracerConfiguration.TRACER_APPNAME_KEY + " must be configured!");
         SofaTracerConfiguration.setProperty(SofaTracerConfiguration.TRACER_APPNAME_KEY,
-            applicationName);
+                applicationName);
 
         // static binding
         SofaTracerProperties tempTarget = new SofaTracerProperties();
         ConfigurationProperties configurationProperties = AnnotationUtils.findAnnotation(
-            SofaTracerProperties.class, ConfigurationProperties.class);
+                SofaTracerProperties.class, ConfigurationProperties.class);
         Binder binder = Binder.get(environment);
         Bindable bindable = Bindable.of(SofaTracerProperties.class).withExistingValue(tempTarget)
-            .withAnnotations(configurationProperties);
+                .withAnnotations(configurationProperties);
         binder.bind(SofaTracerProperties.SOFA_TRACER_CONFIGURATION_PREFIX, bindable);
 
         //properties convert to tracer
         SofaTracerConfiguration.setProperty(
-            SofaTracerConfiguration.DISABLE_MIDDLEWARE_DIGEST_LOG_KEY,
-            tempTarget.getDisableDigestLog());
+                SofaTracerConfiguration.DISABLE_MIDDLEWARE_DIGEST_LOG_KEY,
+                tempTarget.getDisableDigestLog());
         SofaTracerConfiguration.setProperty(SofaTracerConfiguration.DISABLE_DIGEST_LOG_KEY,
-            tempTarget.getDisableConfiguration());
+                tempTarget.getDisableConfiguration());
         SofaTracerConfiguration.setProperty(SofaTracerConfiguration.TRACER_GLOBAL_ROLLING_KEY,
-            tempTarget.getTracerGlobalRollingPolicy());
+                tempTarget.getTracerGlobalRollingPolicy());
         SofaTracerConfiguration.setProperty(SofaTracerConfiguration.TRACER_GLOBAL_LOG_RESERVE_DAY,
-            tempTarget.getTracerGlobalLogReserveDay());
+                tempTarget.getTracerGlobalLogReserveDay());
         //stat log interval
         SofaTracerConfiguration.setProperty(SofaTracerConfiguration.STAT_LOG_INTERVAL,
-            tempTarget.getStatLogInterval());
+                tempTarget.getStatLogInterval());
         //baggage length
         SofaTracerConfiguration.setProperty(
-            SofaTracerConfiguration.TRACER_PENETRATE_ATTRIBUTE_MAX_LENGTH,
-            tempTarget.getBaggageMaxLength());
+                SofaTracerConfiguration.TRACER_PENETRATE_ATTRIBUTE_MAX_LENGTH,
+                tempTarget.getBaggageMaxLength());
         SofaTracerConfiguration.setProperty(
-            SofaTracerConfiguration.TRACER_SYSTEM_PENETRATE_ATTRIBUTE_MAX_LENGTH,
-            tempTarget.getBaggageMaxLength());
+                SofaTracerConfiguration.TRACER_SYSTEM_PENETRATE_ATTRIBUTE_MAX_LENGTH,
+                tempTarget.getBaggageMaxLength());
 
         //sampler config
         if (tempTarget.getSamplerName() != null) {
             SofaTracerConfiguration.setProperty(SofaTracerConfiguration.SAMPLER_STRATEGY_NAME_KEY,
-                tempTarget.getSamplerName());
+                    tempTarget.getSamplerName());
         }
         if (StringUtils.isNotBlank(tempTarget.getSamplerCustomRuleClassName())) {
             SofaTracerConfiguration.setProperty(
-                SofaTracerConfiguration.SAMPLER_STRATEGY_CUSTOM_RULE_CLASS_NAME,
-                tempTarget.getSamplerCustomRuleClassName());
+                    SofaTracerConfiguration.SAMPLER_STRATEGY_CUSTOM_RULE_CLASS_NAME,
+                    tempTarget.getSamplerCustomRuleClassName());
         }
         SofaTracerConfiguration.setProperty(
-            SofaTracerConfiguration.SAMPLER_STRATEGY_PERCENTAGE_KEY,
-            String.valueOf(tempTarget.getSamplerPercentage()));
+                SofaTracerConfiguration.SAMPLER_STRATEGY_PERCENTAGE_KEY,
+                String.valueOf(tempTarget.getSamplerPercentage()));
 
         SofaTracerConfiguration.setProperty(SofaTracerConfiguration.JSON_FORMAT_OUTPUT,
-            String.valueOf(tempTarget.isJsonOutput()));
+                String.valueOf(tempTarget.isJsonOutput()));
     }
 
     @Override
     public int getOrder() {
-        return ApplicationListenerOrderConstants.SOFA_TRACER_CONFIGURATION_LISTENER_ORDER;
+        return HIGHEST_PRECEDENCE + 30;
     }
 
     private boolean isSpringCloudBootstrapEnvironment(Environment environment) {
@@ -118,13 +116,13 @@ public class SofaTracerConfigurationListener
             return false;
         } else {
             return !((ConfigurableEnvironment) environment).getPropertySources().contains(
-                "sofaBootstrap")
-                   && isSpringCloud();
+                    "sofaBootstrap")
+                    && isSpringCloud();
         }
     }
 
     private boolean isSpringCloud() {
         return ClassUtils.isPresent("org.springframework.cloud.bootstrap.BootstrapConfiguration",
-            null);
+                null);
     }
 }

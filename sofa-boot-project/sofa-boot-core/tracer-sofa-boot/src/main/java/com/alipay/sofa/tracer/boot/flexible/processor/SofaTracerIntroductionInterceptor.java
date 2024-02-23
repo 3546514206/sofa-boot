@@ -27,7 +27,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 3:05 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/8/9 3:05 PM
+ * @since:
  **/
 public class SofaTracerIntroductionInterceptor implements IntroductionInterceptor {
 
@@ -44,7 +45,7 @@ public class SofaTracerIntroductionInterceptor implements IntroductionIntercepto
             return invocation.proceed();
         }
         Method mostSpecificMethod = AopUtils.getMostSpecificMethod(method, invocation.getThis()
-            .getClass());
+                .getClass());
 
         Tracer tracerSpan = findAnnotation(mostSpecificMethod, Tracer.class);
         if (tracerSpan == null) {
@@ -63,8 +64,8 @@ public class SofaTracerIntroductionInterceptor implements IntroductionIntercepto
         if (annotation == null) {
             try {
                 annotation = AnnotationUtils.findAnnotation(
-                    method.getDeclaringClass().getMethod(method.getName(),
-                        method.getParameterTypes()), clazz);
+                        method.getDeclaringClass().getMethod(method.getName(),
+                                method.getParameterTypes()), clazz);
             } catch (NoSuchMethodException | SecurityException ex) {
                 SelfLog.warn("Exception occurred while tyring to find the annotation");
             }

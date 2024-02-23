@@ -16,12 +16,7 @@
  */
 package com.alipay.sofa.healthcheck.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.alipay.sofa.healthcheck.HealthCheckProperties;
-import com.alipay.sofa.healthcheck.core.HealthCheckExecutor;
-import com.alipay.sofa.runtime.configure.SofaRuntimeConfigurationProperties;
+import com.alipay.sofa.healthcheck.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,16 +28,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.alipay.sofa.healthcheck.AfterReadinessCheckCallbackProcessor;
-import com.alipay.sofa.healthcheck.HealthCheckerProcessor;
-import com.alipay.sofa.healthcheck.HealthIndicatorProcessor;
-import com.alipay.sofa.healthcheck.ReadinessCheckListener;
-
 import reactor.core.publisher.Mono;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author qilong.zql
@@ -66,7 +57,7 @@ public class ReactiveHealthIndicatorTest {
         Assert.assertNotNull(healthMap.get("reactiveDemo").getDetails().get("reactiveTest"));
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class ReactiveHealthIndicatorConfiguration {
         @Bean
         public ReactiveHealthIndicator reactiveDemoHealthIndicator() {
@@ -74,9 +65,8 @@ public class ReactiveHealthIndicatorTest {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
-    @EnableConfigurationProperties({ HealthCheckProperties.class,
-            SofaRuntimeConfigurationProperties.class })
+    @Configuration
+    @EnableConfigurationProperties(HealthCheckProperties.class)
     static class ReactiveHealthIndicatorTestConfiguration {
         @Bean
         public AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor() {
@@ -84,32 +74,18 @@ public class ReactiveHealthIndicatorTest {
         }
 
         @Bean
-        public ReadinessCheckListener readinessCheckListener(Environment environment,
-                                                             HealthCheckerProcessor healthCheckerProcessor,
-                                                             HealthIndicatorProcessor healthIndicatorProcessor,
-                                                             AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor,
-                                                             SofaRuntimeConfigurationProperties sofaRuntimeConfigurationProperties,
-                                                             HealthCheckProperties healthCheckProperties) {
-            return new ReadinessCheckListener(environment, healthCheckerProcessor,
-                healthIndicatorProcessor, afterReadinessCheckCallbackProcessor,
-                sofaRuntimeConfigurationProperties, healthCheckProperties);
+        public ReadinessCheckListener readinessCheckListener() {
+            return new ReadinessCheckListener();
         }
 
         @Bean
-        public HealthCheckerProcessor healthCheckerProcessor(HealthCheckProperties healthCheckProperties,
-                                                             HealthCheckExecutor healthCheckExecutor) {
-            return new HealthCheckerProcessor(healthCheckProperties, healthCheckExecutor);
+        public HealthCheckerProcessor healthCheckerProcessor() {
+            return new HealthCheckerProcessor();
         }
 
         @Bean
-        public HealthIndicatorProcessor healthIndicatorProcessor(HealthCheckProperties properties,
-                                                                 HealthCheckExecutor healthCheckExecutor) {
-            return new HealthIndicatorProcessor(properties, healthCheckExecutor);
-        }
-
-        @Bean
-        public HealthCheckExecutor healthCheckExecutor(HealthCheckProperties properties) {
-            return new HealthCheckExecutor(properties);
+        public HealthIndicatorProcessor healthIndicatorProcessor() {
+            return new HealthIndicatorProcessor();
         }
     }
 }

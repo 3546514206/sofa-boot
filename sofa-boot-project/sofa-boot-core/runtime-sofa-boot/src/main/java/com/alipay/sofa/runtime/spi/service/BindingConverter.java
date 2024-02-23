@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.runtime.spi.service;
 
-import org.w3c.dom.Element;
-
 import com.alipay.sofa.boot.spring.namespace.spi.SofaBootTagNameSupport;
 import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
@@ -26,6 +24,7 @@ import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
 import com.alipay.sofa.runtime.api.binding.BindingType;
 import com.alipay.sofa.runtime.api.client.param.BindingParam;
 import com.alipay.sofa.runtime.spi.binding.Binding;
+import org.w3c.dom.Element;
 
 /**
  * Binding Converter, convert {@link BindingParam} or xml Element to concrete {@link Binding}
@@ -33,11 +32,11 @@ import com.alipay.sofa.runtime.spi.binding.Binding;
  * @author xuanbei 18/2/28
  */
 public interface BindingConverter<L extends BindingParam, R extends Binding> extends
-                                                                             SofaBootTagNameSupport {
+        SofaBootTagNameSupport {
     /**
      * convert {@link BindingParam} to concrete {@link Binding}
      *
-     * @param bindingParam binding parameter
+     * @param bindingParam            binding parameter
      * @param bindingConverterContext binding converter context
      * @return Binding Object
      */
@@ -46,7 +45,7 @@ public interface BindingConverter<L extends BindingParam, R extends Binding> ext
     /**
      * convert xml Element to concrete {@link Binding}
      *
-     * @param element xml Element
+     * @param element                 xml Element
      * @param bindingConverterContext binding converter context
      * @return Binding Object
      */
@@ -55,9 +54,9 @@ public interface BindingConverter<L extends BindingParam, R extends Binding> ext
     /**
      * convert annotation Element to concrete {@link Binding}
      *
-     * @param sofaServiceAnnotation {@link SofaService} Annotation
+     * @param sofaServiceAnnotation        {@link SofaService} Annotation
      * @param sofaServiceBindingAnnotation {@link SofaServiceBinding} Annotation
-     * @param bindingConverterContext binding converter context
+     * @param bindingConverterContext      binding converter context
      * @return Binding Object
      */
     R convert(SofaService sofaServiceAnnotation, SofaServiceBinding sofaServiceBindingAnnotation,
@@ -66,9 +65,9 @@ public interface BindingConverter<L extends BindingParam, R extends Binding> ext
     /**
      * convert annotation Element to concrete {@link Binding}
      *
-     * @param sofaReferenceAnnotation {@link SofaReference} Annotation
+     * @param sofaReferenceAnnotation        {@link SofaReference} Annotation
      * @param sofaReferenceBindingAnnotation {@link SofaReferenceBinding} Annotation
-     * @param bindingConverterContext binding converter context
+     * @param bindingConverterContext        binding converter context
      * @return Binding Object
      */
     R convert(SofaReference sofaReferenceAnnotation,

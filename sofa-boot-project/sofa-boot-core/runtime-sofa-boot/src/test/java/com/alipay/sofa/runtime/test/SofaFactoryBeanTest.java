@@ -47,19 +47,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(properties = "spring.application.name=SofaFactoryBeanTest")
 public class SofaFactoryBeanTest {
 
-    static SampleService            parameterSampleService = null;
+    static SampleService parameterSampleService = null;
 
     @SofaReference(uniqueId = "serviceViaBeanMethod")
-    private SampleService           serviceViaBeanMethod;
+    private SampleService serviceViaBeanMethod;
 
     @Autowired
-    private SampleService           sampleService;
+    private SampleService sampleService;
 
     @SofaReference(uniqueId = "serviceWithoutInterface")
     private ServiceWithoutInterface serviceWithoutInterface;
 
     @Autowired
-    private ApplicationContext      ctx;
+    private ApplicationContext ctx;
 
     @Test
     public void testParameterSampleService() {
@@ -68,26 +68,26 @@ public class SofaFactoryBeanTest {
     }
 
     @Test
-    public void testServiceFactoryBean() throws Exception{
+    public void testServiceFactoryBean() throws Exception {
         ServiceFactoryBean serviceFactoryBean;
         ReferenceFactoryBean referenceFactoryBean;
 
         // Configuration
-        serviceFactoryBean = (ServiceFactoryBean)ctx.getBean("&" + SofaBeanNameGenerator.generateSofaServiceBeanName(SampleService.class, "serviceViaBeanMethod"));
+        serviceFactoryBean = (ServiceFactoryBean) ctx.getBean("&" + SofaBeanNameGenerator.generateSofaServiceBeanName(SampleService.class, "serviceViaBeanMethod"));
         Assert.assertTrue(serviceFactoryBean.isApiType());
 
-        serviceFactoryBean = (ServiceFactoryBean)ctx.getBean("&" + SofaBeanNameGenerator.generateSofaServiceBeanName(ServiceWithoutInterface.class, "serviceWithoutInterface"));
+        serviceFactoryBean = (ServiceFactoryBean) ctx.getBean("&" + SofaBeanNameGenerator.generateSofaServiceBeanName(ServiceWithoutInterface.class, "serviceWithoutInterface"));
         Assert.assertTrue(serviceFactoryBean.isApiType());
 
-        referenceFactoryBean = (ReferenceFactoryBean)ctx.getBean("&" + SofaBeanNameGenerator.generateSofaReferenceBeanName(SampleService.class, "serviceViaBeanMethod"));
+        referenceFactoryBean = (ReferenceFactoryBean) ctx.getBean("&" + SofaBeanNameGenerator.generateSofaReferenceBeanName(SampleService.class, "serviceViaBeanMethod"));
         Assert.assertTrue(referenceFactoryBean.isApiType());
         Assert.assertEquals(serviceViaBeanMethod, referenceFactoryBean.getObject());
 
         // xml
-        serviceFactoryBean = (ServiceFactoryBean)ctx.getBean("&" + SofaBeanNameGenerator.generateSofaServiceBeanName(SampleService.class, ""));
+        serviceFactoryBean = (ServiceFactoryBean) ctx.getBean("&" + SofaBeanNameGenerator.generateSofaServiceBeanName(SampleService.class, ""));
         Assert.assertFalse(serviceFactoryBean.isApiType());
 
-        referenceFactoryBean = (ReferenceFactoryBean)ctx.getBean("&xmlServiceWithoutInterface");
+        referenceFactoryBean = (ReferenceFactoryBean) ctx.getBean("&xmlServiceWithoutInterface");
         Assert.assertFalse(referenceFactoryBean.isApiType());
         Assert.assertEquals(serviceWithoutInterface, referenceFactoryBean.getObject());
 
@@ -102,7 +102,7 @@ public class SofaFactoryBeanTest {
         });
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @Import(RuntimeConfiguration.class)
     @ImportResource("classpath*:META-INF/service/test-service.xml")
     static class SofaFactoryBeanTestConfiguration {

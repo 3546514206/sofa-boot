@@ -16,10 +16,10 @@
  */
 package com.alipay.sofa.runtime.ext.component;
 
-import com.alipay.sofa.boot.error.ErrorCode;
 import com.alipay.sofa.runtime.SofaRuntimeProperties;
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 import com.alipay.sofa.runtime.api.component.ComponentName;
+import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.log.SofaLogger;
 import com.alipay.sofa.runtime.model.ComponentStatus;
 import com.alipay.sofa.runtime.model.ComponentType;
@@ -36,6 +36,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * SOFA Extension Component
@@ -45,23 +46,28 @@ import java.lang.reflect.Method;
  * @since 2.6.0
  */
 public class ExtensionComponent extends AbstractComponent {
-    public static final String        LINK_SYMBOL              = "$";
+    public static final String LINK_SYMBOL = "$";
     public static final ComponentType EXTENSION_COMPONENT_TYPE = new ComponentType("extension");
 
-    private Extension                 extension;
+    private Extension extension;
 
     public ExtensionComponent(Extension extension, SofaRuntimeContext sofaRuntimeContext) {
         this.extension = extension;
         this.sofaRuntimeContext = sofaRuntimeContext;
         this.componentName = ComponentNameFactory.createComponentName(
-            EXTENSION_COMPONENT_TYPE,
-            extension.getTargetComponentName().getName() + LINK_SYMBOL
-                    + ObjectUtils.getIdentityHexString(extension));
+                EXTENSION_COMPONENT_TYPE,
+                extension.getTargetComponentName().getName() + LINK_SYMBOL
+                        + ObjectUtils.getIdentityHexString(extension));
     }
 
     @Override
     public ComponentType getType() {
         return EXTENSION_COMPONENT_TYPE;
+    }
+
+    @Override
+    public Map<String, Property> getProperties() {
+        return null;
     }
 
     @Override
@@ -74,7 +80,7 @@ public class ExtensionComponent extends AbstractComponent {
         ComponentName extensionPointComponentName = extension.getTargetComponentName();
 
         ComponentInfo extensionPointComponentInfo = componentManager
-            .getComponentInfo(extensionPointComponentName);
+                .getComponentInfo(extensionPointComponentName);
 
         if (extensionPointComponentInfo != null && extensionPointComponentInfo.isActivated()) {
             componentStatus = ComponentStatus.RESOLVED;
@@ -93,31 +99,26 @@ public class ExtensionComponent extends AbstractComponent {
         ComponentManager componentManager = sofaRuntimeContext.getComponentManager();
         ComponentName extensionPointComponentName = extension.getTargetComponentName();
         ComponentInfo extensionPointComponentInfo = componentManager
-            .getComponentInfo(extensionPointComponentName);
+                .getComponentInfo(extensionPointComponentName);
 
         if (extensionPointComponentInfo == null || !extensionPointComponentInfo.isActivated()) {
             return;
         }
 
         loadContributions(
-            ((ExtensionPointComponent) extensionPointComponentInfo).getExtensionPoint(), extension);
+                ((ExtensionPointComponent) extensionPointComponentInfo).getExtensionPoint(), extension);
 
         Object target = extensionPointComponentInfo.getImplementation().getTarget();
-        try {
-            if (target instanceof Extensible) {
+        if (target instanceof Extensible) {
+            try {
                 ((Extensible) target).registerExtension(extension);
-            } else {
-                Method method = ReflectionUtils.findMethod(target.getClass(), "registerExtension",
-                    Extension.class);
-                if (method == null) {
-                    throw new RuntimeException(ErrorCode.convert("01-01001", target.getClass()
-                        .getCanonicalName()));
-                }
-                ReflectionUtils.invokeMethod(method, target, extension);
+            } catch (Exception e) {
+                throw new ServiceRuntimeException(e);
             }
-        } catch (Throwable t) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-01000",
-                extensionPointComponentInfo.getName()), t);
+        } else {
+            Method method = ReflectionUtils.findMethod(target.getClass(), "registerExtension",
+                    Extension.class);
+            ReflectionUtils.invokeMethod(method, target, extension);
         }
 
         componentStatus = ComponentStatus.ACTIVATED;
@@ -130,31 +131,7 @@ public class ExtensionComponent extends AbstractComponent {
             healthResult.setHealthy(true);
             return healthResult;
         }
-
-        HealthResult healthResult = new HealthResult(componentName.getRawName());
-        //表示 loadContributions 异常的 Extension
-        if (e != null) {
-            healthResult.setHealthy(false);
-            healthResult.setHealthReport("Extension loadContributions error: " + e.getMessage());
-            return healthResult;
-        }
-        //表示注册成功的 Extension
-        if (isActivated()) {
-            healthResult.setHealthy(true);
-            return healthResult;
-        }
-        //表示对应的 ExtensionPoint 未注册
-        if (!isResolved()) {
-            healthResult.setHealthy(false);
-            healthResult.setHealthReport("Can not find corresponding ExtensionPoint: "
-                                         + extension.getTargetComponentName().getName());
-            return healthResult;
-        } else {
-            // 表示 registerExtension 异常的 Extension
-            healthResult.setHealthy(false);
-            healthResult.setHealthReport("Extension registerExtension error");
-            return healthResult;
-        }
+        return super.isHealthy();
     }
 
     public Extension getExtension() {
@@ -165,16 +142,14 @@ public class ExtensionComponent extends AbstractComponent {
         if (extensionPoint != null && extensionPoint.hasContribution()) {
             try {
                 Object[] contribs = ((ExtensionPointInternal) extensionPoint)
-                    .loadContributions((ExtensionInternal) extension);
+                        .loadContributions((ExtensionInternal) extension);
                 ((ExtensionInternal) extension).setContributions(contribs);
             } catch (Exception e) {
                 if (SofaRuntimeProperties.isExtensionFailureInsulating(sofaRuntimeContext
-                    .getAppClassLoader())) {
+                        .getAppClassLoader())) {
                     this.e = e;
                 }
-                SofaLogger.error(
-                    ErrorCode.convert("01-01002", extensionPoint.getName(),
-                        extension.getComponentName()), e);
+                SofaLogger.error("Failed to create contribution objects", e);
             }
         }
     }

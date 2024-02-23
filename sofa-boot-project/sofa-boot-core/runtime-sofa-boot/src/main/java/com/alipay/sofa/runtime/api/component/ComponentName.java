@@ -16,9 +16,9 @@
  */
 package com.alipay.sofa.runtime.api.component;
 
-import java.io.Serializable;
-
 import com.alipay.sofa.runtime.model.ComponentType;
+
+import java.io.Serializable;
 
 /**
  * ComponentName used to identify the component uniquely.
@@ -26,7 +26,7 @@ import com.alipay.sofa.runtime.model.ComponentType;
  * @author xuanbei 18/2/28
  */
 public class ComponentName implements Serializable {
-    private static final long   serialVersionUID = -6856142686482394411L;
+    private static final long serialVersionUID = -6856142686482394411L;
 
     /**
      * component type
@@ -35,11 +35,11 @@ public class ComponentName implements Serializable {
     /**
      * component name
      */
-    private final String        name;
+    private final String name;
     /**
      * raw name
      */
-    private final String        rawName;
+    private final String rawName;
 
     /**
      * build ComponentName by component type and component name

@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.boot.test.spring;
 
+import com.alipay.sofa.boot.constant.SofaBootConstants;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,13 +29,11 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-
 /**
  * Fix https://github.com/alipay/sofa-boot/issues/371
  *
  * @author qilong.zql
- * @since  2.5.0
+ * @since 2.5.0
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -48,8 +47,8 @@ public class SofaBootstrapTest {
         Throwable throwable = null;
         try {
             SpringApplication springApplication = new SpringApplication(
-                SofaBootstrapTestConfiguration.class);
-            String[] args = { "-A=B" };
+                    SofaBootstrapTestConfiguration.class);
+            String[] args = {"-A=B"};
             springApplication.run(args);
         } catch (Throwable t) {
             throwable = t;
@@ -60,11 +59,11 @@ public class SofaBootstrapTest {
     @Test
     public void environmentCustomizeTest() {
         MutablePropertySources propertySources = ((StandardEnvironment) environment)
-            .getPropertySources();
+                .getPropertySources();
         Assert.assertNotNull(propertySources.get(SofaBootConstants.SOFA_DEFAULT_PROPERTY_SOURCE));
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class SofaBootstrapTestConfiguration {
 
     }

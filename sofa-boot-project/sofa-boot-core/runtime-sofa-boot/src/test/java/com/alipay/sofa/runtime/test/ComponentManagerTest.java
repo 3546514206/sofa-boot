@@ -16,20 +16,6 @@
  */
 package com.alipay.sofa.runtime.test;
 
-import static com.alipay.sofa.runtime.service.component.ServiceComponent.SERVICE_COMPONENT_TYPE;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import com.alipay.sofa.runtime.api.annotation.SofaService;
 import com.alipay.sofa.runtime.api.component.ComponentName;
 import com.alipay.sofa.runtime.spi.component.ComponentInfo;
@@ -39,6 +25,18 @@ import com.alipay.sofa.runtime.spi.util.ComponentNameFactory;
 import com.alipay.sofa.runtime.test.beans.facade.SampleService;
 import com.alipay.sofa.runtime.test.beans.service.DefaultSampleService;
 import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static com.alipay.sofa.runtime.service.component.ServiceComponent.SERVICE_COMPONENT_TYPE;
 
 /**
  * @author xuanbei
@@ -56,13 +54,9 @@ public class ComponentManagerTest {
     public void testRegisterServiceDuplicated() {
         ComponentManager componentManager = sofaRuntimeContext.getComponentManager();
         ComponentName componentName = ComponentNameFactory.createComponentName(
-            SERVICE_COMPONENT_TYPE, SampleService.class, "");
+                SERVICE_COMPONENT_TYPE, SampleService.class, "");
         ComponentInfo componentInfo = componentManager.getComponentInfo(componentName);
-        GenericApplicationContext applicationContext = new GenericApplicationContext();
-        applicationContext.setId("testModuleName");
-        componentInfo.setApplicationContext(applicationContext);
         componentManager.register(componentInfo);
-        Assert.assertEquals("testModuleName", componentInfo.getApplicationContext().getId());
     }
 
     @Test
@@ -70,7 +64,7 @@ public class ComponentManagerTest {
         Assert.assertEquals("ComponentManagerTest", sofaRuntimeContext.getAppName());
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @Import(RuntimeConfiguration.class)
     static class ComponentManagerTestConfiguration {
         @Bean

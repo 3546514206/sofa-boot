@@ -41,7 +41,7 @@ public interface ReferenceClient {
      * </pre>
      *
      * @param referenceParam The parameter of the SOFA reference to create.
-     * @param <T> The type of the SOFA reference to create.
+     * @param <T>            The type of the SOFA reference to create.
      * @return The SOFA reference to create.
      */
     <T> T reference(ReferenceParam<T> referenceParam);
@@ -50,20 +50,22 @@ public interface ReferenceClient {
      * Remove a specified SOFA reference
      *
      * @param referenceParam The parameter of the SOFA reference to remove
-     * @param <T> The type of the SOFA reference to remove
+     * @param <T>            The type of the SOFA reference to remove
      */
     <T> void removeReference(ReferenceParam<T> referenceParam);
 
     /**
      * Remove SOFA references on service dimension
+     *
      * @param interfaceClass the interface type of the reference component
      */
     void removeReference(Class<?> interfaceClass);
 
     /**
      * Remove SOFA references on service dimension
+     *
      * @param interfaceClass the interface type of the reference component
-     * @param uniqueId the uniqueId of the reference component
+     * @param uniqueId       the uniqueId of the reference component
      */
     void removeReference(Class<?> interfaceClass, String uniqueId);
 

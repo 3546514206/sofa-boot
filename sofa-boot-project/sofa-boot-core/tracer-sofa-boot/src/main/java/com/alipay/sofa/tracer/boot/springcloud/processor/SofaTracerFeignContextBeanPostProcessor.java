@@ -16,15 +16,15 @@
  */
 package com.alipay.sofa.tracer.boot.springcloud.processor;
 
+import com.alipay.sofa.tracer.plugins.springcloud.instruments.feign.SofaTracerFeignContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.cloud.openfeign.FeignContext;
 
-import com.alipay.sofa.tracer.plugins.springcloud.instruments.feign.SofaTracerFeignContext;
-
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/3/13 6:08 PM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/3/13 6:08 PM
+ * @since:
  **/
 public class SofaTracerFeignContextBeanPostProcessor implements BeanPostProcessor {
 
@@ -36,7 +36,7 @@ public class SofaTracerFeignContextBeanPostProcessor implements BeanPostProcesso
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
-                                                                               throws BeansException {
+            throws BeansException {
         if (bean instanceof FeignContext && !(bean instanceof SofaTracerFeignContext)) {
             return new SofaTracerFeignContext((FeignContext) bean, beanFactory);
         }
@@ -45,7 +45,7 @@ public class SofaTracerFeignContextBeanPostProcessor implements BeanPostProcesso
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
+            throws BeansException {
         return bean;
     }
 }

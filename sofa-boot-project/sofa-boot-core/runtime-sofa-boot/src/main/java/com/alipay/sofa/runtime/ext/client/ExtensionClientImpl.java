@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.runtime.ext.client;
 
-import org.springframework.util.Assert;
-
 import com.alipay.sofa.runtime.api.client.ExtensionClient;
 import com.alipay.sofa.runtime.api.client.param.ExtensionParam;
 import com.alipay.sofa.runtime.api.client.param.ExtensionPointParam;
@@ -31,6 +29,7 @@ import com.alipay.sofa.runtime.spi.component.Implementation;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
 import com.alipay.sofa.runtime.spi.util.ComponentNameFactory;
 import com.alipay.sofa.service.api.component.ExtensionPoint;
+import org.springframework.util.Assert;
 
 /**
  * Programming API Implement for Extension/Extension-Point
@@ -51,17 +50,17 @@ public class ExtensionClientImpl implements ExtensionClient {
     public void publishExtension(ExtensionParam extensionParam) {
         Assert.notNull(extensionParam, "extensionParam can not be null.");
         Assert.notNull(extensionParam.getElement(),
-            "Extension contribution element can not be null.");
+                "Extension contribution element can not be null.");
         Assert.notNull(extensionParam.getTargetInstanceName(),
-            "Extension target instance name can not be null.");
+                "Extension target instance name can not be null.");
         Assert.notNull(extensionParam.getTargetName(), "Extension target name can not be null.");
 
         ExtensionImpl extension = new ExtensionImpl(null, extensionParam.getTargetName(),
-            extensionParam.getElement(), sofaRuntimeContext.getAppClassLoader());
+                extensionParam.getElement(), sofaRuntimeContext.getAppClassLoader());
         extension.setTargetComponentName(ComponentNameFactory.createComponentName(
-            ExtensionPointComponent.EXTENSION_POINT_COMPONENT_TYPE,
-            extensionParam.getTargetInstanceName() + ExtensionComponent.LINK_SYMBOL
-                    + extensionParam.getTargetName()));
+                ExtensionPointComponent.EXTENSION_POINT_COMPONENT_TYPE,
+                extensionParam.getTargetInstanceName() + ExtensionComponent.LINK_SYMBOL
+                        + extensionParam.getTargetName()));
         ComponentInfo extensionComponent = new ExtensionComponent(extension, sofaRuntimeContext);
         sofaRuntimeContext.getComponentManager().register(extensionComponent);
     }
@@ -71,16 +70,16 @@ public class ExtensionClientImpl implements ExtensionClient {
         Assert.notNull(extensionPointParam, "extensionPointParam can not be null.");
         Assert.notNull(extensionPointParam.getName(), "Extension point name can not be null.");
         Assert.notNull(extensionPointParam.getContributionClass(),
-            "Extension point contribution can not be null.");
+                "Extension point contribution can not be null.");
         Assert.notNull(extensionPointParam.getTarget(), "Extension point target can not be null.");
 
         ExtensionPoint extensionPoint = new ExtensionPointImpl(extensionPointParam.getName(),
-            extensionPointParam.getContributionClass());
+                extensionPointParam.getContributionClass());
         Implementation implementation = new DefaultImplementation(
-            extensionPointParam.getTargetName());
+                extensionPointParam.getTargetName());
         implementation.setTarget(extensionPointParam.getTarget());
         ComponentInfo extensionPointComponent = new ExtensionPointComponent(extensionPoint,
-            sofaRuntimeContext, implementation);
+                sofaRuntimeContext, implementation);
         sofaRuntimeContext.getComponentManager().register(extensionPointComponent);
     }
 }

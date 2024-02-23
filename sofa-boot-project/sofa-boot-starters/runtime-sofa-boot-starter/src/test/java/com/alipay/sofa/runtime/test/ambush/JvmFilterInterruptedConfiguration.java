@@ -16,8 +16,8 @@
  */
 package com.alipay.sofa.runtime.test.ambush;
 
-import com.alipay.sofa.runtime.filter.JvmFilterContext;
 import com.alipay.sofa.runtime.filter.JvmFilter;
+import com.alipay.sofa.runtime.filter.JvmFilterContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource("classpath:spring/runtime.xml")
 public class JvmFilterInterruptedConfiguration {
     public static int beforeCount = 0;
-    public static int afterCount  = 0;
+    public static int afterCount = 0;
 
     @Bean
     public JvmFilter egressFilter1() {

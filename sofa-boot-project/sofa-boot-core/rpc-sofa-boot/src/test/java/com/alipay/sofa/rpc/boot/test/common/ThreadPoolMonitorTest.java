@@ -34,7 +34,7 @@ public class ThreadPoolMonitorTest {
     @Test
     public void test() throws InterruptedException {
         ThreadPoolExecutor executorService = new ThreadPoolExecutor(10, 11, 1, TimeUnit.DAYS,
-            new LinkedBlockingQueue<>(10));
+                new LinkedBlockingQueue<>(10));
         new RpcThreadPoolMonitor(executorService, LoggerConstant.TRIPLE_THREAD_LOGGER_NAME).start();
         Thread.sleep(10000);
     }
@@ -42,9 +42,9 @@ public class ThreadPoolMonitorTest {
     @Test
     public void testTestStop() throws InterruptedException {
         ThreadPoolExecutor executorService = new ThreadPoolExecutor(10, 11, 1, TimeUnit.DAYS,
-            new LinkedBlockingQueue<>(10));
+                new LinkedBlockingQueue<>(10));
         RpcThreadPoolMonitor rpcThreadPoolMonitor = new RpcThreadPoolMonitor(executorService,
-            LoggerConstant.TRIPLE_THREAD_LOGGER_NAME);
+                LoggerConstant.TRIPLE_THREAD_LOGGER_NAME);
         rpcThreadPoolMonitor.start();
 
         Thread monitor = rpcThreadPoolMonitor.getMonitor();

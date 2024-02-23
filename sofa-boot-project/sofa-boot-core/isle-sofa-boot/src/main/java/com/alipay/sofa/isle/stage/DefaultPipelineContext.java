@@ -16,18 +16,16 @@
  */
 package com.alipay.sofa.isle.stage;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
 /**
  * @author xuanbei 18/3/12
  */
 public class DefaultPipelineContext implements PipelineContext {
-
-    private final List<PipelineStage> stageList;
-
-    public DefaultPipelineContext(List<PipelineStage> stageList) {
-        this.stageList = stageList;
-    }
+    @Autowired
+    private List<PipelineStage> stageList;
 
     @Override
     public void process() throws Exception {

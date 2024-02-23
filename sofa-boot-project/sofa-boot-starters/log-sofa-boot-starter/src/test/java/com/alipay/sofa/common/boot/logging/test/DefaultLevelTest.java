@@ -42,13 +42,12 @@ public class DefaultLevelTest extends LogTestBase {
         logger = getLogger();
         File logFile = getLogbackDefaultFile(environment);
         FileUtils.write(logFile, StringUtil.EMPTY_STRING,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         logger.info("info level");
         logger.debug("debug level");
         List<String> contents = FileUtils.readLines(logFile,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         Assert.assertEquals(1, contents.size());
         Assert.assertTrue(contents.get(0).contains("info level"));
-        applicationContext.close();
     }
 }

@@ -34,10 +34,11 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/9/12 12:52 AM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/9/12 12:52 AM
+ * @since:
  **/
 @ActiveProfiles("ribbon")
-@Import({ FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class })
+@Import({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 @EnableFeignClients
 public class TestRestTemplateRibbon extends AbstractTestCloudBase {
 
@@ -56,8 +57,8 @@ public class TestRestTemplateRibbon extends AbstractTestCloudBase {
             Thread.sleep(500);
             //wait for async output
             List<String> contents = FileUtils.readLines(new File(
-                logDirectoryPath + File.separator
-                        + RestTemplateLogEnum.REST_TEMPLATE_DIGEST.getDefaultLogName()));
+                    logDirectoryPath + File.separator
+                            + RestTemplateLogEnum.REST_TEMPLATE_DIGEST.getDefaultLogName()));
             Assert.assertTrue(contents.size() == 1);
             Assert.assertTrue(contents.get(0).contains("Connection refused"));
         }
@@ -68,8 +69,8 @@ public class TestRestTemplateRibbon extends AbstractTestCloudBase {
         Thread.sleep(500);
         //wait for async output
         List<String> contents = FileUtils.readLines(new File(
-            logDirectoryPath + File.separator
-                    + RestTemplateLogEnum.REST_TEMPLATE_DIGEST.getDefaultLogName()));
+                logDirectoryPath + File.separator
+                        + RestTemplateLogEnum.REST_TEMPLATE_DIGEST.getDefaultLogName()));
         Assert.assertTrue(contents.size() == 2);
     }
 }

@@ -16,10 +16,10 @@
  */
 package com.alipay.sofa.tracer.boot.springmvc;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import com.alipay.sofa.tracer.boot.TestUtil;
+import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
+import com.alipay.sofa.tracer.boot.base.SpringBootWebApplication;
+import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,10 +29,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.tracer.boot.TestUtil;
-import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
-import com.alipay.sofa.tracer.boot.base.SpringBootWebApplication;
-import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author qilong.zql
@@ -40,16 +39,16 @@ import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SpringBootWebApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-                                                                                                                                    "spring.main.web-application-type=reactive",
-                                                                                                                                    "com.alipay.sofa.tracer.springmvc.jsonOutput=true",
-                                                                                                                                    "spring.application.name=webflux-test" })
+        "spring.main.web-application-type=reactive",
+        "com.alipay.sofa.tracer.springmvc.jsonOutput=true",
+        "spring.application.name=webflux-test"})
 public class WebFluxTracerTest extends AbstractTestBase {
 
     @Autowired
     protected TestRestTemplate testRestTemplate;
 
     @LocalServerPort
-    private int                definedPort;
+    private int definedPort;
 
     @Test
     public void testWebFluxTracer() throws Exception {
@@ -60,7 +59,7 @@ public class WebFluxTracerTest extends AbstractTestBase {
 
         //wait for async output
         List<String> contents = FileUtils
-            .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
+                .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
         assertTrue(contents.size() == 1);
     }
 

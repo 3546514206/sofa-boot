@@ -42,11 +42,11 @@ import java.util.Collection;
  */
 @SpringBootApplication
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = XsdTimeoutTest.class, properties = { "timeout=10000" })
+@SpringBootTest(classes = XsdTimeoutTest.class, properties = {"timeout=10000"})
 @ImportResource("/spring/service_reference.xml")
 public class XsdTimeoutTest {
     @Autowired
-    WhateverInterface  whatever;
+    WhateverInterface whatever;
     @Autowired
     SofaRuntimeContext sofaRuntimeContext;
 
@@ -58,11 +58,11 @@ public class XsdTimeoutTest {
     @Test
     public void testServiceTimeout() {
         ServiceComponent component = (ServiceComponent) sofaRuntimeContext.getComponentManager()
-            .getComponentInfo(
-                new ComponentName(ServiceComponent.SERVICE_COMPONENT_TYPE, WhateverInterface.class
-                    .getName()));
+                .getComponentInfo(
+                        new ComponentName(ServiceComponent.SERVICE_COMPONENT_TYPE, WhateverInterface.class
+                                .getName()));
         RpcBinding binding = (RpcBinding) component.getService().getBinding(
-            RpcBindingType.BOLT_BINDING_TYPE);
+                RpcBindingType.BOLT_BINDING_TYPE);
         Assert.assertEquals((long) binding.getRpcBindingParam().getTimeout(), 10000);
     }
 
@@ -73,30 +73,30 @@ public class XsdTimeoutTest {
     public void testBindingMethod() {
         //service
         ServiceComponent component = (ServiceComponent) sofaRuntimeContext.getComponentManager()
-            .getComponentInfo(
-                new ComponentName(ServiceComponent.SERVICE_COMPONENT_TYPE,
-                    MethodElementInterface.class.getName()));
+                .getComponentInfo(
+                        new ComponentName(ServiceComponent.SERVICE_COMPONENT_TYPE,
+                                MethodElementInterface.class.getName()));
         RpcBinding binding = (RpcBinding) component.getService().getBinding(
-            RpcBindingType.BOLT_BINDING_TYPE);
+                RpcBindingType.BOLT_BINDING_TYPE);
         Assert.assertEquals(1, binding.getRpcBindingParam().getMethodInfos().size());
         Assert.assertEquals("service", binding.getRpcBindingParam().getMethodInfos().get(0)
-            .getName());
+                .getName());
         Assert.assertEquals(10000, binding.getRpcBindingParam().getMethodInfos().get(0)
-            .getTimeout().intValue());
+                .getTimeout().intValue());
 
         //reference
         Collection<ComponentInfo> componentInfos = sofaRuntimeContext.getComponentManager()
-            .getComponentInfosByType(ReferenceComponent.REFERENCE_COMPONENT_TYPE);
+                .getComponentInfosByType(ReferenceComponent.REFERENCE_COMPONENT_TYPE);
         for (ComponentInfo componentInfo : componentInfos) {
             if (componentInfo instanceof ReferenceComponent) {
                 ReferenceComponent referenceComponent = (ReferenceComponent) componentInfo;
                 if (referenceComponent.getReference().getInterfaceType()
-                    .equals(MethodElementInterface.class)) {
+                        .equals(MethodElementInterface.class)) {
                     RpcBinding refBinding = (RpcBinding) referenceComponent.getReference()
-                        .getBinding(RpcBindingType.BOLT_BINDING_TYPE);
+                            .getBinding(RpcBindingType.BOLT_BINDING_TYPE);
                     Assert.assertEquals(1, refBinding.getRpcBindingParam().getMethodInfos().size());
                     Assert.assertEquals("service", refBinding.getRpcBindingParam().getMethodInfos()
-                        .get(0).getName());
+                            .get(0).getName());
                 }
             }
         }
@@ -105,16 +105,16 @@ public class XsdTimeoutTest {
     @Test
     public void testReferenceTimeout() {
         Collection<ComponentInfo> c = sofaRuntimeContext.getComponentManager()
-            .getComponentInfosByType(ReferenceComponent.REFERENCE_COMPONENT_TYPE);
+                .getComponentInfosByType(ReferenceComponent.REFERENCE_COMPONENT_TYPE);
         for (ComponentInfo componentInfo : c) {
             if (componentInfo instanceof ReferenceComponent) {
                 ReferenceComponent referenceComponent = (ReferenceComponent) componentInfo;
                 if (!referenceComponent.getReference().getInterfaceType()
-                    .equals(WhateverInterface.class)) {
+                        .equals(WhateverInterface.class)) {
                     continue;
                 }
                 Binding binding = referenceComponent.getReference().getBinding(
-                    RpcBindingType.BOLT_BINDING_TYPE);
+                        RpcBindingType.BOLT_BINDING_TYPE);
                 if (binding instanceof RpcBinding) {
                     RpcBinding rpcBinding = (RpcBinding) binding;
                     Assert.assertEquals((long) rpcBinding.getRpcBindingParam().getTimeout(), 10000);

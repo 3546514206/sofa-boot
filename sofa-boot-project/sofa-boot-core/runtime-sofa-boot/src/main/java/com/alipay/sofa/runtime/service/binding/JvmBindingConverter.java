@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.runtime.service.binding;
 
-import org.w3c.dom.Element;
-
 import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import com.alipay.sofa.runtime.api.annotation.SofaReferenceBinding;
 import com.alipay.sofa.runtime.api.annotation.SofaService;
@@ -25,6 +23,7 @@ import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
 import com.alipay.sofa.runtime.api.binding.BindingType;
 import com.alipay.sofa.runtime.spi.service.BindingConverter;
 import com.alipay.sofa.runtime.spi.service.BindingConverterContext;
+import org.w3c.dom.Element;
 
 /**
  * @author qilong.zql
@@ -42,7 +41,7 @@ public class JvmBindingConverter implements BindingConverter<JvmBindingParam, Jv
         JvmBindingParam jvmBindingParam = new JvmBindingParam();
         if (element != null) {
             jvmBindingParam.setSerialize(Boolean.TRUE.toString().equalsIgnoreCase(
-                element.getAttribute(JvmBinding.XmlConstants.SERIALIZE)));
+                    element.getAttribute(JvmBinding.XmlConstants.SERIALIZE)));
         }
         return new JvmBinding().setJvmBindingParam(jvmBindingParam);
     }
@@ -64,7 +63,7 @@ public class JvmBindingConverter implements BindingConverter<JvmBindingParam, Jv
                               SofaReferenceBinding sofaReferenceBindingAnnotation,
                               BindingConverterContext bindingConverterContext) {
         if (JvmBinding.XmlConstants.BINDING_TYPE.equals(sofaReferenceBindingAnnotation
-            .bindingType())) {
+                .bindingType())) {
             JvmBindingParam jvmBindingParam = new JvmBindingParam();
             jvmBindingParam.setSerialize(sofaReferenceBindingAnnotation.serialize());
             return new JvmBinding().setJvmBindingParam(jvmBindingParam);

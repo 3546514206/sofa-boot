@@ -27,12 +27,9 @@ import com.alipay.sofa.isle.stage.ModelCreatingStage;
 import com.alipay.sofa.startup.StartupReporter;
 import com.alipay.sofa.startup.stage.healthcheck.StartupReadinessCheckListener;
 import org.junit.Test;
-import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointProperties;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,21 +40,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StartupHealthCheckStageConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-                                                             .withBean(StartupReporter.class)
-                                                             .withConfiguration(
-                                                                 AutoConfigurations
-                                                                     .of(SofaStartupAutoConfiguration.class,
-                                                                         SofaBootHealthCheckAutoConfiguration.class,
-                                                                         StartupHealthCheckStageConfiguration.class,
-                                                                         SofaRuntimeAutoConfiguration.class,
-                                                                         TestHealthCheckConfiguration.class));
+            .withConfiguration(AutoConfigurations
+                    .of(SofaStartupAutoConfiguration.class,
+                            SofaBootHealthCheckAutoConfiguration.class,
+                            StartupHealthCheckStageConfiguration.class,
+                            TestHealthCheckConfiguration.class,
+                            SofaRuntimeAutoConfiguration.class));
 
     @Test
     public void startupReporterAndHealthCheckerExist() {
         contextRunner.withClassLoader(new FilteredClassLoader(ApplicationRuntimeModel.class, ModelCreatingStage.class))
                 .run((context -> {
-            assertThat(context).hasSingleBean(StartupReadinessCheckListener.class);
-        }));
+                    assertThat(context).hasSingleBean(StartupReadinessCheckListener.class);
+                }));
     }
 
     @Test
@@ -75,10 +70,5 @@ public class StartupHealthCheckStageConfigurationTest {
                     assertThat(context).hasSingleBean(ReadinessCheckListener.class);
                     assertThat(context).doesNotHaveBean(StartupReadinessCheckListener.class);
                 }));
-    }
-
-    @Configuration(proxyBeanMethods = false)
-    @EnableConfigurationProperties(value = { HealthEndpointProperties.class })
-    static class TestHealthCheckConfiguration {
     }
 }

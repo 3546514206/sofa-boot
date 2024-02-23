@@ -25,7 +25,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
- *
  * @author xi.hux@alipay.com
  * @since 2.6.0
  */
@@ -34,10 +33,10 @@ public class ParserUtils {
     /**
      * Parse custom attributes, as ID, LAZY-INIT, DEPENDS-ON。
      *
-     * @param element element
+     * @param element       element
      * @param parserContext parser context
-     * @param builder builder
-     * @param callback callback
+     * @param builder       builder
+     * @param callback      callback
      */
     public static void parseCustomAttributes(Element element, ParserContext parserContext,
                                              BeanDefinitionBuilder builder,
@@ -50,8 +49,8 @@ public class ParserUtils {
 
             if (BeanDefinitionParserDelegate.DEPENDS_ON_ATTRIBUTE.equals(name)) {
                 builder.getBeanDefinition().setDependsOn(
-                    (StringUtils.tokenizeToStringArray(attribute.getValue(),
-                        BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS)));
+                        (StringUtils.tokenizeToStringArray(attribute.getValue(),
+                                BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS)));
             } else if (BeanDefinitionParserDelegate.LAZY_INIT_ATTRIBUTE.equals(name)) {
                 builder.setLazyInit(Boolean.parseBoolean(attribute.getValue()));
             } else if (BeanDefinitionParserDelegate.ABSTRACT_ATTRIBUTE.equals(name)) {
@@ -65,7 +64,6 @@ public class ParserUtils {
     }
 
     /**
-     *
      * @author xi.hux@alipay.com
      * @since 2.6.0
      */
@@ -74,9 +72,9 @@ public class ParserUtils {
         /**
          * Parser attribute
          *
-         * @param parent element parent
-         * @param attribute attribute
-         * @param builder builder
+         * @param parent        element parent
+         * @param attribute     attribute
+         * @param builder       builder
          * @param parserContext parser context
          */
         void process(Element parent, Attr attribute, BeanDefinitionBuilder builder,

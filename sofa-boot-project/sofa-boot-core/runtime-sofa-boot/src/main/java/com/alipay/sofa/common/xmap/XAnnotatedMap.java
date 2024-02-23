@@ -16,32 +16,26 @@
  */
 package com.alipay.sofa.common.xmap;
 
+import com.alipay.sofa.common.xmap.annotation.XNodeMap;
+import com.alipay.sofa.runtime.log.SofaLogger;
+import org.w3c.dom.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.alipay.sofa.common.xmap.annotation.XNodeMap;
-import com.alipay.sofa.runtime.log.SofaLogger;
-
 /**
- *
  * @author <a href="mailto:bs@nuxeo.com">Bogdan Stefanescu</a>
  * @author xi.hux@alipay.com
  * @since 2.6.0
  */
 public class XAnnotatedMap extends XAnnotatedList {
 
-    protected static final ElementMapVisitor        elementMapVisitor = new ElementMapVisitor();
-    protected static final ElementValueMapVisitor   elementVisitor    = new ElementValueMapVisitor();
-    protected static final AttributeValueMapVisitor attributeVisitor  = new AttributeValueMapVisitor();
+    protected static final ElementMapVisitor elementMapVisitor = new ElementMapVisitor();
+    protected static final ElementValueMapVisitor elementVisitor = new ElementValueMapVisitor();
+    protected static final AttributeValueMapVisitor attributeVisitor = new AttributeValueMapVisitor();
 
-    protected Path                                  key;
+    protected Path key;
 
     public XAnnotatedMap(XMap xmap, XSetter setter, XGetter getter, XNodeMap anno) {
         super(xmap, setter, getter);
@@ -61,7 +55,7 @@ public class XAnnotatedMap extends XAnnotatedList {
     @SuppressWarnings("unchecked")
     @Override
     protected Object getValue(Context ctx, Element base) throws IllegalAccessException,
-                                                        InstantiationException {
+            InstantiationException {
         Map<String, Object> values = (Map) type.newInstance();
         if (xao != null) {
             DOMHelper.visitMapNodes(ctx, this, base, path, elementMapVisitor, values);
@@ -81,7 +75,7 @@ public class XAnnotatedMap extends XAnnotatedList {
     @SuppressWarnings("unchecked")
     @Override
     public void decode(Object instance, Node base, Document document, List<String> filters)
-                                                                                           throws Exception {
+            throws Exception {
         if (!isFilter(filters)) {
             return;
         }

@@ -16,14 +16,6 @@
  */
 package com.alipay.sofa.runtime.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import com.alipay.sofa.boot.annotation.PlaceHolderAnnotationInvocationHandler;
 import com.alipay.sofa.boot.annotation.PlaceHolderBinder;
 import com.alipay.sofa.boot.annotation.WrapperAnnotation;
@@ -33,6 +25,13 @@ import com.alipay.sofa.runtime.api.annotation.SofaService;
 import com.alipay.sofa.runtime.api.annotation.SofaServiceBinding;
 import com.alipay.sofa.runtime.test.beans.facade.SampleService;
 import com.alipay.sofa.runtime.test.beans.service.AnnotationSampleService;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Test {@link com.alipay.sofa.runtime.api.annotation.SofaServiceBinding} and
@@ -41,7 +40,7 @@ import com.alipay.sofa.runtime.test.beans.service.AnnotationSampleService;
  * @author qilong.zql
  * @since 3.2.0
  */
-@TestPropertySource({ "/config/application-annotation.properties" })
+@TestPropertySource({"/config/application-annotation.properties"})
 @RunWith(SpringRunner.class)
 public class AnnotationPlaceHolderTest {
     @Autowired
@@ -59,7 +58,7 @@ public class AnnotationPlaceHolderTest {
 
         SofaService sofaService = AnnotationSampleService.class.getAnnotation(SofaService.class);
         PlaceHolderAnnotationInvocationHandler.AnnotationWrapperBuilder<SofaService> builder = PlaceHolderAnnotationInvocationHandler.AnnotationWrapperBuilder
-            .wrap(sofaService).withBinder(binder);
+                .wrap(sofaService).withBinder(binder);
         SofaService delegate = builder.build();
 
         Assert.assertEquals(sofaService.hashCode(), delegate.hashCode());
@@ -107,9 +106,9 @@ public class AnnotationPlaceHolderTest {
         };
 
         SofaReference sofaReference = AnnotationSampleService.class.getField("sampleService")
-            .getAnnotation(SofaReference.class);
+                .getAnnotation(SofaReference.class);
         PlaceHolderAnnotationInvocationHandler.AnnotationWrapperBuilder<SofaReference> builder = PlaceHolderAnnotationInvocationHandler.AnnotationWrapperBuilder
-            .wrap(sofaReference).withBinder(binder);
+                .wrap(sofaReference).withBinder(binder);
         SofaReference delegate = builder.build();
 
         Assert.assertEquals("${annotation.sample.ref.uniqueId}", sofaReference.uniqueId());

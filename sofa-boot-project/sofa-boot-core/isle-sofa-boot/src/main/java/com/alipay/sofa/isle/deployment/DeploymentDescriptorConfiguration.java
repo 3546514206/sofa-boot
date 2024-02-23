@@ -25,9 +25,13 @@ import java.util.List;
  * @author khotyn 9/11/14 4:51 PM
  */
 public class DeploymentDescriptorConfiguration {
-    /** module name identities */
-    private List<String> moduleNameIdentities    = new ArrayList<>();
-    /** require module identities */
+    /**
+     * module name identities
+     */
+    private List<String> moduleNameIdentities = new ArrayList<>();
+    /**
+     * require module identities
+     */
     private List<String> requireModuleIdentities = new ArrayList<>();
 
     public DeploymentDescriptorConfiguration(List<String> moduleNameIdentities,

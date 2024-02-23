@@ -27,12 +27,12 @@ public class RuntimeContextAwareBean implements SofaRuntimeContextAware {
 
     private SofaRuntimeContext sofaRuntimeContext;
 
+    public SofaRuntimeContext getSofaRuntimeContext() {
+        return sofaRuntimeContext;
+    }
+
     @Override
     public void setSofaRuntimeContext(SofaRuntimeContext sofaRuntimeContext) {
         this.sofaRuntimeContext = sofaRuntimeContext;
-    }
-
-    public SofaRuntimeContext getSofaRuntimeContext() {
-        return sofaRuntimeContext;
     }
 }

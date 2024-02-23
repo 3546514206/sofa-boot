@@ -19,29 +19,19 @@ package com.alipay.sofa.boot.listener;
 import com.alipay.sofa.boot.constant.SofaBootConstants;
 import com.alipay.sofa.boot.util.SofaBootEnvUtils;
 import com.alipay.sofa.common.log.env.LogEnvUtils;
-import com.alipay.sofa.boot.util.ApplicationListenerOrderConstants;
 import org.springframework.boot.Banner;
-import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
-import org.springframework.boot.env.EnvironmentPostProcessorApplicationListener;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.EnumerablePropertySource;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
-import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.env.*;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.StreamSupport;
 
@@ -50,48 +40,51 @@ import java.util.stream.StreamSupport;
  * @since 3.0.0
  */
 public class SofaBootstrapRunListener implements
-                                     ApplicationListener<ApplicationEnvironmentPreparedEvent>,
-                                     Ordered {
+        ApplicationListener<ApplicationEnvironmentPreparedEvent>,
+        Ordered {
 
-    private static AtomicBoolean           executed             = new AtomicBoolean(false);
     private final static MapPropertySource HIGH_PRIORITY_CONFIG = new MapPropertySource(
-                                                                    SofaBootConstants.SOFA_HIGH_PRIORITY_CONFIG,
-                                                                    new HashMap<>());
+            SofaBootConstants.SOFA_HIGH_PRIORITY_CONFIG,
+            new HashMap<>());
+    private static AtomicBoolean executed = new AtomicBoolean(false);
 
     /**
      * config log settings
      */
     private void assemblyLogSetting(ConfigurableEnvironment environment) {
         StreamSupport.stream(environment.getPropertySources().spliterator(), false)
-            .filter(propertySource -> propertySource instanceof EnumerablePropertySource)
-            .map(propertySource -> Arrays
-                .asList(((EnumerablePropertySource) propertySource).getPropertyNames()))
+                .filter(propertySource -> propertySource instanceof EnumerablePropertySource)
+                .map(propertySource -> Arrays
+                        .asList(((EnumerablePropertySource) propertySource).getPropertyNames()))
                 .flatMap(Collection::stream).filter(LogEnvUtils::isSofaCommonLoggingConfig)
                 .forEach((key) -> HIGH_PRIORITY_CONFIG.getSource().put(key, environment.getProperty(key)));
     }
 
     /**
      * config required properties
+     *
      * @param environment
      */
     private void assemblyRequireProperties(ConfigurableEnvironment environment) {
         if (StringUtils.hasText(environment.getProperty(SofaBootConstants.APP_NAME_KEY))) {
             HIGH_PRIORITY_CONFIG.getSource().put(SofaBootConstants.APP_NAME_KEY,
-                environment.getProperty(SofaBootConstants.APP_NAME_KEY));
+                    environment.getProperty(SofaBootConstants.APP_NAME_KEY));
         }
     }
 
     /**
      * Mark this environment as SOFA bootstrap environment
+     *
      * @param environment
      */
     private void assemblyEnvironmentMark(ConfigurableEnvironment environment) {
         environment.getPropertySources().addFirst(
-            new MapPropertySource(SofaBootConstants.SOFA_BOOTSTRAP, new HashMap<>()));
+                new MapPropertySource(SofaBootConstants.SOFA_BOOTSTRAP, new HashMap<>()));
     }
 
     /**
      * Un-Mark this environment as SOFA bootstrap environment
+     *
      * @param environment
      */
     private void unAssemblyEnvironmentMark(ConfigurableEnvironment environment) {
@@ -100,7 +93,7 @@ public class SofaBootstrapRunListener implements
 
     @Override
     public int getOrder() {
-        return ApplicationListenerOrderConstants.SOFA_BOOTSTRAP_RUN_LISTENER_ORDER;
+        return HIGHEST_PRECEDENCE;
     }
 
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
@@ -109,7 +102,7 @@ public class SofaBootstrapRunListener implements
         if (SofaBootEnvUtils.isSpringCloud() && executed.compareAndSet(false, true)) {
             StandardEnvironment bootstrapEnvironment = new StandardEnvironment();
             StreamSupport.stream(environment.getPropertySources().spliterator(), false)
-                    .filter(source->!(source instanceof PropertySource.StubPropertySource))
+                    .filter(source -> !(source instanceof PropertySource.StubPropertySource))
                     .forEach(source -> bootstrapEnvironment.getPropertySources().addLast(source));
 
             List<Class> sources = new ArrayList<>();
@@ -123,17 +116,16 @@ public class SofaBootstrapRunListener implements
 
             SpringApplication bootstrapApplication = new SpringApplicationBuilder()
                     .profiles(environment.getActiveProfiles()).bannerMode(Banner.Mode.OFF)
-                    .environment(bootstrapEnvironment).sources(sources.toArray(new Class[] {}))
+                    .environment(bootstrapEnvironment).sources(sources.toArray(new Class[]{}))
                     .registerShutdownHook(false).logStartupInfo(false).web(WebApplicationType.NONE)
                     .listeners().initializers().build(event.getArgs());
 
-            ConfigurableBootstrapContext bootstrapContext = event.getBootstrapContext();
             ApplicationEnvironmentPreparedEvent bootstrapEvent = new ApplicationEnvironmentPreparedEvent(
-                    bootstrapContext, bootstrapApplication, event.getArgs(), bootstrapEnvironment);
+                    bootstrapApplication, event.getArgs(), bootstrapEnvironment);
 
             application.getListeners().stream()
-                    .filter(listener -> listener instanceof EnvironmentPostProcessorApplicationListener)
-                    .forEach(listener -> ((EnvironmentPostProcessorApplicationListener) listener)
+                    .filter(listener -> listener instanceof ConfigFileApplicationListener)
+                    .forEach(listener -> ((ConfigFileApplicationListener) listener)
                             .onApplicationEvent(bootstrapEvent));
 
             assemblyLogSetting(bootstrapEnvironment);

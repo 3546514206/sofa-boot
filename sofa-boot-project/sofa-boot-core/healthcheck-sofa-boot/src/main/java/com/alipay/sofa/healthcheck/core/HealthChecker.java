@@ -15,29 +15,35 @@
  * limitations under the License.
  */
 package com.alipay.sofa.healthcheck.core;
+
 import org.springframework.boot.actuate.health.Health;
 
 /**
  * @author liangen
  * @author qilong.zql
+ * <p>
+ * SOFABoot 提供的健康检查接口，相比 HealthIndicator 接口，增加了一些扩展参数，如失败重试次数，超时时间等
  * @since 2.3.0
  */
 public interface HealthChecker {
 
     /**
      * HealthCheck information.
+     *
      * @return
      */
     Health isHealthy();
 
     /**
      * HealthChecker name
+     *
      * @return
      */
     String getComponentName();
 
     /**
      * The number of retries after failure.
+     *
      * @return
      */
     default int getRetryCount() {
@@ -46,9 +52,10 @@ public interface HealthChecker {
 
     /**
      * The time interval for each retry after failure.
+     *
      * @return
      */
-    default long getRetryTimeInterval(){
+    default long getRetryTimeInterval() {
         return 0;
     }
 
@@ -56,18 +63,10 @@ public interface HealthChecker {
      * Is it strictly checked?
      * If true, the final check result of isHealthy() is used as the result of the component's check.
      * If false, the final result of the component is considered to be healthy, but the exception log is printed.
+     *
      * @return
      */
     default boolean isStrictCheck() {
         return true;
-    }
-
-    /**
-     * The timeout in milliseconds.
-     * If less than or equal to 0, the property {@literal com.alipay.sofa.healthcheck.component.timeout} is used as timeout.
-     * @return
-     */
-    default int getTimeout() {
-        return 0;
     }
 }

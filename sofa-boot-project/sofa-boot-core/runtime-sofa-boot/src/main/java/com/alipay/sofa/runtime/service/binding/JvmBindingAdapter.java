@@ -16,18 +16,11 @@
  */
 package com.alipay.sofa.runtime.service.binding;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
-
-import com.alipay.sofa.boot.error.ErrorCode;
 import com.alipay.sofa.runtime.SofaRuntimeProperties;
-import com.alipay.sofa.runtime.filter.JvmFilterContext;
-import com.alipay.sofa.runtime.filter.JvmFilterHolder;
-import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.framework.ProxyFactory;
-
 import com.alipay.sofa.runtime.api.binding.BindingType;
 import com.alipay.sofa.runtime.api.component.ComponentName;
+import com.alipay.sofa.runtime.filter.JvmFilterContext;
+import com.alipay.sofa.runtime.filter.JvmFilterHolder;
 import com.alipay.sofa.runtime.invoke.DynamicJvmServiceProxyFinder;
 import com.alipay.sofa.runtime.log.SofaLogger;
 import com.alipay.sofa.runtime.service.component.ServiceComponent;
@@ -37,6 +30,11 @@ import com.alipay.sofa.runtime.spi.component.ComponentInfo;
 import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
 import com.alipay.sofa.runtime.spi.service.ServiceProxy;
 import com.alipay.sofa.runtime.spi.util.ComponentNameFactory;
+import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.aop.framework.ProxyFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 
 /**
  * JVM Binding Adapter, used to handle JvmBinding
@@ -124,7 +122,6 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
             ProxyFactory factory = new ProxyFactory();
             if (javaClass.isInterface()) {
                 factory.addInterface(javaClass);
-                factory.addInterface(JvmBindingInterface.class);
             } else {
                 factory.setTargetClass(javaClass);
                 factory.setProxyTargetClass(true);
@@ -140,9 +137,9 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
      * JVM Service Invoker
      */
     static class JvmServiceInvoker extends ServiceProxy {
-        private Contract           contract;
-        private JvmBinding         binding;
-        private Object             target;
+        private Contract contract;
+        private JvmBinding binding;
+        private Object target;
         private SofaRuntimeContext sofaRuntimeContext;
 
         public JvmServiceInvoker(Contract contract, JvmBinding binding,
@@ -166,8 +163,8 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
 
             if (getTarget() == null) {
                 ServiceComponent serviceComponent = DynamicJvmServiceProxyFinder
-                    .getDynamicJvmServiceProxyFinder().findServiceComponent(
-                        sofaRuntimeContext.getAppClassLoader(), contract);
+                        .getDynamicJvmServiceProxyFinder().findServiceComponent(
+                                sofaRuntimeContext.getAppClassLoader(), contract);
                 if (serviceComponent == null) {
                     // Jvm service is not found in normal or Ark environment
                     // We're actually invoking an RPC service, skip Jvm filtering
@@ -206,12 +203,12 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
         public Object doInvoke(MethodInvocation invocation) throws Throwable {
             if (binding.isDestroyed()) {
                 throw new IllegalStateException("Can not call destroyed reference! JVM Reference["
-                                                + getInterfaceName() + "#" + getUniqueId()
-                                                + "] has already been destroyed.");
+                        + getInterfaceName() + "#" + getUniqueId()
+                        + "] has already been destroyed.");
             }
 
             SofaLogger.debug(">> Start in JVM service invoke, the service interface is  - {}",
-                getInterfaceName());
+                    getInterfaceName());
 
             Object retVal;
             Object targetObj = this.getTarget();
@@ -219,15 +216,15 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
             // invoke internal dynamic-biz jvm service
             if (targetObj == null) {
                 ServiceProxy serviceProxy = DynamicJvmServiceProxyFinder
-                    .getDynamicJvmServiceProxyFinder().findServiceProxy(
-                        sofaRuntimeContext.getAppClassLoader(), contract);
+                        .getDynamicJvmServiceProxyFinder().findServiceProxy(
+                                sofaRuntimeContext.getAppClassLoader(), contract);
                 if (serviceProxy != null) {
                     try {
                         return serviceProxy.invoke(invocation);
                     } finally {
                         SofaLogger.debug(
-                            "<< Finish Cross App JVM service invoke, the service is  - {}]",
-                            (getInterfaceName() + "#" + getUniqueId()));
+                                "<< Finish Cross App JVM service invoke, the service is  - {}]",
+                                (getInterfaceName() + "#" + getUniqueId()));
                     }
                 }
             }
@@ -235,12 +232,18 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
             if (targetObj == null || ((targetObj instanceof Proxy) && binding.hasBackupProxy())) {
                 targetObj = binding.getBackupProxy();
                 SofaLogger.debug("<<{}.{} backup proxy invoke.", getInterfaceName().getName(),
-                    invocation.getMethod().getName());
+                        invocation.getMethod().getName());
             }
 
             if (targetObj == null) {
-                throw new IllegalStateException(ErrorCode.convert("01-00400", getInterfaceName(),
-                    getUniqueId()));
+                throw new IllegalStateException(
+                        "JVM Reference["
+                                + getInterfaceName()
+                                + "#"
+                                + getUniqueId()
+                                + "] can not find the corresponding JVM service. "
+                                + "Please check if there is a SOFA deployment publish the corresponding JVM service. "
+                                + "If this exception occurred when the application starts up, please add Require-Module to SOFA deployment's MANIFEST.MF to indicate the startup dependency of SOFA modules.");
             }
 
             ClassLoader tcl = Thread.currentThread().getContextClassLoader();
@@ -251,8 +254,8 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
                 throw ex.getTargetException();
             } finally {
                 SofaLogger.debug(
-                    "<< Finish JVM service invoke, the service implementation is  - {}]",
-                    (this.target == null ? "null" : this.target.getClass().getName()));
+                        "<< Finish JVM service invoke, the service implementation is  - {}]",
+                        (this.target == null ? "null" : this.target.getClass().getName()));
 
                 popThreadContextClassLoader(tcl);
             }
@@ -277,10 +280,10 @@ public class JvmBindingAdapter implements BindingAdapter<JvmBinding> {
         protected Object getTarget() {
             if (this.target == null) {
                 ComponentName componentName = ComponentNameFactory.createComponentName(
-                    ServiceComponent.SERVICE_COMPONENT_TYPE, getInterfaceName(),
-                    contract.getUniqueId());
+                        ServiceComponent.SERVICE_COMPONENT_TYPE, getInterfaceName(),
+                        contract.getUniqueId());
                 ComponentInfo componentInfo = sofaRuntimeContext.getComponentManager()
-                    .getComponentInfo(componentName);
+                        .getComponentInfo(componentName);
 
                 if (componentInfo != null) {
                     this.target = componentInfo.getImplementation().getTarget();

@@ -16,11 +16,13 @@
  */
 package com.alipay.sofa.rpc.boot.test.reference;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.util.List;
-
+import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
+import com.alipay.sofa.rpc.boot.container.ServerConfigContainer;
+import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
+import com.alipay.sofa.rpc.boot.test.bean.invoke.HelloSyncService;
+import com.alipay.sofa.rpc.config.ServerConfig;
+import com.alipay.sofa.rpc.core.exception.SofaRouteException;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +31,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alipay.sofa.rpc.boot.config.SofaBootRpcConfigConstants;
-import com.alipay.sofa.rpc.boot.container.ServerConfigContainer;
-import com.alipay.sofa.rpc.boot.test.ActivelyDestroyTest;
-import com.alipay.sofa.rpc.boot.test.bean.invoke.HelloSyncService;
-import com.alipay.sofa.rpc.config.ServerConfig;
-import com.alipay.sofa.rpc.core.exception.SofaRouteException;
-import com.google.common.collect.Lists;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
- *
  * @author zhuoyu.sjw
  * @version $Id: SofaBootRpCReferenceTest.java, v 0.1 2018-06-25 19:26 zhuoyu.sjw Exp $$
  */
@@ -49,7 +47,7 @@ import com.google.common.collect.Lists;
 public class ReferenceTest extends ActivelyDestroyTest {
 
     @Autowired
-    private HelloSyncService      helloSyncService;
+    private HelloSyncService helloSyncService;
 
     @Autowired
     private ServerConfigContainer serverConfigContainer;
@@ -57,9 +55,9 @@ public class ReferenceTest extends ActivelyDestroyTest {
     @Test
     public void testNoServerStarted() {
         List<String> protocols = Lists.newArrayList(SofaBootRpcConfigConstants.RPC_PROTOCOL_BOLT,
-            SofaBootRpcConfigConstants.RPC_PROTOCOL_REST,
-            SofaBootRpcConfigConstants.RPC_PROTOCOL_H2C,
-            SofaBootRpcConfigConstants.RPC_PROTOCOL_DUBBO);
+                SofaBootRpcConfigConstants.RPC_PROTOCOL_REST,
+                SofaBootRpcConfigConstants.RPC_PROTOCOL_H2C,
+                SofaBootRpcConfigConstants.RPC_PROTOCOL_DUBBO);
 
         for (String protocol : protocols) {
             ServerConfig serverConfig = serverConfigContainer.getServerConfig(protocol);

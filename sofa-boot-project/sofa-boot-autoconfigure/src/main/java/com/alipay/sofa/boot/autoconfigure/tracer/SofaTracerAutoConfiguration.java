@@ -25,6 +25,7 @@ import com.alipay.common.tracer.core.utils.StringUtils;
 import com.alipay.sofa.tracer.boot.properties.SofaTracerProperties;
 import com.alipay.sofa.tracer.plugin.flexible.FlexibleTracer;
 import io.opentracing.Tracer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,17 +40,14 @@ import java.util.List;
  * @author yangguanchao
  * @since 2018/05/08
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @EnableConfigurationProperties(SofaTracerProperties.class)
-@ConditionalOnClass({ SpanReportListenerHolder.class, Tracer.class, SofaTracerProperties.class,
-                     FlexibleTracer.class })
+@ConditionalOnClass({SpanReportListenerHolder.class, Tracer.class, SofaTracerProperties.class,
+        FlexibleTracer.class})
 public class SofaTracerAutoConfiguration {
 
-    private final List<SpanReportListener> spanReportListenerList;
-
-    public SofaTracerAutoConfiguration(List<SpanReportListener> spanReportListenerList) {
-        this.spanReportListenerList = spanReportListenerList;
-    }
+    @Autowired(required = false)
+    private List<SpanReportListener> spanReportListenerList;
 
     @Bean
     @ConditionalOnMissingBean
@@ -63,7 +61,7 @@ public class SofaTracerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public Tracer sofaTracer(SofaTracerProperties sofaTracerProperties) throws Exception {
+    public Tracer tracer(SofaTracerProperties sofaTracerProperties) throws Exception {
         String reporterName = sofaTracerProperties.getReporterName();
         if (StringUtils.isNotBlank(reporterName)) {
             Reporter reporter = (Reporter) Class.forName(reporterName).newInstance();

@@ -16,14 +16,14 @@
  */
 package com.alipay.sofa.boot.annotation;
 
+import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
-import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * @author qilong.zql
@@ -31,7 +31,7 @@ import org.springframework.util.ReflectionUtils;
  */
 public class PlaceHolderAnnotationInvocationHandler implements InvocationHandler {
 
-    private final Annotation        delegate;
+    private final Annotation delegate;
 
     private final PlaceHolderBinder binder;
 
@@ -44,7 +44,7 @@ public class PlaceHolderAnnotationInvocationHandler implements InvocationHandler
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object ret = method.invoke(delegate, args);
         if (!ReflectionUtils.isEqualsMethod(method) && !ReflectionUtils.isHashCodeMethod(method)
-            && !ReflectionUtils.isToStringMethod(method) && isAttributeMethod(method)) {
+                && !ReflectionUtils.isToStringMethod(method) && isAttributeMethod(method)) {
             return resolvePlaceHolder(ret);
         }
         return ret;
@@ -52,7 +52,7 @@ public class PlaceHolderAnnotationInvocationHandler implements InvocationHandler
 
     private boolean isAttributeMethod(Method method) {
         return method != null && method.getParameterTypes().length == 0
-               && method.getReturnType() != void.class;
+                && method.getReturnType() != void.class;
     }
 
     public Object resolvePlaceHolder(Object origin) {
@@ -79,7 +79,7 @@ public class PlaceHolderAnnotationInvocationHandler implements InvocationHandler
     }
 
     public static class AnnotationWrapperBuilder<A> {
-        private Annotation        delegate;
+        private Annotation delegate;
         private PlaceHolderBinder binder;
 
         private AnnotationWrapperBuilder() {
@@ -87,7 +87,7 @@ public class PlaceHolderAnnotationInvocationHandler implements InvocationHandler
 
         public static <A> AnnotationWrapperBuilder wrap(A annotation) {
             Assert.isTrue(annotation == null || annotation instanceof Annotation,
-                "Parameter must be annotation type.");
+                    "Parameter must be annotation type.");
             AnnotationWrapperBuilder<A> builder = new AnnotationWrapperBuilder<A>();
             builder.delegate = (Annotation) annotation;
             return builder;
@@ -102,9 +102,9 @@ public class PlaceHolderAnnotationInvocationHandler implements InvocationHandler
         public A build() {
             if (delegate != null) {
                 ClassLoader cl = this.getClass().getClassLoader();
-                Class<?>[] exposedInterface = { delegate.annotationType(), WrapperAnnotation.class };
+                Class<?>[] exposedInterface = {delegate.annotationType(), WrapperAnnotation.class};
                 return (A) Proxy.newProxyInstance(cl, exposedInterface,
-                    new PlaceHolderAnnotationInvocationHandler(delegate, binder));
+                        new PlaceHolderAnnotationInvocationHandler(delegate, binder));
             }
             return null;
         }

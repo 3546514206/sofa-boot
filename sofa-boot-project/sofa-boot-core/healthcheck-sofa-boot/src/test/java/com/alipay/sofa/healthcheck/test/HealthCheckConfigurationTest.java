@@ -16,12 +16,8 @@
  */
 package com.alipay.sofa.healthcheck.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.alipay.sofa.healthcheck.HealthCheckProperties;
-import com.alipay.sofa.healthcheck.core.HealthCheckExecutor;
-import com.alipay.sofa.runtime.configure.SofaRuntimeConfigurationProperties;
+import com.alipay.sofa.boot.constant.SofaBootConstants;
+import com.alipay.sofa.healthcheck.*;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -29,14 +25,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
-import com.alipay.sofa.boot.constant.SofaBootConstants;
-import com.alipay.sofa.healthcheck.AfterReadinessCheckCallbackProcessor;
-import com.alipay.sofa.healthcheck.HealthCheckerProcessor;
-import com.alipay.sofa.healthcheck.HealthIndicatorProcessor;
-import com.alipay.sofa.healthcheck.ReadinessCheckListener;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author qilong.zql
@@ -49,14 +41,14 @@ public class HealthCheckConfigurationTest {
     @Test
     public void testInject() {
         initApplicationContext(new HashMap<String, Object>(),
-            HealthCheckConfigurationTestConfiguration.class);
+                HealthCheckConfigurationTestConfiguration.class);
         Assert.notNull(applicationContext.getBean(ReadinessCheckListener.class));
         Assert.notNull(applicationContext.getBean(HealthCheckerProcessor.class));
         Assert.notNull(applicationContext.getBean(HealthIndicatorProcessor.class));
         Assert.notNull(applicationContext.getBean(AfterReadinessCheckCallbackProcessor.class));
 
         ReadinessCheckListener readinessCheckListener = applicationContext
-            .getBean(ReadinessCheckListener.class);
+                .getBean(ReadinessCheckListener.class);
         Assert.isTrue(!readinessCheckListener.skipIndicator());
         Assert.isTrue(!readinessCheckListener.skipComponent());
         Assert.isTrue(!readinessCheckListener.skipAllCheck());
@@ -69,10 +61,10 @@ public class HealthCheckConfigurationTest {
         healthCheckConfiguration.put(SofaBootConstants.SOFABOOT_SKIP_HEALTH_INDICATOR_CHECK, true);
         healthCheckConfiguration.put(SofaBootConstants.SOFABOOT_SKIP_COMPONENT_HEALTH_CHECK, true);
         initApplicationContext(healthCheckConfiguration,
-            HealthCheckConfigurationTestConfiguration.class);
+                HealthCheckConfigurationTestConfiguration.class);
 
         ReadinessCheckListener readinessCheckListener = applicationContext
-            .getBean(ReadinessCheckListener.class);
+                .getBean(ReadinessCheckListener.class);
         Assert.isTrue(readinessCheckListener.skipIndicator());
         Assert.isTrue(readinessCheckListener.skipComponent());
         Assert.isTrue(readinessCheckListener.skipAllCheck());
@@ -86,9 +78,8 @@ public class HealthCheckConfigurationTest {
         applicationContext = springApplication.run();
     }
 
-    @Configuration(proxyBeanMethods = false)
-    @EnableConfigurationProperties({ HealthCheckProperties.class,
-            SofaRuntimeConfigurationProperties.class })
+    @Configuration
+    @EnableConfigurationProperties(HealthCheckProperties.class)
     static class HealthCheckConfigurationTestConfiguration {
         @Bean
         public AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor() {
@@ -96,32 +87,18 @@ public class HealthCheckConfigurationTest {
         }
 
         @Bean
-        public ReadinessCheckListener readinessCheckListener(Environment environment,
-                                                             HealthCheckerProcessor healthCheckerProcessor,
-                                                             HealthIndicatorProcessor healthIndicatorProcessor,
-                                                             AfterReadinessCheckCallbackProcessor afterReadinessCheckCallbackProcessor,
-                                                             SofaRuntimeConfigurationProperties sofaRuntimeConfigurationProperties,
-                                                             HealthCheckProperties healthCheckProperties) {
-            return new ReadinessCheckListener(environment, healthCheckerProcessor,
-                healthIndicatorProcessor, afterReadinessCheckCallbackProcessor,
-                sofaRuntimeConfigurationProperties, healthCheckProperties);
+        public ReadinessCheckListener readinessCheckListener() {
+            return new ReadinessCheckListener();
         }
 
         @Bean
-        public HealthCheckerProcessor healthCheckerProcessor(HealthCheckProperties healthCheckProperties,
-                                                             HealthCheckExecutor healthCheckExecutor) {
-            return new HealthCheckerProcessor(healthCheckProperties, healthCheckExecutor);
+        public HealthCheckerProcessor healthCheckerProcessor() {
+            return new HealthCheckerProcessor();
         }
 
         @Bean
-        public HealthIndicatorProcessor healthIndicatorProcessor(HealthCheckProperties properties,
-                                                                 HealthCheckExecutor healthCheckExecutor) {
-            return new HealthIndicatorProcessor(properties, healthCheckExecutor);
-        }
-
-        @Bean
-        public HealthCheckExecutor healthCheckExecutor(HealthCheckProperties properties) {
-            return new HealthCheckExecutor(properties);
+        public HealthIndicatorProcessor healthIndicatorProcessor() {
+            return new HealthIndicatorProcessor();
         }
     }
 }

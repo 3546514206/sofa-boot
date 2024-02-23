@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @SpringBootApplication
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = { "management.endpoints.web.exposure.include=health,info,readiness" })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"management.endpoints.web.exposure.include=health,info,readiness"})
 @TestPropertySource(properties = "spring.application.name=ReadinessHealthCheckHttpCodeTest")
 public class ReadinessHealthCheckHttpCodeTest {
 
@@ -49,18 +49,18 @@ public class ReadinessHealthCheckHttpCodeTest {
     @Test
     public void testReadinessCheckFailedHttpCode() {
         ResponseEntity<String> response = restTemplate.getForEntity("/actuator/readiness",
-            String.class);
+                String.class);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     public void testVersions404HttpCode() {
         ResponseEntity<String> response = restTemplate.getForEntity("/actuator/versions",
-            String.class);
+                String.class);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     static class DownHealthIndicatorConfiguration {
         @Bean
         public HealthIndicator downHealthIndicator() {

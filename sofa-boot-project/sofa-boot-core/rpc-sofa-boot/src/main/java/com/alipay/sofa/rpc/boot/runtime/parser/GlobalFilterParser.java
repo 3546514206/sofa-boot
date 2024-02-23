@@ -16,6 +16,9 @@
  */
 package com.alipay.sofa.rpc.boot.runtime.parser;
 
+import com.alipay.sofa.boot.spring.namespace.spi.SofaBootTagNameSupport;
+import com.alipay.sofa.rpc.boot.container.RpcFilterContainer;
+import com.alipay.sofa.rpc.boot.log.SofaBootRpcLoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -23,23 +26,19 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
-import com.alipay.sofa.boot.spring.namespace.spi.SofaBootTagNameSupport;
-import com.alipay.sofa.rpc.boot.container.RpcFilterContainer;
-import com.alipay.sofa.rpc.boot.log.SofaBootRpcLoggerFactory;
-
 /**
  * 解析全局 Filter
  *
  * @author <a href="mailto:lw111072@antfin.com">LiWei</a>
  */
 public class GlobalFilterParser extends AbstractSimpleBeanDefinitionParser implements
-                                                                          SofaBootTagNameSupport {
+        SofaBootTagNameSupport {
 
-    private static final Logger LOGGER            = SofaBootRpcLoggerFactory
-                                                      .getLogger(GlobalFilterParser.class);
+    private static final Logger LOGGER = SofaBootRpcLoggerFactory
+            .getLogger(GlobalFilterParser.class);
     private static final String TAG_GLOBAL_FILTER = "rpc-global-filter";
-    private static final String TAG_REF           = "ref";
-    private static final String TAG_CLASS         = "class";
+    private static final String TAG_REF = "ref";
+    private static final String TAG_CLASS = "class";
 
     /**
      * 从 XML 解析全局 Filter。
@@ -72,7 +71,7 @@ public class GlobalFilterParser extends AbstractSimpleBeanDefinitionParser imple
 
         if (LOGGER.isWarnEnabled()) {
             LOGGER
-                .warn("both the ref attr and class attr is blank, this rpc global filter is invalid");
+                    .warn("both the ref attr and class attr is blank, this rpc global filter is invalid");
         }
 
     }

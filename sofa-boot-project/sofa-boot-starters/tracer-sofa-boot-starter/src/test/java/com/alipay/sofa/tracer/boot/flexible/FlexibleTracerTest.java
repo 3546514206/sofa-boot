@@ -31,12 +31,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
- * @author guolei.sgl (guolei.sgl@antfin.com) 2019/8/3 10:59 AM
+ * @author: guolei.sgl (guolei.sgl@antfin.com) 2019/8/3 10:59 AM
+ * @since:
  **/
 @ActiveProfiles("json")
 public class FlexibleTracerTest extends AbstractTestBase {
@@ -66,13 +65,13 @@ public class FlexibleTracerTest extends AbstractTestBase {
         TestUtil.waitForAsyncLog();
         //wait for async output
         List<String> contents = FileUtils.readLines(customFileLog(FlexibleLogEnum.FLEXIBLE_DIGEST
-            .getDefaultLogName()));
+                .getDefaultLogName()));
         assertTrue(contents.size() == 2);
         JSONObject item = JSONObject.parseObject(contents.get(0));
         assertEquals(appName, item.get("local.app"));
 
         ResponseEntity<String> responseException = testRestTemplate.getForEntity(testUrl2,
-            String.class);
+                String.class);
 
         String resultException = responseException.getBody();
         assertTrue(resultException.equalsIgnoreCase("exception"));
@@ -80,7 +79,7 @@ public class FlexibleTracerTest extends AbstractTestBase {
         TestUtil.waitForAsyncLog();
         //wait for async output
         List<String> contentsException = FileUtils
-            .readLines(customFileLog(FlexibleLogEnum.FLEXIBLE_DIGEST.getDefaultLogName()));
+                .readLines(customFileLog(FlexibleLogEnum.FLEXIBLE_DIGEST.getDefaultLogName()));
 
         assertTrue(contentsException.size() == 3);
         JSONObject itemException = JSONObject.parseObject(contentsException.get(2));

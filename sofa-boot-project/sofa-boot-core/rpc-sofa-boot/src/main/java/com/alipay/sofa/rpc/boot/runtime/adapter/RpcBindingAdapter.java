@@ -59,14 +59,14 @@ public abstract class RpcBindingAdapter implements BindingAdapter<RpcBinding> {
                               SofaRuntimeContext sofaRuntimeContext) {
 
         ApplicationContext applicationContext = sofaRuntimeContext.getSofaRuntimeManager()
-            .getRootApplicationContext();
+                .getRootApplicationContext();
         ProviderConfigContainer providerConfigContainer = applicationContext
-            .getBean(ProviderConfigContainer.class);
+                .getBean(ProviderConfigContainer.class);
         String uniqueName = providerConfigContainer.createUniqueName((Contract) contract, binding);
         ProviderConfigHelper providerConfigHelper = applicationContext
-            .getBean(ProviderConfigHelper.class);
+                .getBean(ProviderConfigHelper.class);
         ProviderConfig providerConfig = providerConfigHelper.getProviderConfig((Contract) contract,
-            binding, target);
+                binding, target);
         try {
             providerConfigContainer.addProviderConfig(uniqueName, providerConfig);
         } catch (Exception e) {
@@ -88,11 +88,11 @@ public abstract class RpcBindingAdapter implements BindingAdapter<RpcBinding> {
                              SofaRuntimeContext sofaRuntimeContext) {
 
         ApplicationContext applicationContext = sofaRuntimeContext.getSofaRuntimeManager()
-            .getRootApplicationContext();
+                .getRootApplicationContext();
         ProviderConfigContainer providerConfigContainer = applicationContext
-            .getBean(ProviderConfigContainer.class);
+                .getBean(ProviderConfigContainer.class);
         ProcessorContainer processorContainer = applicationContext
-            .getBean(ProcessorContainer.class);
+                .getBean(ProcessorContainer.class);
 
         String uniqueName = providerConfigContainer.createUniqueName((Contract) contract, binding);
         ProviderConfig providerConfig = providerConfigContainer.getProviderConfig(uniqueName);
@@ -100,7 +100,7 @@ public abstract class RpcBindingAdapter implements BindingAdapter<RpcBinding> {
 
         if (providerConfig == null) {
             throw new ServiceRuntimeException(LogCodes.getLog(
-                LogCodes.INFO_SERVICE_METADATA_IS_NULL, uniqueName));
+                    LogCodes.INFO_SERVICE_METADATA_IS_NULL, uniqueName));
         }
 
         try {
@@ -135,17 +135,17 @@ public abstract class RpcBindingAdapter implements BindingAdapter<RpcBinding> {
                                 SofaRuntimeContext sofaRuntimeContext) {
 
         ApplicationContext applicationContext = sofaRuntimeContext.getSofaRuntimeManager()
-            .getRootApplicationContext();
+                .getRootApplicationContext();
 
         ProviderConfigContainer providerConfigContainer = applicationContext
-            .getBean(ProviderConfigContainer.class);
+                .getBean(ProviderConfigContainer.class);
         String key = providerConfigContainer.createUniqueName((Contract) contract, binding);
         ProviderConfig providerConfig = providerConfigContainer.getProviderConfig(key);
         try {
             providerConfig.unExport();
         } catch (Exception e) {
             throw new ServiceRuntimeException(
-                LogCodes.getLog(LogCodes.ERROR_PROXY_PRE_UNPUBLISH_FAIL), e);
+                    LogCodes.getLog(LogCodes.ERROR_PROXY_PRE_UNPUBLISH_FAIL), e);
         }
     }
 
@@ -162,15 +162,15 @@ public abstract class RpcBindingAdapter implements BindingAdapter<RpcBinding> {
                                  SofaRuntimeContext sofaRuntimeContext) {
 
         ApplicationContext applicationContext = sofaRuntimeContext.getSofaRuntimeManager()
-            .getRootApplicationContext();
+                .getRootApplicationContext();
         ProviderConfigContainer providerConfigContainer = applicationContext
-            .getBean(ProviderConfigContainer.class);
+                .getBean(ProviderConfigContainer.class);
         String key = providerConfigContainer.createUniqueName((Contract) contract, binding);
         try {
             providerConfigContainer.removeProviderConfig(key);
         } catch (Exception e) {
             throw new ServiceRuntimeException(
-                LogCodes.getLog(LogCodes.ERROR_PROXY_POST_UNPUBLISH_FAIL), e);
+                    LogCodes.getLog(LogCodes.ERROR_PROXY_POST_UNPUBLISH_FAIL), e);
         }
     }
 
@@ -186,16 +186,16 @@ public abstract class RpcBindingAdapter implements BindingAdapter<RpcBinding> {
                             SofaRuntimeContext sofaRuntimeContext) {
 
         ApplicationContext applicationContext = sofaRuntimeContext.getSofaRuntimeManager()
-            .getRootApplicationContext();
+                .getRootApplicationContext();
         ConsumerConfigHelper consumerConfigHelper = applicationContext
-            .getBean(ConsumerConfigHelper.class);
+                .getBean(ConsumerConfigHelper.class);
         ConsumerConfigContainer consumerConfigContainer = applicationContext
-            .getBean(ConsumerConfigContainer.class);
+                .getBean(ConsumerConfigContainer.class);
         ProcessorContainer processorContainer = applicationContext
-            .getBean(ProcessorContainer.class);
+                .getBean(ProcessorContainer.class);
 
         ConsumerConfig consumerConfig = consumerConfigHelper.getConsumerConfig((Contract) contract,
-            binding);
+                binding);
         processorContainer.processorConsumer(consumerConfig);
 
         if (MockMode.LOCAL.equalsIgnoreCase(binding.getRpcBindingParam().getMockMode())) {
@@ -225,13 +225,13 @@ public abstract class RpcBindingAdapter implements BindingAdapter<RpcBinding> {
                             SofaRuntimeContext sofaRuntimeContext) {
         try {
             ApplicationContext applicationContext = sofaRuntimeContext.getSofaRuntimeManager()
-                .getRootApplicationContext();
+                    .getRootApplicationContext();
             ConsumerConfigContainer consumerConfigContainer = applicationContext
-                .getBean(ConsumerConfigContainer.class);
+                    .getBean(ConsumerConfigContainer.class);
             consumerConfigContainer.removeAndUnReferConsumerConfig(binding);
         } catch (Exception e) {
             throw new ServiceRuntimeException(LogCodes.getLog(LogCodes.ERROR_PROXY_UNCOSUME_FAIL),
-                e);
+                    e);
         }
     }
 

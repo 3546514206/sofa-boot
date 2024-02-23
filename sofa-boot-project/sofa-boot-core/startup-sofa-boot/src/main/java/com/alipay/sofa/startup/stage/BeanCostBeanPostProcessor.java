@@ -17,6 +17,7 @@
 package com.alipay.sofa.startup.stage;
 
 import com.alipay.sofa.boot.startup.BeanStat;
+import com.alipay.sofa.isle.spring.share.UnshareSofaModulePostProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
@@ -29,25 +30,22 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author huzijie
  * @version BeanCostBeanPostProcessor.java, v 0.1 2020年12月31日 2:40 下午 huzijie Exp $
  */
-@Deprecated
+@UnshareSofaModulePostProcessor
 public class BeanCostBeanPostProcessor implements BeanPostProcessor {
-    private final static String         SOFA_CLASS_NAME_PREFIX = "com.alipay.sofa.runtime";
-    private final Map<String, BeanStat> beanInitCostMap        = new ConcurrentHashMap<>();
-    private final List<BeanStat>        beanStatList           = new ArrayList<>();
-    private final long                  beanLoadCost;
-    private final boolean               skipSofaBean;
+    private final static String SOFA_CLASS_NAME_PREFIX = "com.alipay.sofa.runtime";
+    private final Map<String, BeanStat> beanInitCostMap = new ConcurrentHashMap<>();
+    private final List<BeanStat> beanStatList = new ArrayList<>();
+    private final long beanLoadCost;
 
-    public BeanCostBeanPostProcessor(long beanInitCostThreshold, boolean skipSofaBean) {
+    public BeanCostBeanPostProcessor(long beanInitCostThreshold) {
         this.beanLoadCost = beanInitCostThreshold;
-        this.skipSofaBean = skipSofaBean;
     }
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
-                                                                               throws BeansException {
-        if (!skipSofaBean || isNotSofaBean(bean)) {
+            throws BeansException {
+        if (isNotSofaBean(bean)) {
             BeanStat beanStat = new BeanStat();
-            beanStat.setName(beanName);
             String beanClassName = getBeanName(bean, beanName);
             beanStat.setBeanClassName(beanClassName);
             beanStat.startRefresh();
@@ -58,8 +56,8 @@ public class BeanCostBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
-        if (!skipSofaBean || isNotSofaBean(bean)) {
+            throws BeansException {
+        if (isNotSofaBean(bean)) {
             String beanClassName = getBeanName(bean, beanName);
             BeanStat beanStat = beanInitCostMap.remove(beanClassName);
             if (beanStat != null) {

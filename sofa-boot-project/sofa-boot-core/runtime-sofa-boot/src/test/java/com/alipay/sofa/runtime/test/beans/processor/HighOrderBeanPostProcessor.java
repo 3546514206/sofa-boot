@@ -16,10 +16,6 @@
  */
 package com.alipay.sofa.runtime.test.beans.processor;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.core.PriorityOrdered;
-
 import com.alipay.sofa.runtime.api.annotation.SofaReference;
 import com.alipay.sofa.runtime.api.aware.ClientFactoryAware;
 import com.alipay.sofa.runtime.api.client.ClientFactory;
@@ -27,30 +23,32 @@ import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
 import com.alipay.sofa.runtime.spi.spring.RuntimeShutdownAware;
 import com.alipay.sofa.runtime.spi.spring.SofaRuntimeContextAware;
 import com.alipay.sofa.runtime.test.beans.facade.SampleService;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.PriorityOrdered;
 
 /**
  * @author ruoshan
  * @since 2.6.0
  */
 public class HighOrderBeanPostProcessor implements BeanPostProcessor, PriorityOrdered,
-                                       SofaRuntimeContextAware, ClientFactoryAware,
-                                       RuntimeShutdownAware {
+        SofaRuntimeContextAware, ClientFactoryAware,
+        RuntimeShutdownAware {
 
     private SofaRuntimeContext sofaRuntimeContext;
 
-    private ClientFactory      clientFactory;
+    private ClientFactory clientFactory;
 
     @SofaReference
-    private SampleService      sampleService;
+    private SampleService sampleService;
 
     @Override
     public int getOrder() {
         return PriorityOrdered.HIGHEST_PRECEDENCE;
     }
 
-    @Override
-    public void setClientFactory(ClientFactory clientFactory) {
-        this.clientFactory = clientFactory;
+    public SofaRuntimeContext getSofaRuntimeContext() {
+        return sofaRuntimeContext;
     }
 
     @Override
@@ -58,12 +56,13 @@ public class HighOrderBeanPostProcessor implements BeanPostProcessor, PriorityOr
         this.sofaRuntimeContext = sofaRuntimeContext;
     }
 
-    public SofaRuntimeContext getSofaRuntimeContext() {
-        return sofaRuntimeContext;
-    }
-
     public ClientFactory getClientFactory() {
         return clientFactory;
+    }
+
+    @Override
+    public void setClientFactory(ClientFactory clientFactory) {
+        this.clientFactory = clientFactory;
     }
 
     public SampleService getSampleService() {
@@ -72,13 +71,13 @@ public class HighOrderBeanPostProcessor implements BeanPostProcessor, PriorityOr
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
-                                                                               throws BeansException {
+            throws BeansException {
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
+            throws BeansException {
         return bean;
     }
 

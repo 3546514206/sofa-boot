@@ -38,6 +38,7 @@ import java.util.Map;
 public class GlobalSpaceOverrideTest extends LogTestBase {
     /**
      * test space config override global config
+     *
      * @throws IOException not handling
      */
     @Test
@@ -45,12 +46,11 @@ public class GlobalSpaceOverrideTest extends LogTestBase {
         Map<String, Object> properties = new HashMap<>();
         properties.put(Constants.SOFA_MIDDLEWARE_ALL_LOG_CONSOLE_SWITCH, "true");
         properties.put(Constants.SOFA_MIDDLEWARE_ALL_LOG_CONSOLE_LEVEL, "debug");
-        properties.put("logging.level.test.space", "info");
         properties
-            .put(String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE),
-                "false");
+                .put(String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_SWITCH, TEST_SPACE),
+                        "false");
         properties.put(
-            String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_LEVEL, TEST_SPACE), "info");
+                String.format(Constants.SOFA_MIDDLEWARE_SINGLE_LOG_CONSOLE_LEVEL, TEST_SPACE), "info");
 
         SpringApplication springApplication = new SpringApplication(EmptyConfig.class);
         springApplication.setDefaultProperties(properties);
@@ -59,11 +59,11 @@ public class GlobalSpaceOverrideTest extends LogTestBase {
         logger = getLogger();
         File logFile = getLogbackDefaultFile(environment);
         FileUtils.write(logFile, StringUtil.EMPTY_STRING,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         logger.info("info level");
         logger.debug("debug level");
         List<String> contents = FileUtils.readLines(logFile,
-            environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
+                environment.getProperty(Constants.LOG_ENCODING_PROP_KEY));
         Assert.assertEquals(1, contents.size());
         Assert.assertTrue(contents.get(0).contains("info level"));
         Assert.assertFalse(outContent.toString().contains("info level"));

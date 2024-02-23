@@ -15,8 +15,8 @@
   ~ limitations under the License.
   -->
 
-<xsd:schema xmlns="http://sofastack.io/schema/sofaboot"
-            xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans" xmlns="http://sofastack.io/schema/sofaboot"
             targetNamespace="http://sofastack.io/schema/sofaboot"
             elementFormDefault="qualified" attributeFormDefault="unqualified">
 
@@ -35,8 +35,8 @@
 
     <!-- parameters in service/reference binding.* -->
     <xsd:complexType name="TParameter">
-        <xsd:attribute name="key" type="xsd:string" use="required" />
-        <xsd:attribute name="value" type="xsd:string" use="required" />
+        <xsd:attribute name="key" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
     </xsd:complexType>
 
     <!-- Bolt Start -->
@@ -121,10 +121,10 @@
     <!-- global-attrs in service binding.bolt -->
     <xsd:complexType name="BBindingTRSerAttr">
         <xsd:attribute name="timeout" type="xsd:string" use="optional"/>
-        <xsd:attribute name="weight" type="xsd:int" use="optional" />
-        <xsd:attribute name="warm-up-weight" type="xsd:int" use="optional" />
-        <xsd:attribute name="warm-up-time" type="xsd:int" use="optional" />
-        <xsd:attribute name="thread-pool-ref" type="xsd:string" use="optional" />
+        <xsd:attribute name="weight" type="xsd:int" use="optional"/>
+        <xsd:attribute name="warm-up-weight" type="xsd:int" use="optional"/>
+        <xsd:attribute name="warm-up-time" type="xsd:int" use="optional"/>
+        <xsd:attribute name="thread-pool-ref" type="xsd:string" use="optional"/>
         <xsd:attribute name="filter" type="xsd:string" use="optional"/>
         <xsd:attribute name="registry" type="xsd:string" use="optional"/>
         <xsd:attribute name="serialize-type" type="xsd:string" use="optional"/>
@@ -534,10 +534,10 @@
     <!-- global-attrs in service binding.h2c -->
     <xsd:complexType name="H2cBindingSerAttr">
         <xsd:attribute name="timeout" type="xsd:string" use="optional"/>
-        <xsd:attribute name="weight" type="xsd:int" use="optional" />
-        <xsd:attribute name="warm-up-weight" type="xsd:int" use="optional" />
-        <xsd:attribute name="warm-up-time" type="xsd:int" use="optional" />
-        <xsd:attribute name="thread-pool-ref" type="xsd:string" use="optional" />
+        <xsd:attribute name="weight" type="xsd:int" use="optional"/>
+        <xsd:attribute name="warm-up-weight" type="xsd:int" use="optional"/>
+        <xsd:attribute name="warm-up-time" type="xsd:int" use="optional"/>
+        <xsd:attribute name="thread-pool-ref" type="xsd:string" use="optional"/>
         <xsd:attribute name="filter" type="xsd:string" use="optional"/>
         <xsd:attribute name="registry" type="xsd:string" use="optional"/>
         <xsd:attribute name="serialize-type" type="xsd:string" use="optional"/>
@@ -616,7 +616,6 @@
 
                 </xsd:all>
                 <xsd:attribute name="jvm-first" use="optional" type="xsd:boolean" default="true"/>
-                <xsd:attribute name="required" type="xsd:boolean" default="true" use="optional"/>
                 <xsd:attribute name="interface" type="xsd:string" use="required"/>
                 <xsd:attribute name="abstract" type="xsd:boolean" use="optional"/>
                 <xsd:attribute name="parent" type="xsd:string" use="optional"/>
@@ -633,7 +632,7 @@
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:all minOccurs="0" maxOccurs="1">
-                    <xsd:element name="binding.jvm"  type="BBindingJvmService" minOccurs="0"/>
+                    <xsd:element name="binding.jvm" type="BBindingJvmService" minOccurs="0"/>
                     <xsd:element name="binding.bolt" type="BBindingTRService" minOccurs="0"/>
                     <xsd:element name="binding.rest" type="RestBindingTRService" minOccurs="0"/>
                     <xsd:element name="binding.dubbo" type="DubboBindingTRService" minOccurs="0"/>

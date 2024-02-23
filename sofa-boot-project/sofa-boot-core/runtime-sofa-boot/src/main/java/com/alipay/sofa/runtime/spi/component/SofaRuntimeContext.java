@@ -24,10 +24,14 @@ import com.alipay.sofa.runtime.api.client.ClientFactory;
  * @author xuanbei 18/2/28
  */
 public class SofaRuntimeContext {
-    /** component manager */
-    private ComponentManager   componentManager;
-    /** client factory */
-    private ClientFactory      clientFactory;
+    /**
+     * component manager
+     */
+    private ComponentManager componentManager;
+    /**
+     * client factory
+     */
+    private ClientFactory clientFactory;
     private SofaRuntimeManager sofaRuntimeManager;
 
     public SofaRuntimeContext(SofaRuntimeManager sofaRuntimeManager,

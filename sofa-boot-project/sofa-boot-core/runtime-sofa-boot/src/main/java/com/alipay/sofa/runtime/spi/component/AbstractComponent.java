@@ -19,17 +19,13 @@ package com.alipay.sofa.runtime.spi.component;
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 import com.alipay.sofa.runtime.api.component.ComponentLifeCycle;
 import com.alipay.sofa.runtime.api.component.ComponentName;
-import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.model.ComponentStatus;
 import com.alipay.sofa.runtime.spi.binding.Binding;
 import com.alipay.sofa.runtime.spi.health.HealthResult;
-import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * abstract component implementation
@@ -40,19 +36,15 @@ public abstract class AbstractComponent implements ComponentInfo {
     /**
      * component status
      */
-    protected ComponentStatus       componentStatus = ComponentStatus.UNREGISTERED;
+    protected ComponentStatus componentStatus = ComponentStatus.UNREGISTERED;
 
-    protected Implementation        implementation;
+    protected Implementation implementation;
 
-    protected ComponentName         componentName;
+    protected ComponentName componentName;
 
-    protected SofaRuntimeContext    sofaRuntimeContext;
+    protected SofaRuntimeContext sofaRuntimeContext;
 
-    protected Exception             e;
-
-    protected ApplicationContext    applicationContext;
-
-    protected Map<String, Property> properties      = new ConcurrentHashMap<>();
+    protected Exception e;
 
     @Override
     public SofaRuntimeContext getContext() {
@@ -70,16 +62,6 @@ public abstract class AbstractComponent implements ComponentInfo {
     }
 
     @Override
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
     public Implementation getImplementation() {
         return implementation;
     }
@@ -92,7 +74,7 @@ public abstract class AbstractComponent implements ComponentInfo {
     @Override
     public boolean isResolved() {
         return componentStatus == ComponentStatus.ACTIVATED
-               || componentStatus == ComponentStatus.RESOLVED;
+                || componentStatus == ComponentStatus.RESOLVED;
     }
 
     @Override
@@ -109,7 +91,7 @@ public abstract class AbstractComponent implements ComponentInfo {
             return;
         }
         if (componentStatus == ComponentStatus.ACTIVATED
-            || componentStatus == ComponentStatus.RESOLVED) {
+                || componentStatus == ComponentStatus.RESOLVED) {
             unresolve();
         }
         componentStatus = ComponentStatus.UNREGISTERED;
@@ -118,7 +100,7 @@ public abstract class AbstractComponent implements ComponentInfo {
     @Override
     public void unresolve() throws ServiceRuntimeException {
         if (componentStatus == ComponentStatus.REGISTERED
-            || componentStatus == ComponentStatus.UNREGISTERED) {
+                || componentStatus == ComponentStatus.UNREGISTERED) {
             return;
         }
 
@@ -201,10 +183,10 @@ public abstract class AbstractComponent implements ComponentInfo {
         for (Binding binding : bindings) {
             HealthResult result = binding.healthCheck();
             String report = "["
-                            + result.getHealthName()
-                            + ","
-                            + (result.getHealthReport() == null ? (result.isHealthy() ? "passed"
-                                : "failed") : result.getHealthReport()) + "]";
+                    + result.getHealthName()
+                    + ","
+                    + (result.getHealthReport() == null ? (result.isHealthy() ? "passed"
+                    : "failed") : result.getHealthReport()) + "]";
             healthResult.add(report);
         }
         return String.join(" ", healthResult);
@@ -213,10 +195,5 @@ public abstract class AbstractComponent implements ComponentInfo {
     @Override
     public boolean canBeDuplicate() {
         return true;
-    }
-
-    @Override
-    public Map<String, Property> getProperties() {
-        return properties;
     }
 }

@@ -51,7 +51,7 @@ public class ModelCreatingStageTest implements ApplicationContextAware {
     public void test() throws Exception {
         applicationContext.getBean("modelCreatingStage", ModelCreatingStage.class).process();
         ApplicationRuntimeModel application = applicationContext.getBean(
-            SofaBootConstants.APPLICATION, ApplicationRuntimeModel.class);
+                SofaBootConstants.APPLICATION, ApplicationRuntimeModel.class);
         Assert.assertNotNull(application.getSofaRuntimeContext());
     }
 
@@ -60,29 +60,26 @@ public class ModelCreatingStageTest implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @EnableConfigurationProperties(SofaModuleProperties.class)
     static class ModelCreatingStageTestConfiguration {
         @Bean
         @ConditionalOnMissingBean
-        public ModelCreatingStage modelCreatingStage(ApplicationContext applicationContext,
-                                                     SofaModuleProperties sofaModuleProperties,
-                                                     SofaModuleProfileChecker sofaModuleProfileChecker) {
-            return new ModelCreatingStage((AbstractApplicationContext) applicationContext,
-                sofaModuleProperties, sofaModuleProfileChecker);
+        public ModelCreatingStage modelCreatingStage(ApplicationContext applicationContext) {
+            return new ModelCreatingStage((AbstractApplicationContext) applicationContext);
         }
 
         @Bean
         @ConditionalOnMissingBean
-        public SofaModuleProfileChecker sofaModuleProfileChecker(SofaModuleProperties sofaModuleProperties) {
-            return new DefaultSofaModuleProfileChecker(sofaModuleProperties);
+        public SofaModuleProfileChecker sofaModuleProfileChecker() {
+            return new DefaultSofaModuleProfileChecker();
         }
 
         @Bean
         @ConditionalOnMissingBean
         public SofaRuntimeManager sofaRuntimeManager() {
             SofaRuntimeManager sofaRuntimeManager = new StandardSofaRuntimeManager("test",
-                ModelCreatingStageTest.class.getClassLoader(), null);
+                    ModelCreatingStageTest.class.getClassLoader(), null);
             return sofaRuntimeManager;
         }
     }

@@ -32,8 +32,8 @@ import org.springframework.context.ApplicationContext;
  * @version : TestBindingConverter.java, v 0.1 2020年02月05日 2:58 下午 zhaowang Exp $
  */
 public class TestBindingConverter extends RpcBindingConverter {
-    public static final BindingType TEST        = new BindingType("TEST");
-    public static final String      TARGET_NAME = "test";
+    public static final BindingType TEST = new BindingType("TEST");
+    public static final String TARGET_NAME = "test";
 
     @Override
     protected RpcBinding createRpcBinding(RpcBindingParam bindingParam,

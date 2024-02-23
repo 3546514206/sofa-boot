@@ -16,11 +16,10 @@
  */
 package com.alipay.sofa.common.boot.logging.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.alipay.sofa.common.log.Constants;
 import com.alipay.sofa.common.utils.ReportUtil;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author qilong.zql

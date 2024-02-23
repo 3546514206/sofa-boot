@@ -16,12 +16,9 @@
  */
 package com.alipay.sofa.boot.startup;
 
-import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
-
-import java.time.Duration;
 
 /**
  * @author huzijie
@@ -30,18 +27,18 @@ import java.time.Duration;
 public class BootStageConstants {
 
     /**
-     * The running stage since JVM started to {@link SpringApplicationRunListener#started(ConfigurableApplicationContext, Duration)} ()}
+     * The running stage since JVM started to {@link SpringApplicationRunListener#starting()}
      */
-    public static final String JVM_STARTING_STAGE                = "JvmStartingStage";
+    public static final String JVM_STARTING_STAGE = "JvmStartingStage";
 
     /**
-     * The running stage since {@link SpringApplicationRunListener#started(ConfigurableApplicationContext, Duration)} ()} to
-     * {@link SpringApplicationRunListener#environmentPrepared(ConfigurableBootstrapContext, ConfigurableEnvironment)} (ConfigurableEnvironment)}}
+     * The running stage since {@link SpringApplicationRunListener#starting()} to
+     * {@link SpringApplicationRunListener#environmentPrepared(ConfigurableEnvironment)}}
      */
-    public static final String ENVIRONMENT_PREPARE_STAGE         = "EnvironmentPrepareStage";
+    public static final String ENVIRONMENT_PREPARE_STAGE = "EnvironmentPrepareStage";
 
     /**
-     * The running stage since {@link SpringApplicationRunListener#environmentPrepared(ConfigurableBootstrapContext, ConfigurableEnvironment)} (ConfigurableEnvironment)} to
+     * The running stage since {@link SpringApplicationRunListener#environmentPrepared(ConfigurableEnvironment)} to
      * {@link SpringApplicationRunListener#contextPrepared(ConfigurableApplicationContext)}}
      */
     public static final String APPLICATION_CONTEXT_PREPARE_STAGE = "ApplicationContextPrepareStage";
@@ -50,7 +47,7 @@ public class BootStageConstants {
      * The running stage since {@link SpringApplicationRunListener#contextPrepared(ConfigurableApplicationContext)} to
      * {@link SpringApplicationRunListener#contextLoaded(ConfigurableApplicationContext)}}
      */
-    public static final String APPLICATION_CONTEXT_LOAD_STAGE    = "ApplicationContextLoadStage";
+    public static final String APPLICATION_CONTEXT_LOAD_STAGE = "ApplicationContextLoadStage";
 
     /**
      * The running stage since {@link SpringApplicationRunListener#contextLoaded(ConfigurableApplicationContext)} to
@@ -61,7 +58,7 @@ public class BootStageConstants {
     /**
      * The running stage for ModuleCreatingStage
      */
-    public static final String ISLE_MODEL_CREATING_STAGE         = "ModelCreatingStage";
+    public static final String ISLE_MODEL_CREATING_STAGE = "ModelCreatingStage";
 
     /**
      * The running stage for SpringContextInstallStage
@@ -71,5 +68,5 @@ public class BootStageConstants {
     /**
      * The running stage for ReadinessCheckListener
      */
-    public static final String HEALTH_CHECK_STAGE                = "HealthCheckStage";
+    public static final String HEALTH_CHECK_STAGE = "HealthCheckStage";
 }

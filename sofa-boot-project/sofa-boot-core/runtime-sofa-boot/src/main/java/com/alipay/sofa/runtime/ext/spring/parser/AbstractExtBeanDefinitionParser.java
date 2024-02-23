@@ -16,16 +16,14 @@
  */
 package com.alipay.sofa.runtime.ext.spring.parser;
 
-import com.alipay.sofa.runtime.ext.spring.ClassLoaderWrapper;
+import com.alipay.sofa.boot.spring.namespace.spi.SofaBootTagNameSupport;
+import com.alipay.sofa.runtime.spi.util.ParserUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.core.Conventions;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-
-import com.alipay.sofa.boot.spring.namespace.spi.SofaBootTagNameSupport;
-import com.alipay.sofa.runtime.spi.util.ParserUtils;
 
 /**
  * Common parser for extension and extension point
@@ -35,18 +33,14 @@ import com.alipay.sofa.runtime.spi.util.ParserUtils;
  * @since 2.6.0
  */
 public abstract class AbstractExtBeanDefinitionParser extends
-                                                     AbstractSingleExtPointBeanDefinitionParser
-                                                                                               implements
-                                                                                               SofaBootTagNameSupport {
-    public static final String  REF                       = "ref";
+        AbstractSingleExtPointBeanDefinitionParser
+        implements
+        SofaBootTagNameSupport {
+    public static final String REF = "ref";
 
-    @Deprecated
-    private static final String BEAN_CLASS_LOADER         = "beanClassLoader";
-
-    private static final String BEAN_CLASS_LOADER_WRAPPER = "beanClassLoaderWrapper";
+    private static final String BEAN_CLASS_LOADER = "beanClassLoader";
 
     /**
-     *
      * @param element       the XML element being parsed
      * @param parserContext the object encapsulating the current state of the parsing process
      * @param builder       used to define the <code>BeanDefinition</code>
@@ -70,29 +64,26 @@ public abstract class AbstractExtBeanDefinitionParser extends
 
     protected void configBeanClassLoader(ParserContext parserContext, BeanDefinitionBuilder builder) {
         ClassLoader beanClassLoader = parserContext.getReaderContext().getBeanClassLoader();
-        // not support setClassLoder since spring framework 5.2.20.RELEASE
-
-        builder
-            .addPropertyValue(BEAN_CLASS_LOADER_WRAPPER, new ClassLoaderWrapper(beanClassLoader));
+        builder.addPropertyValue(BEAN_CLASS_LOADER, beanClassLoader);
     }
 
     protected void parseAttribute(Element element, ParserContext parserContext,
                                   BeanDefinitionBuilder builder) {
         ParserUtils.parseCustomAttributes(element, parserContext, builder,
-            new ParserUtils.AttributeCallback() {
+                new ParserUtils.AttributeCallback() {
 
-                public void process(Element parent, Attr attribute, BeanDefinitionBuilder builder,
-                                    ParserContext parserContext) {
-                    String name = attribute.getLocalName();
+                    public void process(Element parent, Attr attribute, BeanDefinitionBuilder builder,
+                                        ParserContext parserContext) {
+                        String name = attribute.getLocalName();
 
-                    // fallback mechanism
-                    if (!REF.equals(name)) {
-                        builder.addPropertyValue(Conventions.attributeNameToPropertyName(name),
-                            attribute.getValue());
+                        // fallback mechanism
+                        if (!REF.equals(name)) {
+                            builder.addPropertyValue(Conventions.attributeNameToPropertyName(name),
+                                    attribute.getValue());
+                        }
+
                     }
-
-                }
-            });
+                });
     }
 
     protected abstract void parserSubElement(Element element, ParserContext parserContext,

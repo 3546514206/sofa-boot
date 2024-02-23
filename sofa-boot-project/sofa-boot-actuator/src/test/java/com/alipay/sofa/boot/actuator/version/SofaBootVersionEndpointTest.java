@@ -22,7 +22,6 @@ import org.junit.Test;
 import java.util.List;
 
 /**
- *
  * @author elseifer
  * @version $Id: SofaBootVersionEndpointTest.java, v 0.1 2020年09月08日 下午3:42 elseifer Exp $
  */

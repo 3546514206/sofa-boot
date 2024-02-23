@@ -27,12 +27,11 @@ import com.alipay.sofa.isle.deployment.impl.FileDeploymentDescriptor;
 import com.alipay.sofa.isle.loader.DynamicSpringContextLoader;
 import com.alipay.sofa.isle.loader.SpringContextLoader;
 import com.alipay.sofa.isle.spring.config.SofaModuleProperties;
-import com.alipay.sofa.runtime.factory.BeanLoadCostBeanFactory;
+import com.alipay.sofa.isle.spring.factory.BeanLoadCostBeanFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -53,21 +52,21 @@ public class BeanHierarchyTest {
         application.setModuleDeploymentValidator(new DefaultModuleDeploymentValidator());
 
         DeploymentDescriptorConfiguration deploymentDescriptorConfiguration = new DeploymentDescriptorConfiguration(
-            Collections.singletonList(SofaBootConstants.MODULE_NAME),
-            Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
+                Collections.singletonList(SofaBootConstants.MODULE_NAME),
+                Collections.singletonList(SofaBootConstants.REQUIRE_MODULE));
 
         Properties props = new Properties();
         props.setProperty(SofaBootConstants.MODULE_NAME, "com.alipay.module");
         File moduleDirectory = new File("target/test-classes/module/sofa-module.properties");
         DeploymentDescriptor dd = DeploymentBuilder.build(moduleDirectory.toURI().toURL(), props,
-            deploymentDescriptorConfiguration, this.getClass().getClassLoader());
+                deploymentDescriptorConfiguration, this.getClass().getClassLoader());
         Assert.assertTrue(dd instanceof FileDeploymentDescriptor);
         Assert.assertTrue(application.isModuleDeployment(dd));
         application.addDeployment(dd);
 
         refreshApplication(application);
         BeanFactory beanFactory = ((ConfigurableApplicationContext) dd.getApplicationContext())
-            .getBeanFactory();
+                .getBeanFactory();
         for (BeanStat bn : ((BeanLoadCostBeanFactory) beanFactory).getBeanStats()) {
             if (bn.getBeanClassName().contains("testService")) {
                 Assert.assertEquals(3, bn.getChildren().size());
@@ -78,31 +77,28 @@ public class BeanHierarchyTest {
                 }
             }
         }
-        ApplicationContext applicationContext = application.getResolvedDeployments().get(0)
-            .getApplicationContext();
-        String moduleName = applicationContext.getId();
-        Assert.assertEquals("com.alipay.module", moduleName);
+
     }
 
     private void refreshApplication(ApplicationRuntimeModel application) throws Exception {
         DefaultListableBeanFactory rootBeanFactory = new DefaultListableBeanFactory();
         ConfigurableApplicationContext rootApplicationContext = new GenericApplicationContext(
-            rootBeanFactory);
+                rootBeanFactory);
         rootApplicationContext.refresh();
         SofaModuleProperties sofaModuleProperties = new SofaModuleProperties();
         sofaModuleProperties.setBeanLoadCost(1);
         rootBeanFactory.registerSingleton("sofaModuleProperties", sofaModuleProperties);
         rootBeanFactory.registerSingleton(SofaBootConstants.PROCESSORS_OF_ROOT_APPLICATION_CONTEXT,
-            new HashMap<>());
+                new HashMap<>());
         SpringContextLoader springContextLoader = new DynamicSpringContextLoader(
-            rootApplicationContext, sofaModuleProperties);
+                rootApplicationContext);
 
         for (DeploymentDescriptor dd : application.getResolvedDeployments()) {
             if (dd.isSpringPowered()) {
                 springContextLoader.loadSpringContext(dd, application);
 
                 ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) dd
-                    .getApplicationContext();
+                        .getApplicationContext();
                 dd.startDeploy();
                 ctx.refresh();
                 dd.deployFinish();

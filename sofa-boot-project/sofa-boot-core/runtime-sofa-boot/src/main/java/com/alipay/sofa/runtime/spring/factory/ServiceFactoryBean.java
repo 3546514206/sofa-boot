@@ -16,10 +16,8 @@
  */
 package com.alipay.sofa.runtime.spring.factory;
 
-import com.alipay.sofa.boot.error.ErrorCode;
 import com.alipay.sofa.runtime.api.ServiceRuntimeException;
 import com.alipay.sofa.runtime.api.annotation.SofaService;
-import com.alipay.sofa.runtime.api.component.Property;
 import com.alipay.sofa.runtime.model.InterfaceMode;
 import com.alipay.sofa.runtime.service.binding.JvmBinding;
 import com.alipay.sofa.runtime.service.binding.JvmBindingParam;
@@ -27,20 +25,16 @@ import com.alipay.sofa.runtime.service.component.Service;
 import com.alipay.sofa.runtime.service.component.ServiceComponent;
 import com.alipay.sofa.runtime.service.component.impl.ServiceImpl;
 import com.alipay.sofa.runtime.spi.binding.Binding;
-import com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo;
 import com.alipay.sofa.runtime.spi.component.ComponentInfo;
 import com.alipay.sofa.runtime.spi.component.DefaultImplementation;
 import com.alipay.sofa.runtime.spi.component.Implementation;
 import com.alipay.sofa.runtime.spi.service.BindingConverterContext;
 
-import static com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo.BEAN_ID;
-import static com.alipay.sofa.runtime.spi.component.ComponentDefinitionInfo.SOURCE;
-
 /**
  * @author xuanbei 18/3/1
  */
 public class ServiceFactoryBean extends AbstractContractFactoryBean {
-    protected Object  ref;
+    protected Object ref;
     protected Service service;
 
     public ServiceFactoryBean() {
@@ -53,7 +47,7 @@ public class ServiceFactoryBean extends AbstractContractFactoryBean {
     @Override
     protected void doAfterPropertiesSet() {
         if (!apiType && hasSofaServiceAnnotation()) {
-            throw new ServiceRuntimeException(ErrorCode.convert("01-00103", beanId, ref.getClass()));
+            throw new ServiceRuntimeException("Bean " + beanId + " of type " + ref.getClass() + " has already annotated by @SofaService," + " can not be registered using xml. Please check it.");
         }
 
         Implementation implementation = new DefaultImplementation();
@@ -70,16 +64,7 @@ public class ServiceFactoryBean extends AbstractContractFactoryBean {
             service.addBinding(binding);
         }
 
-        ComponentInfo componentInfo = new ServiceComponent(implementation, service,
-            bindingAdapterFactory, sofaRuntimeContext);
-        componentInfo.setApplicationContext(applicationContext);
-        ComponentDefinitionInfo definitionInfo = new ComponentDefinitionInfo();
-        definitionInfo.setInterfaceMode(apiType ? InterfaceMode.api : InterfaceMode.spring);
-        definitionInfo.putInfo(BEAN_ID, beanId);
-        Property property = new Property();
-        property.setName(SOURCE);
-        property.setValue(definitionInfo);
-        componentInfo.getProperties().put(SOURCE, property);
+        ComponentInfo componentInfo = new ServiceComponent(implementation, service, bindingAdapterFactory, sofaRuntimeContext);
         sofaRuntimeContext.getComponentManager().register(componentInfo);
     }
 
@@ -91,8 +76,7 @@ public class ServiceFactoryBean extends AbstractContractFactoryBean {
         }
 
         String annotationUniqueId = sofaService.uniqueId();
-        if ((uniqueId == null || uniqueId.isEmpty())
-            && (annotationUniqueId == null || annotationUniqueId.isEmpty())) {
+        if ((uniqueId == null || uniqueId.isEmpty()) && (annotationUniqueId == null || annotationUniqueId.isEmpty())) {
             return true;
         }
         return annotationUniqueId.equals(uniqueId);

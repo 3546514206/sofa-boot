@@ -16,11 +16,11 @@
  */
 package com.alipay.sofa.rpc.boot.container;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import com.alipay.sofa.rpc.config.ConsumerConfig;
 import com.alipay.sofa.runtime.spi.binding.Binding;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * ConsumerConfig 持有者.维护编程界面级别的RPC组件。

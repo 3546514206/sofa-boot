@@ -16,13 +16,15 @@
  */
 package com.alipay.sofa.tracer.boot.springmvc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterCycleTimesManager;
+import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterManager;
+import com.alipay.sofa.tracer.boot.TestUtil;
+import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
 import com.alipay.sofa.tracer.boot.base.SpringBootWebApplication;
+import com.alipay.sofa.tracer.boot.base.controller.SampleRestController;
+import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -34,14 +36,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterCycleTimesManager;
-import com.alipay.common.tracer.core.reporter.stat.manager.SofaTracerStatisticReporterManager;
-import com.alipay.sofa.tracer.boot.TestUtil;
-import com.alipay.sofa.tracer.boot.base.AbstractTestBase;
-import com.alipay.sofa.tracer.boot.base.controller.SampleRestController;
-import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * SpringMvcFilterTest
@@ -53,6 +52,11 @@ import com.alipay.sofa.tracer.plugins.springmvc.SpringMvcLogEnum;
 @SpringBootTest(classes = SpringBootWebApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-json.properties")
 public class SpringMvcFilterJsonOutputTest extends AbstractTestBase {
+
+    private static <K, V> Map<K, V> parseToMap(String json, Class<K> keyType, Class<V> valueType) {
+        return JSON.parseObject(json, new TypeReference<Map<K, V>>(keyType, valueType) {
+        });
+    }
 
     @Before
     public void before() throws InterruptedException {
@@ -67,7 +71,7 @@ public class SpringMvcFilterJsonOutputTest extends AbstractTestBase {
         int countTimes = 5;
         for (int i = 0; i < countTimes; i++) {
             ResponseEntity<SampleRestController.Greeting> response = testRestTemplate.getForEntity(
-                restUrl, SampleRestController.Greeting.class);
+                    restUrl, SampleRestController.Greeting.class);
             SampleRestController.Greeting greetingResponse = response.getBody();
             assertTrue(greetingResponse.isSuccess());
             // http://docs.spring.io/spring-boot/docs/1.4.2.RELEASE/reference/htmlsingle/#boot-features-testing
@@ -78,7 +82,7 @@ public class SpringMvcFilterJsonOutputTest extends AbstractTestBase {
 
         //wait for async output
         List<String> contents = FileUtils
-            .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
+                .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_DIGEST.getDefaultLogName()));
         assertTrue(contents.size() == countTimes);
         for (int i = 0; i < contents.size(); i++) {
             String logValue = contents.get(i);
@@ -91,25 +95,20 @@ public class SpringMvcFilterJsonOutputTest extends AbstractTestBase {
 
         for (int i = 0; i < countTimes; i++) {
             ResponseEntity<SampleRestController.Greeting> response = testRestTemplate.getForEntity(
-                restUrl, SampleRestController.Greeting.class);
+                    restUrl, SampleRestController.Greeting.class);
             SampleRestController.Greeting greetingResponse = response.getBody();
             assertTrue(greetingResponse.isSuccess());
         }
         SofaTracerStatisticReporterManager s = SofaTracerStatisticReporterCycleTimesManager
-            .getSofaTracerStatisticReporterManager(1L);
+                .getSofaTracerStatisticReporterManager(1L);
         Assert.notNull(s.getStatReporters().get(
-            SpringMvcLogEnum.SPRING_MVC_STAT.getDefaultLogName()));
+                SpringMvcLogEnum.SPRING_MVC_STAT.getDefaultLogName()));
 
         //stat log : 设置了周期 1s 输出一次
         Thread.sleep(1000);
         //wait for async output
         List<String> statContents = FileUtils
-            .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_STAT.getDefaultLogName()));
+                .readLines(customFileLog(SpringMvcLogEnum.SPRING_MVC_STAT.getDefaultLogName()));
         assertEquals(2, statContents.size());
-    }
-
-    private static <K, V> Map<K, V> parseToMap(String json, Class<K> keyType, Class<V> valueType) {
-        return JSON.parseObject(json, new TypeReference<Map<K, V>>(keyType, valueType) {
-        });
     }
 }

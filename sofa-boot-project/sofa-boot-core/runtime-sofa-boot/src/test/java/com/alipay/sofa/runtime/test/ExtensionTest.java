@@ -24,11 +24,6 @@ import com.alipay.sofa.runtime.api.aware.ExtensionClientAware;
 import com.alipay.sofa.runtime.api.client.ExtensionClient;
 import com.alipay.sofa.runtime.api.client.param.ExtensionParam;
 import com.alipay.sofa.runtime.api.client.param.ExtensionPointParam;
-import com.alipay.sofa.runtime.ext.component.ExtensionComponent;
-import com.alipay.sofa.runtime.model.ComponentType;
-import com.alipay.sofa.runtime.spi.component.ComponentInfo;
-import com.alipay.sofa.runtime.spi.component.SofaRuntimeContext;
-import com.alipay.sofa.runtime.spi.spring.SofaRuntimeContextAware;
 import com.alipay.sofa.runtime.test.configuration.RuntimeConfiguration;
 import com.alipay.sofa.runtime.test.extension.bean.IExtension;
 import com.alipay.sofa.runtime.test.extension.bean.SimpleSpringBean;
@@ -54,7 +49,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
-import java.util.Collection;
 
 /**
  * @author ruoshan
@@ -63,17 +57,15 @@ import java.util.Collection;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource(properties = "spring.application.name=ExtensionTest")
-public class ExtensionTest implements ExtensionClientAware, SofaRuntimeContextAware {
+public class ExtensionTest implements ExtensionClientAware {
 
-    private ExtensionClient      extensionClient;
-
-    private SofaRuntimeContext   sofaRuntimeContext;
+    private ExtensionClient extensionClient;
 
     @Autowired
-    private IExtension           iExtension;
+    private IExtension iExtension;
 
     @Autowired
-    private SimpleSpringBean     simpleSpringBean;
+    private SimpleSpringBean simpleSpringBean;
 
     @Autowired
     private SimpleSpringListBean simpleSpringListBean1;
@@ -82,10 +74,10 @@ public class ExtensionTest implements ExtensionClientAware, SofaRuntimeContextAw
     private SimpleSpringListBean simpleSpringListBean2;
 
     @Autowired
-    private SimpleSpringMapBean  springMapBean1;
+    private SimpleSpringMapBean springMapBean1;
 
     @Autowired
-    private SimpleSpringMapBean  springMapBean2;
+    private SimpleSpringMapBean springMapBean2;
 
     @Test
     public void testXMap() throws Exception {
@@ -134,7 +126,7 @@ public class ExtensionTest implements ExtensionClientAware, SofaRuntimeContextAw
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(new File(Thread.currentThread().getContextClassLoader()
-            .getResource("META-INF/extension/extension.xml").toURI()));
+                .getResource("META-INF/extension/extension.xml").toURI()));
         ExtensionParam extensionParam = new ExtensionParam();
         extensionParam.setTargetName("clientValue");
         extensionParam.setTargetInstanceName("iExtension");
@@ -149,28 +141,28 @@ public class ExtensionTest implements ExtensionClientAware, SofaRuntimeContextAw
         Assert.assertNotNull(iExtension);
         Assert.assertNotNull(iExtension.getSimpleExtensionDescriptor());
         Assert.assertEquals("SOFABoot Extension Test", iExtension.getSimpleExtensionDescriptor()
-            .getStringValue());
+                .getStringValue());
         Assert.assertEquals("value with path", iExtension.getSimpleExtensionDescriptor()
-            .getStringValueWithPath());
+                .getStringValueWithPath());
         Assert.assertEquals(new Integer(10), iExtension.getSimpleExtensionDescriptor()
-            .getIntValue());
+                .getIntValue());
         Assert.assertEquals(new Long(20), iExtension.getSimpleExtensionDescriptor().getLongValue());
         Assert.assertEquals(new Float(1.1), iExtension.getSimpleExtensionDescriptor()
-            .getFloatValue());
+                .getFloatValue());
         Assert.assertEquals(new Double(2.2), iExtension.getSimpleExtensionDescriptor()
-            .getDoubleValue());
+                .getDoubleValue());
         Assert.assertEquals(Boolean.TRUE, iExtension.getSimpleExtensionDescriptor()
-            .getBooleanValue());
+                .getBooleanValue());
         Assert.assertTrue(iExtension.getSimpleExtensionDescriptor().getDateValue().toString()
-            .contains("2019"));
+                .contains("2019"));
         Assert.assertEquals("file", iExtension.getSimpleExtensionDescriptor().getFileValue()
-            .getName());
+                .getName());
         Assert.assertEquals(SimpleExtensionDescriptor.class.getName(), iExtension
-            .getSimpleExtensionDescriptor().getClassValue().getName());
+                .getSimpleExtensionDescriptor().getClassValue().getName());
         Assert.assertEquals("http://test", iExtension.getSimpleExtensionDescriptor().getUrlValue()
-            .toString());
+                .toString());
         Assert.assertEquals("extension.xml", iExtension.getSimpleExtensionDescriptor()
-            .getResourceValue().toFile().getName());
+                .getResourceValue().toFile().getName());
     }
 
     @Test
@@ -216,9 +208,9 @@ public class ExtensionTest implements ExtensionClientAware, SofaRuntimeContextAw
     public void testSpringMap() {
         Assert.assertEquals(2, iExtension.getSimpleSpringMapBeanMap().size());
         Assert.assertEquals(springMapBean1,
-            iExtension.getSimpleSpringMapBeanMap().get("testMapSpringKey1"));
+                iExtension.getSimpleSpringMapBeanMap().get("testMapSpringKey1"));
         Assert.assertEquals(springMapBean2,
-            iExtension.getSimpleSpringMapBeanMap().get("testMapSpringKey2"));
+                iExtension.getSimpleSpringMapBeanMap().get("testMapSpringKey2"));
     }
 
     @Test
@@ -236,32 +228,12 @@ public class ExtensionTest implements ExtensionClientAware, SofaRuntimeContextAw
         Assert.assertNull(iExtension.getBadDescriptor());
     }
 
-    @Test
-    public void testNotExist() {
-        Collection<ComponentInfo> componentInfos =
-                sofaRuntimeContext.getComponentManager().getComponentInfosByType(new ComponentType("extension"));
-        componentInfos.forEach(componentInfo -> {
-            if (componentInfo instanceof ExtensionComponent) {
-                if (componentInfo.getName().getName().contains("noExist")) {
-                    Assert.assertFalse(componentInfo.isHealthy().isHealthy());
-                    Assert.assertEquals("Can not find corresponding ExtensionPoint: iExtension$noExist",
-                            componentInfo.isHealthy().getHealthReport());
-                }
-            }
-        });
-    }
-
     @Override
     public void setExtensionClient(ExtensionClient extensionClient) {
         this.extensionClient = extensionClient;
     }
 
-    @Override
-    public void setSofaRuntimeContext(SofaRuntimeContext sofaRuntimeContext) {
-        this.sofaRuntimeContext = sofaRuntimeContext;
-    }
-
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @Import(RuntimeConfiguration.class)
     @ImportResource("classpath*:META-INF/extension/test-extension.xml")
     static class ExtensionTestConfiguration {

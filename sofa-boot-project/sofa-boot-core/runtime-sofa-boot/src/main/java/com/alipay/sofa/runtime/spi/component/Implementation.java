@@ -39,6 +39,11 @@ public interface Implementation {
     Object getTarget();
 
     /**
+     * set target object
+     */
+    void setTarget(Object target);
+
+    /**
      * get target object class type
      *
      * @return target class type
@@ -58,11 +63,6 @@ public interface Implementation {
      * @return true or false。
      */
     boolean isLazyInit();
-
-    /**
-     * set target object
-     */
-    void setTarget(Object target);
 
     /**
      * is Factory or not
